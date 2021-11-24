@@ -19,18 +19,19 @@
     "build": "unbuild",
     "release": "yarn build && standard-version && git push --follow-tags && npm publish",
     "test": "nyc mocha -r jiti/register tests/*.test.*",
+    "lint": "eslint --ext .ts,.mjs .",
     "playground": "yarn jiti ./playground.ts"
   },
   "devDependencies": {
-    "@types/mocha": "^9.0.0",
-    "chai": "^4.3.4",
-    "jiti": "^1.12.9",
-    "mocha": "^9.1.3",
-    "nyc": "^15.1.0",
+    "@nuxtjs/eslint-config-typescript": "latest",
+    "@types/mocha": "latest",
+    "chai": "latest",
+    "eslint": "latest",
+    "jiti": "latest",
+    "mocha": "latest",
+    "nyc": "latest",
     "standard-version": "latest",
-    "unbuild": "latest"
-  },
-  "dependencies": {
-    "@types/chai": "^4.2.22"
+    "unbuild": "latest",
+    "@types/chai": "latest"
   }
 }

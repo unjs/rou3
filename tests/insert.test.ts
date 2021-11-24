@@ -64,7 +64,6 @@ describe('Router tree structure', function () {
     expect(chootChooWildcardNode.type).to.equal(NODE_TYPES.WILDCARD)
   })
 
-
   it('should be able to initialize routes via the router contructor', function () {
     const router = createRouter({
       routes: {

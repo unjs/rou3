@@ -15,7 +15,7 @@ describe('Router remove', function () {
         'choot',
         'choot/:choo',
         'ui/**',
-        'ui/components/**',
+        'ui/components/**'
       ])
     })
 

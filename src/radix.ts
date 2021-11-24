@@ -1,10 +1,10 @@
 import type { RadixRouterContext, RadixNode, MatchedRoute, RadixRouter, RadixNodeData, RadixRouterInitOptions } from './types'
 import { NODE_TYPES } from './types'
 
-export function createRouter<T extends RadixNodeData = RadixNodeData>(options: RadixRouterInitOptions = {}): RadixRouter<T> {
+export function createRouter<T extends RadixNodeData = RadixNodeData> (options: RadixRouterInitOptions = {}): RadixRouter<T> {
   const ctx: RadixRouterContext = {
     rootNode: createRadixNode(),
-    staticRoutesMap: {},
+    staticRoutesMap: {}
   }
 
   if (options.routes) {
@@ -23,7 +23,7 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(options: R
   }
 }
 
-function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
+function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
   const staticPathNode = ctx.staticRoutesMap[path]
   if (staticPathNode) {
     return staticPathNode.data
@@ -76,7 +76,7 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
   return node.data
 }
 
-function lookupAll(ctx: RadixRouterContext, prefix: string) {
+function lookupAll (ctx: RadixRouterContext, prefix: string) {
   const sections = prefix.split('/')
   let node = ctx.rootNode
   const resultArray = []
@@ -86,7 +86,7 @@ function lookupAll(ctx: RadixRouterContext, prefix: string) {
     const section = sections[i]
 
     if (node.data) {
-      resultArray.push(node)
+      resultArray.push(node.data)
     }
 
     let nextNode = node.children[section]
@@ -103,7 +103,7 @@ function lookupAll(ctx: RadixRouterContext, prefix: string) {
           nextNode = node.children[key]
 
           if (nextNode.data) {
-            resultArray.push(nextNode)
+            resultArray.push(nextNode.data)
           }
         }
       }
@@ -113,9 +113,7 @@ function lookupAll(ctx: RadixRouterContext, prefix: string) {
   return resultArray
 }
 
-
-function insert(ctx: RadixRouterContext, path: string, data: any) {
-
+function insert (ctx: RadixRouterContext, path: string, data: any) {
   let isStaticRoute = true
 
   const sections = path.split('/')
@@ -163,8 +161,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
   return node
 }
 
-
-function remove(ctx: RadixRouterContext, path: string) {
+function remove (ctx: RadixRouterContext, path: string) {
   let success = false
   const sections = path.split('/')
   let node = ctx.rootNode
@@ -192,7 +189,7 @@ function remove(ctx: RadixRouterContext, path: string) {
   return success
 }
 
-function createRadixNode(options: Partial<RadixNode> = {}): RadixNode {
+function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
   return {
     type: options.type || NODE_TYPES.NORMAL,
     parent: options.parent || null,
@@ -204,8 +201,7 @@ function createRadixNode(options: Partial<RadixNode> = {}): RadixNode {
   }
 }
 
-
-function getNodeType(str: string) {
+function getNodeType (str: string) {
   if (str[0] === ':') { return NODE_TYPES.PLACEHOLDER }
   if (str === '**') { return NODE_TYPES.WILDCARD }
   return NODE_TYPES.NORMAL

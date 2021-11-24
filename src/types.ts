@@ -4,8 +4,8 @@ export const NODE_TYPES = {
   PLACEHOLDER: 2 as 2
 }
 
-export type NODE_TYPES = typeof NODE_TYPES
-export type NODE_TYPE = NODE_TYPES[keyof NODE_TYPES]
+type _NODE_TYPES = typeof NODE_TYPES
+export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES]
 
 type _RadixNodeDataObject = { params?: never, [key: string]: any }
 export type RadixNodeData<T extends _RadixNodeDataObject = _RadixNodeDataObject> = T
@@ -26,7 +26,7 @@ export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
   staticRoutesMap: Record<string, RadixNode>
 }
 
-export interface RadixRouterInitOptions<T extends RadixNodeData = RadixNodeData> {
+export interface RadixRouterInitOptions {
   routes?: Record<string, any>
 }
 
@@ -47,7 +47,7 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    *
    * @returns An array of matches along with any data that was originally passed in when inserted
   */
-  lookupAll(prefix: string): RadixNode<T>[]
+  lookupAll(prefix: string): MatchedRoute<T>[]
 
   /**
    * Perform an insert into the radix tree
@@ -55,7 +55,7 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    * @param data - the associated data to path
    *
   */
-  insert(path: string, data: T): RadixNode<T>
+  insert(path: string, data: T): void
 
   /**
    * Perform a remove on the tree
