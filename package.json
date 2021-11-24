@@ -1,6 +1,7 @@
 {
   "name": "radix3",
   "version": "0.1.0",
+  "description": "Lightweight and fast router for JavaScript based on Radix Tree",
   "repository": "unjs/radix3",
   "license": "MIT",
   "sideEffects": false,
@@ -17,13 +18,14 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "release": "yarn build && standard-version && git push --follow-tags && npm publish",
-    "test": "nyc mocha -r jiti/register tests/*.test.*",
     "lint": "eslint --ext .ts,.mjs .",
-    "playground": "yarn jiti ./playground.ts"
+    "playground": "yarn jiti ./playground.ts",
+    "release": "yarn build && standard-version && git push --follow-tags && npm publish",
+    "test": "nyc --reporter=lcov mocha -r jiti/register tests/*.test.*"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
+    "@types/chai": "latest",
     "@types/mocha": "latest",
     "chai": "latest",
     "eslint": "latest",
@@ -31,7 +33,6 @@
     "mocha": "latest",
     "nyc": "latest",
     "standard-version": "latest",
-    "unbuild": "latest",
-    "@types/chai": "latest"
+    "unbuild": "latest"
   }
 }
