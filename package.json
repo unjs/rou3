@@ -1,0 +1,36 @@
+{
+  "name": "radix3",
+  "version": "0.1.0",
+  "repository": "unjs/radix3",
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "release": "yarn build && standard-version && git push --follow-tags && npm publish",
+    "test": "nyc mocha -r jiti/register tests/*.test.*",
+    "playground": "yarn jiti ./playground.ts"
+  },
+  "devDependencies": {
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "jiti": "^1.12.9",
+    "mocha": "^9.1.3",
+    "nyc": "^15.1.0",
+    "standard-version": "latest",
+    "unbuild": "latest"
+  },
+  "dependencies": {
+    "@types/chai": "^4.2.22"
+  }
+}
