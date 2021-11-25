@@ -77,6 +77,10 @@ Find all data nodes matching path prefix.
 
 Remove route matching `path`.
 
+## Performance
+
+See [benchmark](./benchmark).
+
 ## License
 
 Based on original work of [`charlieduong94/radix-router`](https://github.com/charlieduong94/radix-router)

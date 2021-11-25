@@ -21,17 +21,25 @@
     "lint": "eslint --ext .ts,.mjs .",
     "playground": "yarn jiti ./playground.ts",
     "release": "yarn build && standard-version && git push --follow-tags && npm publish",
+    "bench": "node ./benchmark/direct.mjs",
+    "bench:http": "node ./benchmark/http.mjs",
+    "bench:profile": "0x -o -D benchmark/.profile -- node ./benchmark/direct.mjs",
     "test": "nyc --reporter=lcov mocha -r jiti/register tests/*.test.*"
   },
   "devDependencies": {
+    "0x": "^4.11.0",
     "@nuxtjs/eslint-config-typescript": "latest",
     "@types/chai": "latest",
     "@types/mocha": "latest",
+    "autocannon": "^7.5.0",
+    "benchmark": "^2.1.4",
     "chai": "latest",
     "eslint": "latest",
     "jiti": "latest",
+    "listhen": "^0.2.5",
     "mocha": "latest",
     "nyc": "latest",
+    "ohmyfetch": "^0.4.8",
     "standard-version": "latest",
     "unbuild": "latest"
   }
