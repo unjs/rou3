@@ -34,7 +34,7 @@ const { createRouter } = require('radix3')
 **Create a router instance and insert routes:**
 
 ```js
-const router createRouter()
+const router = createRouter()
 
 router.insert('/path', { payload: 'this path' })
 router.insert('/path/:name', { payload: 'named route' })
