@@ -40,7 +40,7 @@ export const benchSets = [
   {
     title: 'static route',
     requests: [
-      { path: '/choot/' }
+      { path: '/choot' }
     ]
   },
   {
