@@ -45,10 +45,10 @@ router.insert('/path/foo/**', { payload: 'wildcard route' })
 
 ```js
 // { payload: 'this path' }
-router.lookup('/test')
+router.lookup('/path')
 
 // { payload: 'named route', params: { name: 'fooval' } }
-router.lookup('/test/fooval')
+router.lookup('/path/fooval')
 
 // { payload: 'wildcard route' }
 router.lookup('/path/foo/bar/baz')
