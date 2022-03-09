@@ -120,6 +120,8 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
 
   let node = ctx.rootNode
 
+  let _unnamedPlaceholderCtr = 0
+
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]
 
@@ -137,7 +139,7 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
       node.children[section] = childNode
 
       if (type === NODE_TYPES.PLACEHOLDER) {
-        childNode.paramName = section.slice(1)
+        childNode.paramName = section === '*' ? `_${_unnamedPlaceholderCtr++}` : section.slice(1)
         node.placeholderChildNode = childNode
         isStaticRoute = false
       } else if (type === NODE_TYPES.WILDCARD) {
@@ -202,7 +204,7 @@ function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
 }
 
 function getNodeType (str: string) {
-  if (str[0] === ':') { return NODE_TYPES.PLACEHOLDER }
   if (str === '**') { return NODE_TYPES.WILDCARD }
+  if (str[0] === ':' || str === '*') { return NODE_TYPES.PLACEHOLDER }
   return NODE_TYPES.NORMAL
 }

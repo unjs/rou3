@@ -73,6 +73,15 @@ describe('Router lookup', function () {
     })
   })
 
+  describe('unnamed placeholders', function () {
+    testRouter([
+      'polymer/**',
+      'polymer/*/route'
+    ], {
+      'polymer/anon/route': { path: 'polymer/*/route', params: { _0: 'anon' } }
+    })
+  })
+
   describe('should be able to match routes with trailing slash', function () {
     testRouter([
       'route/without/trailing/slash',
