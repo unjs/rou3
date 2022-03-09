@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 import { createRouter, NODE_TYPES } from '../src'
 
 describe('Router tree structure', function () {

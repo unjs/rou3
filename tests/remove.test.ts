@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 import { createRouter } from '../src'
 import { createRoutes } from './lookup.test'
 

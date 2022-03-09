@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { describe, it, expect } from 'vitest'
 import { createRouter } from '../src'
 
 export function createRoutes (paths) {
