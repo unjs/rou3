@@ -22,4 +22,4 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - run: yarn vitest --coverage
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
