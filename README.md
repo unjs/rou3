@@ -42,6 +42,7 @@ const router = createRouter()
 router.insert('/path', { payload: 'this path' })
 router.insert('/path/:name', { payload: 'named route' })
 router.insert('/path/foo/**', { payload: 'wildcard route' })
+router.insert('/path/foo/**:name', { payload: 'named wildcard route' })
 ```
 
 ***Match route to access matched data:**

@@ -64,21 +64,24 @@ describe('Router lookup', function () {
 
   describe('should be able to perform wildcard lookups', function () {
     testRouter([
-      'polymer/**',
-      'polymer/another/route'
+      'polymer/**:id',
+      'polymer/another/route',
+      'route/:p1/something/**:rest'
     ], {
       'polymer/another/route': { path: 'polymer/another/route' },
-      'polymer/anon': { path: 'polymer/**', params: { _: 'anon' } },
-      'polymer/foo/bar/baz': { path: 'polymer/**', params: { _: 'foo/bar/baz' } }
+      'polymer/anon': { path: 'polymer/**:id', params: { id: 'anon' } },
+      'polymer/foo/bar/baz': { path: 'polymer/**:id', params: { id: 'foo/bar/baz' } },
+      'route/param1/something/c/d': { path: 'route/:p1/something/**:rest', params: { p1: 'param1', rest: 'c/d' } }
     })
   })
 
   describe('unnamed placeholders', function () {
     testRouter([
       'polymer/**',
-      'polymer/*/route'
+      'polymer/route/*'
     ], {
-      'polymer/anon/route': { path: 'polymer/*/route', params: { _0: 'anon' } }
+      'polymer/foo/bar': { path: 'polymer/**', params: { _: 'foo/bar' } },
+      'polymer/route/anon': { path: 'polymer/route/*', params: { _0: 'anon' } }
     })
   })
 

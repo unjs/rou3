@@ -62,7 +62,7 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
 
   if ((node === null || node.data === null) && wildcardNode !== null) {
     node = wildcardNode
-    params._ = wildCardParam
+    params[node.paramName || '_'] = wildCardParam
     paramsFound = true
   }
 
@@ -148,6 +148,7 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
         isStaticRoute = false
       } else if (type === NODE_TYPES.WILDCARD) {
         node.wildcardChildNode = childNode
+        childNode.paramName = section.substring(3 /* "**:" */) || '_'
         isStaticRoute = false
       }
 
@@ -208,7 +209,7 @@ function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
 }
 
 function getNodeType (str: string) {
-  if (str === '**') { return NODE_TYPES.WILDCARD }
+  if (str.startsWith('**')) { return NODE_TYPES.WILDCARD }
   if (str[0] === ':' || str === '*') { return NODE_TYPES.PLACEHOLDER }
   return NODE_TYPES.NORMAL
 }
