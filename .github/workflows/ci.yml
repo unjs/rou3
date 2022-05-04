@@ -17,9 +17,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: yarn
-      - run: yarn install
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn vitest --coverage
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm vitest --coverage
       - uses: codecov/codecov-action@v3

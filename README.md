@@ -15,10 +15,13 @@ Lightweight and fast router for JavaScript based on [Radix Tree](https://en.wiki
 
 ```sh
 # npm
-npm install radix3
+npm i radix3
 
 # yarn
 yarn add radix3
+
+# pnpm
+pnpm i radix3
 ```
 
 **Import:**

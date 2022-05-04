@@ -17,13 +17,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
-    "lint": "eslint --ext .ts,.mjs .",
-    "playground": "yarn jiti ./playground.ts",
-    "release": "yarn lint && yarn test run && yarn build && standard-version && git push --follow-tags && npm publish",
     "bench": "node ./benchmark/direct.mjs",
     "bench:http": "node ./benchmark/http.mjs",
     "bench:profile": "0x -o -D benchmark/.profile -- node ./benchmark/direct.mjs",
+    "build": "unbuild",
+    "lint": "eslint --ext .ts,.mjs .",
+    "playground": "pnpm jiti ./playground.ts",
+    "release": "pnpm lint && pnpm test run && pnpm build && standard-version && git push --follow-tags && pnpm publish",
     "test": "vitest"
   },
   "devDependencies": {
@@ -37,7 +37,9 @@
     "listhen": "latest",
     "ohmyfetch": "latest",
     "standard-version": "latest",
+    "typescript": "^4.6.4",
     "unbuild": "latest",
     "vitest": "latest"
-  }
+  },
+  "packageManager": "pnpm@7.0.0"
 }
