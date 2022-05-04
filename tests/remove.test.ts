@@ -23,12 +23,14 @@ describe('Router remove', function () {
     expect(router.lookup('choot')).to.deep.equal(null)
 
     expect(router.lookup('ui/components/snackbars')).to.deep.equal({
-      path: 'ui/components/**'
+      path: 'ui/components/**',
+      params: { _: 'snackbars' }
     })
 
     router.remove('ui/components/**')
     expect(router.lookup('ui/components/snackbars')).to.deep.equal({
-      path: 'ui/**'
+      path: 'ui/**',
+      params: { _: 'components/snackbars' }
     })
   })
 
@@ -69,11 +71,13 @@ describe('Router remove', function () {
     })
 
     expect(router.lookup('ui/components/snackbars')).to.deep.equal({
-      path: 'ui/components/**'
+      path: 'ui/components/**',
+      params: { _: 'snackbars' }
     })
     router.remove('ui/components/**')
     expect(router.lookup('ui/components/snackbars')).to.deep.equal({
-      path: 'ui/**'
+      path: 'ui/**',
+      params: { _: 'components/snackbars' }
     })
   })
 

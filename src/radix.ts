@@ -35,12 +35,14 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
   let paramsFound = false
   let wildcardNode = null
   let node = ctx.rootNode
+  let wildCardParam = null
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]
 
     if (node.wildcardChildNode !== null) {
       wildcardNode = node.wildcardChildNode
+      wildCardParam = sections.slice(i).join('/')
     }
 
     // Exact matches take precedence over placeholders
@@ -60,6 +62,8 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
 
   if ((node === null || node.data === null) && wildcardNode !== null) {
     node = wildcardNode
+    params._ = wildCardParam
+    paramsFound = true
   }
 
   if (!node) {
