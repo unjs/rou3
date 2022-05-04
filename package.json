@@ -21,10 +21,11 @@
     "bench:http": "node ./benchmark/http.mjs",
     "bench:profile": "0x -o -D benchmark/.profile -- node ./benchmark/direct.mjs",
     "build": "unbuild",
+    "dev": "vitest",
     "lint": "eslint --ext .ts,.mjs .",
     "playground": "pnpm jiti ./playground.ts",
-    "release": "pnpm lint && pnpm test run && pnpm build && standard-version && git push --follow-tags && pnpm publish",
-    "test": "vitest"
+    "release": "pnpm test && pnpm test run && pnpm build && standard-version && git push --follow-tags && pnpm publish",
+    "test": "pnpm lint && vitest run"
   },
   "devDependencies": {
     "0x": "latest",
