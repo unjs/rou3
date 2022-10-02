@@ -47,7 +47,7 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
 
     // Exact matches take precedence over placeholders
     const nextNode = node.children[section]
-    if (nextNode !== undefined) {
+    if (nextNode !== undefined && typeof nextNode !== 'function') {
       node = nextNode
     } else {
       node = node.placeholderChildNode
@@ -95,7 +95,7 @@ function lookupAll (ctx: RadixRouterContext, prefix: string) {
 
     let nextNode = node.children[section]
 
-    if (nextNode !== undefined) {
+    if (nextNode !== undefined && typeof nextNode !== 'function') {
       node = nextNode
     } else if (i === endSections) {
       const keys = Object.keys(node.children)
@@ -130,7 +130,7 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
     const section = sections[i]
 
     const children = node.children
-    let childNode
+    let childNode: RadixNode<RadixNodeData>
 
     if ((childNode = children[section])) {
       node = childNode
