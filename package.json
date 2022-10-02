@@ -30,17 +30,17 @@
   "devDependencies": {
     "0x": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
+    "@vitest/coverage-c8": "latest",
     "autocannon": "latest",
     "benchmark": "latest",
-    "c8": "latest",
     "eslint": "latest",
     "jiti": "latest",
     "listhen": "latest",
     "ohmyfetch": "latest",
     "standard-version": "latest",
-    "typescript": "^4.6.4",
+    "typescript": "^4.8.4",
     "unbuild": "latest",
     "vitest": "latest"
   },
-  "packageManager": "pnpm@7.0.0"
+  "packageManager": "pnpm@7.12.2"
 }
