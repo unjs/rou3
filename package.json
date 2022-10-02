@@ -30,9 +30,9 @@
   "devDependencies": {
     "0x": "latest",
     "@nuxtjs/eslint-config-typescript": "latest",
+    "@vitest/coverage-c8": "latest",
     "autocannon": "latest",
     "benchmark": "latest",
-    "c8": "latest",
     "eslint": "latest",
     "jiti": "latest",
     "listhen": "latest",
