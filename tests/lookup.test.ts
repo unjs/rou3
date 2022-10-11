@@ -81,7 +81,8 @@ describe('Router lookup', function () {
       'polymer/route/*'
     ], {
       'polymer/foo/bar': { path: 'polymer/**', params: { _: 'foo/bar' } },
-      'polymer/route/anon': { path: 'polymer/route/*', params: { _0: 'anon' } }
+      'polymer/route/anon': { path: 'polymer/route/*', params: { _0: 'anon' } },
+      'polymer/constructor': { path: 'polymer/**', params: { _: 'constructor' } }
     })
   })
 
