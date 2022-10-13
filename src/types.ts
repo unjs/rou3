@@ -21,13 +21,15 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   placeholderChildNode: RadixNode<T> | null
 }
 
-export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
-  rootNode: RadixNode<T>
-  staticRoutesMap: Record<string, RadixNode>
+export interface RadixRouterOptions {
+  strictTrailingSlash?: boolean
+  routes?: Record<string, any>
 }
 
-export interface RadixRouterInitOptions {
-  routes?: Record<string, any>
+export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
+  options: RadixRouterOptions
+  rootNode: RadixNode<T>
+  staticRoutesMap: Record<string, RadixNode>
 }
 
 export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {

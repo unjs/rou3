@@ -1,25 +1,28 @@
-import type { RadixRouterContext, RadixNode, MatchedRoute, RadixRouter, RadixNodeData, RadixRouterInitOptions } from './types'
+import type { RadixRouterContext, RadixNode, MatchedRoute, RadixRouter, RadixNodeData, RadixRouterOptions } from './types'
 import { NODE_TYPES } from './types'
 
-export function createRouter<T extends RadixNodeData = RadixNodeData> (options: RadixRouterInitOptions = {}): RadixRouter<T> {
+export function createRouter<T extends RadixNodeData = RadixNodeData> (options: RadixRouterOptions = {}): RadixRouter<T> {
   const ctx: RadixRouterContext = {
+    options,
     rootNode: createRadixNode(),
     staticRoutesMap: {}
   }
 
+  const normalizeTrailingSlash = p => options.strictTrailingSlash ? p : p.replace(/\/$/, '')
+
   if (options.routes) {
     for (const path in options.routes) {
-      insert(ctx, path, options.routes[path])
+      insert(ctx, normalizeTrailingSlash(path), options.routes[path])
     }
   }
 
   return {
     ctx,
     // @ts-ignore
-    lookup: (path: string) => lookup(ctx, path),
+    lookup: (path: string) => lookup(ctx, normalizeTrailingSlash(path)),
     lookupAll: (prefix: string) => lookupAll(ctx, prefix),
-    insert: (path: string, data: any) => insert(ctx, path, data),
-    remove: (path: string) => remove(ctx, path)
+    insert: (path: string, data: any) => insert(ctx, normalizeTrailingSlash(path), data),
+    remove: (path: string) => remove(ctx, normalizeTrailingSlash(path))
   }
 }
 

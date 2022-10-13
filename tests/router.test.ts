@@ -43,8 +43,7 @@ describe('Router lookup', function () {
         }
       },
       '/carbon': null,
-      // TODO
-      // 'carbon/': null,
+      'carbon/': null,
       'carbon/test2/test/test23': {
         path: 'carbon/:element/test/:testing',
         params: {
@@ -92,10 +91,9 @@ describe('Router lookup', function () {
       'route/with/trailing/slash/'
     ], {
       'route/without/trailing/slash': { path: 'route/without/trailing/slash' },
-      'route/with/trailing/slash/': { path: 'route/with/trailing/slash/' }
-      // TODO
-      // 'route/without/trailing/slash/': { path: 'route/without/trailing/slash' },
-      // 'route/with/trailing/slash': { path: 'route/with/trailing/slash/' },
+      'route/with/trailing/slash/': { path: 'route/with/trailing/slash/' },
+      'route/without/trailing/slash/': { path: 'route/without/trailing/slash' },
+      'route/with/trailing/slash': { path: 'route/with/trailing/slash/' }
     })
   })
 })
