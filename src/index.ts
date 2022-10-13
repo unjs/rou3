@@ -1,2 +1,2 @@
-export * from './radix'
+export * from './router'
 export * from './types'
