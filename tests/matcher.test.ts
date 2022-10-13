@@ -20,7 +20,19 @@ describe('Route matcher', function () {
     const matcher = toRouteMatcher(router)
     const matches = matcher.matchAll('/foo/bar/baz')
 
-    expect(JSON.stringify(matches)).to.toMatchInlineSnapshot('"[{\\"m\\":\\"foo/**\\"},{\\"m\\":\\"foo/*/baz\\"},{\\"m\\":\\"foo/bar/baz\\"}]"')
+    expect(matches).to.toMatchInlineSnapshot(`
+      [
+        {
+          "m": "foo/**",
+        },
+        {
+          "m": "foo/*/baz",
+        },
+        {
+          "m": "foo/bar/baz",
+        },
+      ]
+    `)
   })
 
   const routes = createRoutes([
