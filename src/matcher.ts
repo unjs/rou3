@@ -58,14 +58,16 @@ function _routerNodeToTable (initialPath: string, initialNode: RadixNode): Route
   const table: RouteTable = _createRouteTable()
   function _addNode (path: string, node: RadixNode) {
     if (path) {
-      if (node.type === NODE_TYPES.NORMAL && !(path.includes('*'))) {
+      if (node.type === NODE_TYPES.NORMAL && !(path.includes('*') || path.includes(':'))) {
         table.static.set(path, node.data)
       } else if (node.type === NODE_TYPES.WILDCARD) {
         table.wildcard.set(path.replace('/**', ''), node.data)
       } else if (node.type === NODE_TYPES.PLACEHOLDER) {
         const subTable = _routerNodeToTable('', node)
-        subTable.static.set('/', node.data)
-        table.dynamic.set(path.replace('/*', ''), subTable)
+        if (node.data) {
+          subTable.static.set('/', node.data)
+        }
+        table.dynamic.set(path.replace(/\/\*|\/:\w+/, ''), subTable)
         return
       }
     }
