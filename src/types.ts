@@ -44,14 +44,6 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
   lookup(path: string): MatchedRoute<T> | null
 
   /**
-   * Perform lookup of all paths that start with the given prefix
-   * @param The prefix to match
-   *
-   * @returns An array of matches along with any data that was originally passed in when inserted
-  */
-  lookupAll(prefix: string): MatchedRoute<T>[]
-
-  /**
    * Perform an insert into the radix tree
    * @param path - the prefix to match
    * @param data - the associated data to path

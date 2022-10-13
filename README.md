@@ -72,10 +72,6 @@ The `data` object will be returned on matching params. It should be an object li
 
 Returns matched data for `path` with optional `params` key if mached route using placeholders.
 
-### `router.lookupAll(prefix)`
-
-Find all data nodes matching path prefix.
-
 ### `router.remove(path)`
 
 Remove route matching `path`.

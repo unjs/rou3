@@ -20,7 +20,6 @@ export function createRouter<T extends RadixNodeData = RadixNodeData> (options: 
     ctx,
     // @ts-ignore
     lookup: (path: string) => lookup(ctx, normalizeTrailingSlash(path)),
-    lookupAll: (prefix: string) => lookupAll(ctx, prefix),
     insert: (path: string, data: any) => insert(ctx, normalizeTrailingSlash(path), data),
     remove: (path: string) => remove(ctx, normalizeTrailingSlash(path))
   }
@@ -81,39 +80,6 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
   }
 
   return node.data
-}
-
-function lookupAll (ctx: RadixRouterContext, prefix: string) {
-  const sections = prefix.split('/')
-  let node = ctx.rootNode
-  const resultArray = []
-  const endSections = sections.length - 1
-
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i]
-
-    if (node.data) {
-      resultArray.push(node.data)
-    }
-
-    let nextNode = node.children.get(section)
-
-    if (nextNode !== undefined) {
-      node = nextNode
-    } else if (i === endSections) {
-      for (const key of node.children.keys()) {
-        if (key.startsWith(section)) {
-          nextNode = node.children.get(key)
-
-          if (nextNode.data) {
-            resultArray.push(nextNode.data)
-          }
-        }
-      }
-    }
-  }
-
-  return resultArray
 }
 
 function insert (ctx: RadixRouterContext, path: string, data: any) {
