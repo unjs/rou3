@@ -95,7 +95,7 @@ const router = createRouter({
 ```
 
 - `routes`: An object specifying initial routes to add
-- `strictTrailingSlash`: If enabled (disabled by default) matcher makes differences for matching routes with trailing slash
+- `strictTrailingSlash`: By default router ignored trailing slash for matching and adding routes. When set to `true`, matching with trailing slash is different.
 
 ### Route Matcher
 
