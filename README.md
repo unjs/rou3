@@ -82,7 +82,7 @@ Remove route matching `path`.
 
 ### Route Matcher
 
-**Experimental feature:** Behavior might change in a semver-minor release]
+**Experimental feature:** Behavior might change in a semver-minor release.
 
 Creates a multi matcher from router tree that can match **all routes** matching path:
 
