@@ -86,7 +86,7 @@ You can initialize router instance with options:
 
 ```ts
 const router = createRouter({
-  strictTrailinSlash: true,
+  strictTrailingSlash: true,
   routes: {
     '/foo': {}
   }
@@ -95,7 +95,7 @@ const router = createRouter({
 ```
 
 - `routes`: An object specifying initial routes to add
-- `strictTrailinSlash`: If enabled (disabled by default) matcher makes differences for matching routes with trailing slash
+- `strictTrailingSlash`: If enabled (disabled by default) matcher makes differences for matching routes with trailing slash
 
 ### Route Matcher
 
