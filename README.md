@@ -36,7 +36,7 @@ const { createRouter } = require('radix3')
 **Create a router instance and insert routes:**
 
 ```js
-const router = createRouter()
+const router = createRouter(/* options */)
 
 router.insert('/path', { payload: 'this path' })
 router.insert('/path/:name', { payload: 'named route' })
@@ -79,6 +79,23 @@ Find all data nodes matching path prefix.
 ### `router.remove(path)`
 
 Remove route matching `path`.
+
+## Options
+
+You can initialize router instance with options:
+
+```ts
+const router = createRouter({
+  strictTrailingSlash: true,
+  routes: {
+    '/foo': {}
+  }
+})
+
+```
+
+- `routes`: An object specifying initial routes to add
+- `strictTrailingSlash`: By default router ignored trailing slash for matching and adding routes. When set to `true`, matching with trailing slash is different.
 
 ### Route Matcher
 
