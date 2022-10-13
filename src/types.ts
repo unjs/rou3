@@ -14,7 +14,7 @@ export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<T, 'par
 export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   type: NODE_TYPE
   parent: RadixNode<T> | null
-  children: Record<string, RadixNode<T>>
+  children: Map<string, RadixNode<T>>
   data: RadixNodeData | null
   paramName: string | null
   wildcardChildNode: RadixNode<T> | null

@@ -46,8 +46,8 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
     }
 
     // Exact matches take precedence over placeholders
-    const nextNode = node.children[section]
-    if (nextNode !== undefined && typeof nextNode !== 'function') {
+    const nextNode = node.children.get(section)
+    if (nextNode !== undefined) {
       node = nextNode
     } else {
       node = node.placeholderChildNode
@@ -93,18 +93,14 @@ function lookupAll (ctx: RadixRouterContext, prefix: string) {
       resultArray.push(node.data)
     }
 
-    let nextNode = node.children[section]
+    let nextNode = node.children.get(section)
 
-    if (nextNode !== undefined && typeof nextNode !== 'function') {
+    if (nextNode !== undefined) {
       node = nextNode
     } else if (i === endSections) {
-      const keys = Object.keys(node.children)
-
-      for (let j = 0; j < keys.length; j++) {
-        const key = keys[j]
-
+      for (const key of node.children.keys()) {
         if (key.startsWith(section)) {
-          nextNode = node.children[key]
+          nextNode = node.children.get(key)
 
           if (nextNode.data) {
             resultArray.push(nextNode.data)
@@ -129,10 +125,9 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]
 
-    const children = node.children
     let childNode: RadixNode<RadixNodeData>
 
-    if ((childNode = children[section])) {
+    if ((childNode = node.children.get(section))) {
       node = childNode
     } else {
       const type = getNodeType(section)
@@ -140,7 +135,7 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
       // Create new node to represent the next part of the path
       childNode = createRadixNode({ type, parent: node })
 
-      node.children[section] = childNode
+      node.children.set(section, childNode)
 
       if (type === NODE_TYPES.PLACEHOLDER) {
         childNode.paramName = section === '*' ? `_${_unnamedPlaceholderCtr++}` : section.slice(1)
@@ -175,7 +170,7 @@ function remove (ctx: RadixRouterContext, path: string) {
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]
-    node = node.children[section]
+    node = node.children.get(section)
     if (!node) {
       return success
     }
@@ -200,7 +195,7 @@ function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
   return {
     type: options.type || NODE_TYPES.NORMAL,
     parent: options.parent || null,
-    children: {},
+    children: new Map(),
     data: options.data || null,
     paramName: options.paramName || null,
     wildcardChildNode: null,

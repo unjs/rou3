@@ -12,11 +12,11 @@ describe('Router tree structure', function () {
     router.insert('//choo', {})
 
     const rootNode = router.ctx.rootNode
-    const helloNode = rootNode.children.hello
-    const coolNode = rootNode.children.cool
-    const hiNode = rootNode.children.hi
-    const heliumNode = rootNode.children.helium
-    const slashNode = rootNode.children['']
+    const helloNode = rootNode.children.get('hello')
+    const coolNode = rootNode.children.get('cool')
+    const hiNode = rootNode.children.get('hi')
+    const heliumNode = rootNode.children.get('helium')
+    const slashNode = rootNode.children.get('')
 
     expect(helloNode).to.exist
     expect(coolNode).to.exist
@@ -24,8 +24,8 @@ describe('Router tree structure', function () {
     expect(heliumNode).to.exist
     expect(slashNode).to.exist
 
-    const slashChooNode = slashNode.children.choo
-    const slashSlashChooNode = slashNode.children[''].children.choo
+    const slashChooNode = slashNode!.children.get('choo')
+    const slashSlashChooNode = slashNode!.children.get('')!.children.get('choo')
 
     expect(slashChooNode).to.exist
     expect(slashSlashChooNode).to.exist
@@ -54,14 +54,14 @@ describe('Router tree structure', function () {
     router.insert('hello/:placeholder/tree', {})
     router.insert('choot/choo/**', {})
 
-    const helloNode = router.ctx.rootNode.children.hello
-    const helloPlaceholderNode = helloNode.children[':placeholder']
-    expect(helloPlaceholderNode.type).to.equal(NODE_TYPES.PLACEHOLDER)
+    const helloNode = router.ctx.rootNode.children.get('hello')
+    const helloPlaceholderNode = helloNode!.children.get(':placeholder')
+    expect(helloPlaceholderNode!.type).to.equal(NODE_TYPES.PLACEHOLDER)
 
-    const chootNode = router.ctx.rootNode.children.choot
-    const chootChooNode = chootNode.children.choo
-    const chootChooWildcardNode = chootChooNode.children['**']
-    expect(chootChooWildcardNode.type).to.equal(NODE_TYPES.WILDCARD)
+    const chootNode = router.ctx.rootNode.children.get('choot')
+    const chootChooNode = chootNode!.children.get('choo')
+    const chootChooWildcardNode = chootChooNode!.children.get('**')
+    expect(chootChooWildcardNode!.type).to.equal(NODE_TYPES.WILDCARD)
   })
 
   it('should be able to initialize routes via the router contructor', function () {
@@ -73,18 +73,18 @@ describe('Router tree structure', function () {
       }
     })
 
-    const rootSlashNode = router.ctx.rootNode.children['']
-    const apiNode = rootSlashNode.children.api
-    const v1Node = apiNode.children.v1
-    const v2Node = apiNode.children.v2
-    const v3Node = apiNode.children.v3
+    const rootSlashNode = router.ctx.rootNode.children.get('')
+    const apiNode = rootSlashNode!.children.get('api')
+    const v1Node = apiNode!.children.get('v1')
+    const v2Node = apiNode!.children.get('v2')
+    const v3Node = apiNode!.children.get('v3')
 
     expect(v1Node).to.exist
     expect(v2Node).to.exist
     expect(v3Node).to.exist
-    expect(v1Node.data.value).to.equal(1)
-    expect(v2Node.data.value).to.equal(2)
-    expect(v3Node.data.value).to.equal(3)
+    expect(v1Node!.data!.value).to.equal(1)
+    expect(v2Node!.data!.value).to.equal(2)
+    expect(v3Node!.data!.value).to.equal(3)
   })
 
   it('should allow routes to be overwritten by performing another insert', function () {
@@ -93,7 +93,7 @@ describe('Router tree structure', function () {
     })
 
     let apiRouteData = router.lookup('/api/v1')
-    expect(apiRouteData.data).to.equal(1)
+    expect(apiRouteData!.data).to.equal(1)
 
     router.insert('/api/v1', {
       path: '/api/v1',
@@ -103,6 +103,6 @@ describe('Router tree structure', function () {
 
     apiRouteData = router.lookup('/api/v1')
     expect(apiRouteData).deep.equal({ data: 2, path: '/api/v1', anotherField: 3 })
-    expect(apiRouteData.anotherField).to.equal(3)
+    expect(apiRouteData!.anotherField).to.equal(3)
   })
 })
