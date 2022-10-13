@@ -15,7 +15,7 @@ describe('Route matcher', function () {
       '/foo/bar',
       '/foo/baz',
       '/foo/baz/**',
-      '/foo/*/baz'
+      '/foo/*/sub'
     ])
   })
 
@@ -30,8 +30,11 @@ describe('Route matcher', function () {
           "/foo" => {
             "dynamic": Map {},
             "static": Map {
-              "/baz" => {
-                "pattern": "/foo/*/baz",
+              "/sub" => {
+                "pattern": "/foo/*/sub",
+              },
+              "/" => {
+                "pattern": "/foo/*",
               },
             },
             "wildcard": Map {},
@@ -78,20 +81,29 @@ describe('Route matcher', function () {
     expect(_match('/foo/bar')).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
+        "/foo/*",
         "/foo/bar",
       ]
     `)
-    expect(_match('/foo/xyz/baz')).to.toMatchInlineSnapshot(`
+    expect(_match('/foo/baz')).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
-        "/foo/*/baz",
+        "/foo/baz/**",
+        "/foo/*",
+        "/foo/baz",
       ]
     `)
-    // TODO
-    expect(_match('/foo/xyz')).to.toMatchInlineSnapshot(`
-    [
-      "/foo/**",
-    ]
-  `)
+    expect(_match('/foo/123/sub')).to.toMatchInlineSnapshot(`
+      [
+        "/foo/**",
+        "/foo/*/sub",
+      ]
+    `)
+    expect(_match('/foo/123')).to.toMatchInlineSnapshot(`
+      [
+        "/foo/**",
+        "/foo/*",
+      ]
+    `)
   })
 })

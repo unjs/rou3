@@ -28,7 +28,7 @@ function matchRoutes (path: string, table: RouteData): RouteData[] {
 
   // Dynamic
   for (const [key, value] of table.dynamic) {
-    if (path.startsWith(key)) {
+    if (path.startsWith(key + '/')) {
       const subPath = '/' + path.substring(key.length).split('/').splice(2).join('/')
       matches.push(...matchRoutes(subPath, value))
     }
@@ -57,7 +57,9 @@ function createRouteTable (initialPath: string, initialNode: RadixNode): RouteTa
       } else if (node.type === NODE_TYPES.WILDCARD) {
         table.wildcard.set(path.replace('/**', ''), node.data)
       } else if (node.type === NODE_TYPES.PLACEHOLDER) {
-        table.dynamic.set(path.replace('/*', ''), createRouteTable('', node))
+        const subtable = createRouteTable('', node)
+        subtable.static.set('/', node.data)
+        table.dynamic.set(path.replace('/*', ''), subtable)
         return
       }
     }
