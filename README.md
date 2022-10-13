@@ -1,4 +1,3 @@
-
 # 🌳 radix3
 
 [![npm version][npm-version-src]][npm-version-href]
@@ -80,6 +79,42 @@ Find all data nodes matching path prefix.
 ### `router.remove(path)`
 
 Remove route matching `path`.
+
+### Route Matcher
+
+**Experimental feature:** Behavior might change in a semver-minor release.
+
+Creates a multi matcher from router tree that can match **all routes** matching path:
+
+```ts
+import { createRouter, toRouteMatcher } from 'radix3'
+
+const router = createRouter({
+  routes: {
+    '/foo': { m: 'foo' }, // Matches /foo only
+    '/foo/**': { m: 'foo/**' }, // Matches /foo/<any>
+    '/foo/bar': { m: 'foo/bar' },  // Matches /foo/bar only
+    '/foo/bar/baz': { m: 'foo/bar/baz' }, // Matches /foo/bar/baz only
+    '/foo/*/baz': { m: 'foo/*/baz' } // Matches /foo/<any>/baz
+  }
+})
+
+const matcher = toRouteMatcher(router)
+
+const matches = matcher.matchAll('/foo/bar/baz')
+
+// [
+//   {
+//     "m": "foo/**",
+//   },
+//   {
+//     "m": "foo/*/baz",
+//   },
+//   {
+//     "m": "foo/bar/baz",
+//   },
+// ]
+```
 
 ## Performance
 
