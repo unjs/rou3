@@ -1,11 +1,28 @@
 import { describe, it, expect } from 'vitest'
-import { createRouter, routerToMatcher } from '../src'
+import { createRouter, toMatcher } from '../src'
 
 export function createRoutes (paths) {
   return Object.fromEntries(paths.map(path => [path, { pattern: path }]))
 }
 
 describe('Route matcher', function () {
+  it('readme example works', () => {
+    const router = createRouter({
+      routes: {
+        '/foo': { m: 'foo' },
+        '/foo/**': { m: 'foo/**' },
+        '/foo/bar': { m: 'foo/bar' },
+        '/foo/bar/baz': { m: 'foo/bar/baz' },
+        '/foo/*/baz': { m: 'foo/*/baz' }
+      }
+    })
+
+    const matcher = toMatcher(router)
+    const matches = matcher.matchAll('/foo/bar/baz')
+
+    expect(JSON.stringify(matches)).to.toMatchInlineSnapshot('"[{\\"m\\":\\"foo/**\\"},{\\"m\\":\\"foo/*/baz\\"},{\\"m\\":\\"foo/bar/baz\\"}]"')
+  })
+
   const routes = createRoutes([
     '/',
     '/foo',
@@ -18,9 +35,9 @@ describe('Route matcher', function () {
   ])
 
   const router = createRouter({ routes })
-  const matcher = routerToMatcher(router)
+  const matcher = toMatcher(router)
 
-  const _match = path => matcher.match(path).map(r => r.pattern)
+  const _match = path => matcher.matchAll(path).map(r => r.pattern)
 
   it('can create route table', () => {
     expect(matcher.ctx.table).to.toMatchInlineSnapshot(`

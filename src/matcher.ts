@@ -8,10 +8,10 @@ export interface RouteTable {
 
 export interface RouteMatcher {
   ctx: { table: RouteTable }
-  match: (path: string) => RadixNodeData[]
+  matchAll: (path: string) => RadixNodeData[]
 }
 
-export function routerToMatcher (router: RadixRouter): RouteMatcher {
+export function toMatcher (router: RadixRouter): RouteMatcher {
   const table = _routerNodeToTable('', router.ctx.rootNode)
   return _createMatcher(table)
 }
@@ -19,7 +19,7 @@ export function routerToMatcher (router: RadixRouter): RouteMatcher {
 function _createMatcher (table: RouteTable): RouteMatcher {
   return <RouteMatcher> {
     ctx: { table },
-    match: path => _matchRoutes(path, table)
+    matchAll: path => _matchRoutes(path, table)
   }
 }
 
