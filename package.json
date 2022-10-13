@@ -27,7 +27,7 @@
     "dev": "vitest",
     "lint": "eslint --ext .ts,.mjs .",
     "playground": "pnpm jiti ./playground.ts",
-    "release": "pnpm test && pnpm build && standard-version && git push --follow-tags && pnpm publish",
+    "release": "pnpm test && pnpm build && changelogen --release && git push --follow-tags && pnpm publish",
     "test": "pnpm lint && vitest run"
   },
   "devDependencies": {
@@ -36,6 +36,7 @@
     "@vitest/coverage-c8": "latest",
     "autocannon": "latest",
     "benchmark": "latest",
+    "changelogen": "^0.3.2",
     "eslint": "latest",
     "jiti": "latest",
     "listhen": "latest",
