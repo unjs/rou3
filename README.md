@@ -87,7 +87,7 @@ Remove route matching `path`.
 Creates a multi matcher from router tree that can match **all routes** matching path:
 
 ```ts
-import { createRouter, toMatcher } from 'radix3'
+import { createRouter, toRouteMatcher } from 'radix3'
 
 const router = createRouter({
   routes: {
@@ -99,7 +99,7 @@ const router = createRouter({
   }
 })
 
-const matcher = toMatcher(router)
+const matcher = toRouteMatcher(router)
 
 const matches = matcher.matchAll('/foo/bar/baz')
 

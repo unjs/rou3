@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createRouter, toMatcher } from '../src'
+import { createRouter, toRouteMatcher } from '../src'
 
 export function createRoutes (paths) {
   return Object.fromEntries(paths.map(path => [path, { pattern: path }]))
@@ -17,7 +17,7 @@ describe('Route matcher', function () {
       }
     })
 
-    const matcher = toMatcher(router)
+    const matcher = toRouteMatcher(router)
     const matches = matcher.matchAll('/foo/bar/baz')
 
     expect(JSON.stringify(matches)).to.toMatchInlineSnapshot('"[{\\"m\\":\\"foo/**\\"},{\\"m\\":\\"foo/*/baz\\"},{\\"m\\":\\"foo/bar/baz\\"}]"')
@@ -35,7 +35,7 @@ describe('Route matcher', function () {
   ])
 
   const router = createRouter({ routes })
-  const matcher = toMatcher(router)
+  const matcher = toRouteMatcher(router)
 
   const _match = path => matcher.matchAll(path).map(r => r.pattern)
 

@@ -11,7 +11,7 @@ export interface RouteMatcher {
   matchAll: (path: string) => RadixNodeData[]
 }
 
-export function toMatcher (router: RadixRouter): RouteMatcher {
+export function toRouteMatcher (router: RadixRouter): RouteMatcher {
   const table = _routerNodeToTable('', router.ctx.rootNode)
   return _createMatcher(table)
 }
