@@ -1,25 +1,24 @@
 import { describe, it, expect } from 'vitest'
-import { createRouter, createRouteMatcher } from '../src'
+import { createRouter, routerToMatcher } from '../src'
 
 export function createRoutes (paths) {
   return Object.fromEntries(paths.map(path => [path, { pattern: path }]))
 }
 
 describe('Route matcher', function () {
-  const router = createRouter({
-    routes: createRoutes([
-      '/',
-      '/foo',
-      '/foo/*',
-      '/foo/**',
-      '/foo/bar',
-      '/foo/baz',
-      '/foo/baz/**',
-      '/foo/*/sub'
-    ])
-  })
+  const routes = createRoutes([
+    '/',
+    '/foo',
+    '/foo/*',
+    '/foo/**',
+    '/foo/bar',
+    '/foo/baz',
+    '/foo/baz/**',
+    '/foo/*/sub'
+  ])
 
-  const matcher = createRouteMatcher(router)
+  const router = createRouter({ routes })
+  const matcher = routerToMatcher(router)
 
   const _match = path => matcher.match(path).map(r => r.pattern)
 
