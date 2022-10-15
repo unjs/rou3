@@ -8,7 +8,7 @@ export function createRouter<T extends RadixNodeData = RadixNodeData> (options: 
     staticRoutesMap: {}
   }
 
-  const normalizeTrailingSlash = p => options.strictTrailingSlash ? p : p.replace(/\/$/, '')
+  const normalizeTrailingSlash = p => options.strictTrailingSlash ? p : (p.replace(/\/$/, '') || '/')
 
   if (options.routes) {
     for (const path in options.routes) {
