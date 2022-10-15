@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v0.2.1
+
+[compare changes](https://github.com/unjs/radix3/compare/v0.2.0...v0.2.1)
+
+
+### 🩹 Fixes
+
+  - Do not remove single / when removing trailing slash ([2f5d6f0](https://github.com/unjs/radix3/commit/2f5d6f0))
+
+### 🏡 Chore
+
+  - Update changelog ([c84cbb9](https://github.com/unjs/radix3/commit/c84cbb9))
+  - Update dev dependencies ([959d490](https://github.com/unjs/radix3/commit/959d490))
+
+### ❤️  Contributors
+
+- Pooya Parsa
+
 ## v0.1.2...v0.2.0
 
 [compare changes](https://github.com/unjs/radix3/compare/v0.1.2...v0.2.0)
