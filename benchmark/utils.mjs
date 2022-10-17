@@ -32,8 +32,10 @@ export const router = createRouter({
     '/choot',
     '/choot/:choo',
     '/ui/**',
-    '/ui/components/**'
-  ].map(path => [path, { path }]))
+    '/ui/components/**',
+    '/::lang/international/**'
+  ].map(path => [path, { path }])),
+  funcs: { lang: str => str.length === 2 }
 })
 
 export const benchSets = [
@@ -47,6 +49,12 @@ export const benchSets = [
     title: 'dynamic route',
     requests: [
       { path: '/choot/123' }
+    ]
+  },
+  {
+    title: 'dynamic route with funcs',
+    requests: [
+      { path: '/it/international/some' }
     ]
   }
 ]

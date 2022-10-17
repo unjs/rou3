@@ -5,7 +5,8 @@ export function createRouter<T extends RadixNodeData = RadixNodeData> (options: 
   const ctx: RadixRouterContext = {
     options,
     rootNode: createRadixNode(),
-    staticRoutesMap: {}
+    staticRoutesMap: {},
+    funcs: options.funcs || {}
   }
 
   const normalizeTrailingSlash = p => options.strictTrailingSlash ? p : (p.replace(/\/$/, '') || '/')
@@ -23,6 +24,14 @@ export function createRouter<T extends RadixNodeData = RadixNodeData> (options: 
     insert: (path: string, data: any) => insert(ctx, normalizeTrailingSlash(path), data),
     remove: (path: string) => remove(ctx, normalizeTrailingSlash(path))
   }
+}
+
+function find (arr: Array<RadixNode>, section: string): RadixNode | undefined {
+  for (let i = 0; i < arr.length; i++) {
+    const node = arr[i]
+    if (node.check(section)) { return node }
+  }
+  return undefined
 }
 
 function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
@@ -51,6 +60,21 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
     const nextNode = node.children.get(section)
     if (nextNode !== undefined) {
       node = nextNode
+    } else if (node.placeholderChildrenNodeChecked) {
+      const currNode = find(node.placeholderChildrenNodeChecked, section)
+      if (currNode) {
+        node = currNode
+        params[node.paramName] = section
+        paramsFound = true
+      } else {
+        node = node.placeholderChildNode
+        if (node !== null) {
+          params[node.paramName] = section
+          paramsFound = true
+        } else {
+          break
+        }
+      }
     } else {
       node = node.placeholderChildNode
       if (node !== null) {
@@ -85,6 +109,7 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
 function insert (ctx: RadixRouterContext, path: string, data: any) {
   let isStaticRoute = true
 
+  const funcs = ctx.funcs
   const sections = path.split('/')
 
   let node = ctx.rootNode
@@ -109,6 +134,13 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
       if (type === NODE_TYPES.PLACEHOLDER) {
         childNode.paramName = section === '*' ? `_${_unnamedPlaceholderCtr++}` : section.slice(1)
         node.placeholderChildNode = childNode
+        isStaticRoute = false
+      } else if (type === NODE_TYPES.CHECKED_PLACEHOLDER) {
+        if (!node.placeholderChildrenNodeChecked) { node.placeholderChildrenNodeChecked = [] }
+        const splitted = section.slice(2).split(':')
+        childNode.paramName = splitted[1] || `_${_unnamedPlaceholderCtr++}`
+        childNode.check = funcs?.[splitted[0]] || (() => true)
+        node.placeholderChildrenNodeChecked.push(childNode)
         isStaticRoute = false
       } else if (type === NODE_TYPES.WILDCARD) {
         node.wildcardChildNode = childNode
@@ -137,24 +169,48 @@ function remove (ctx: RadixRouterContext, path: string) {
   const sections = path.split('/')
   let node = ctx.rootNode
 
+  // Build node path
+  const nodePath: [RadixNode, string][] = [[node, '']]
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]
     node = node.children.get(section)
+    nodePath.push([node, section])
     if (!node) {
       return success
     }
   }
 
-  if (node.data) {
-    const lastSection = sections[sections.length - 1]
-    node.data = null
-    if (Object.keys(node.children).length === 0) {
-      const parentNode = node.parent
-      delete parentNode[lastSection]
-      parentNode.wildcardChildNode = null
-      parentNode.placeholderChildNode = null
+  if (!node.data) { return success }
+
+  success = true
+
+  // Remove data from the node
+  node.data = null
+  // Reverse the path
+  nodePath.reverse()
+
+  // Iterate over the path and removes all 0 children path nodes
+  for (const [currNode, section] of nodePath) {
+    if (currNode.children.size === 0 && !currNode.data) {
+      const parentNode = currNode.parent
+      if (!parentNode) { continue }
+
+      const type = getNodeType(section)
+      if (type === NODE_TYPES.WILDCARD) {
+        parentNode.children.delete(section)
+        parentNode.wildcardChildNode = null
+      } else if (type === NODE_TYPES.CHECKED_PLACEHOLDER) {
+        const functionName = section.slice(2).split(':')[0]
+        const i = parentNode.placeholderChildrenNodeChecked.findIndex(node => node.check === ctx.funcs[functionName])
+        parentNode.placeholderChildrenNodeChecked.splice(i, i)
+        if (parentNode.placeholderChildrenNodeChecked.length === 0) {
+          parentNode.children.delete(section)
+          parentNode.placeholderChildrenNodeChecked = null
+        }
+      } else {
+        parentNode.children.delete(section)
+      }
     }
-    success = true
   }
 
   return success
@@ -168,12 +224,15 @@ function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
     data: options.data || null,
     paramName: options.paramName || null,
     wildcardChildNode: null,
-    placeholderChildNode: null
+    placeholderChildNode: null,
+    check: null,
+    placeholderChildrenNodeChecked: []
   }
 }
 
 function getNodeType (str: string) {
   if (str.startsWith('**')) { return NODE_TYPES.WILDCARD }
+  if (str[0] === ':' && str[1] === ':') { return NODE_TYPES.CHECKED_PLACEHOLDER }
   if (str[0] === ':' || str === '*') { return NODE_TYPES.PLACEHOLDER }
   return NODE_TYPES.NORMAL
 }

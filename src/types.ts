@@ -1,7 +1,8 @@
 export const NODE_TYPES = {
   NORMAL: 0 as 0,
   WILDCARD: 1 as 1,
-  PLACEHOLDER: 2 as 2
+  PLACEHOLDER: 2 as 2,
+  CHECKED_PLACEHOLDER: 3 as 3
 }
 
 type _NODE_TYPES = typeof NODE_TYPES
@@ -19,17 +20,21 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   paramName: string | null
   wildcardChildNode: RadixNode<T> | null
   placeholderChildNode: RadixNode<T> | null
+  placeholderChildrenNodeChecked: Array<RadixNode<T>>
+  check: (str: string) => boolean
 }
 
 export interface RadixRouterOptions {
   strictTrailingSlash?: boolean
   routes?: Record<string, any>
+  funcs?: Record<string, (str: string) => boolean>
 }
 
 export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
   options: RadixRouterOptions
   rootNode: RadixNode<T>
   staticRoutesMap: Record<string, RadixNode>
+  funcs: Record<string, (str: string) => boolean>
 }
 
 export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
@@ -49,7 +54,7 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    * @param data - the associated data to path
    *
   */
-  insert(path: string, data: T): void
+  insert(path: string, data: T, funcs?: { [key: string]: (((str: string) => boolean) | undefined) }): void
 
   /**
    * Perform a remove on the tree

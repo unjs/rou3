@@ -20,7 +20,71 @@ function testRouter (paths, tests?) {
   }
 }
 
+function testRouterWithFuncs (paths, funcs, tests?) {
+  const routes = createRoutes(paths)
+  const router = createRouter({ routes, funcs })
+
+  if (!tests) {
+    tests = routes
+  }
+
+  for (const path in tests) {
+    it(`lookup ${path} should be ${JSON.stringify(tests[path])}`, () => {
+      expect(router.lookup(path)).to.deep.equal(tests[path])
+    })
+  }
+}
+
 describe('Router lookup', function () {
+  describe('routes with check function should work', function () {
+    testRouterWithFuncs([
+      'carbon/:element',
+      'carbon/::length2:element/test/:testing',
+      'carbon/::lengthMajor:element/test/:testing',
+      'this/:route/has/:cool/stuff',
+      'this/::length2:route/has/:cool/stuff'
+    ], { length2: (v: string) => (v.length === 2), lengthMajor: (v: string) => v.length === 3 },
+    {
+      'carbon/test1': {
+        path: 'carbon/:element',
+        params: {
+          element: 'test1'
+        }
+      },
+      '/carbon': null,
+      'carbon/': null,
+      'carbon/test2/test/test23': null,
+      'carbon/te/test/test23': {
+        path: 'carbon/::length2:element/test/:testing',
+        params: {
+          element: 'te',
+          testing: 'test23'
+        }
+      },
+      'carbon/tes/test/test23': {
+        path: 'carbon/::lengthMajor:element/test/:testing',
+        params: {
+          element: 'tes',
+          testing: 'test23'
+        }
+      },
+      'this/test/has/more/stuff': {
+        path: 'this/:route/has/:cool/stuff',
+        params: {
+          route: 'test',
+          cool: 'more'
+        }
+      },
+      'this/te/has/more/stuff': {
+        path: 'this/::length2:route/has/:cool/stuff',
+        params: {
+          route: 'te',
+          cool: 'more'
+        }
+      }
+    })
+  })
+
   describe('static routes', function () {
     testRouter([
       '/',
@@ -34,7 +98,8 @@ describe('Router lookup', function () {
     testRouter([
       'carbon/:element',
       'carbon/:element/test/:testing',
-      'this/:route/has/:cool/stuff'
+      'this/:route/has/:cool/stuff',
+      'hello/:routes/has/:cool/stuff'
     ], {
       'carbon/test1': {
         path: 'carbon/:element',
@@ -217,8 +282,13 @@ describe('Router remove', function () {
         'choot',
         'choot/:choo',
         'ui/**',
-        'ui/components/**'
-      ])
+        'ui/components/**',
+        '::start/hello',
+        '::ends/hello',
+        'build/::ends/blue',
+        'build/::ends/green'
+      ]),
+      funcs: { start: (str: string) => str.startsWith('test'), ends: (str: string) => str.endsWith('testEnds') }
     })
 
     router.remove('choot')
@@ -233,6 +303,37 @@ describe('Router remove', function () {
     expect(router.lookup('ui/components/snackbars')).to.deep.equal({
       path: 'ui/**',
       params: { _: 'components/snackbars' }
+    })
+
+    expect(router.lookup('test-good/hello')).to.deep.equal({
+      path: '::start/hello',
+      params: { _0: 'test-good' }
+    })
+    expect(router.lookup('hello-testEnds/hello')).to.deep.equal({
+      path: '::ends/hello',
+      params: { _0: 'hello-testEnds' }
+    })
+
+    router.remove('::start/hello')
+    expect(router.lookup('test-good/hello')).to.deep.equal(null)
+
+    expect(router.lookup('hello-testEnds/hello')).to.deep.equal({
+      path: '::ends/hello',
+      params: { _0: 'hello-testEnds' }
+    })
+
+    router.remove('::ends/hello')
+    expect(router.lookup('testEnds/hello')).to.deep.equal(null)
+
+    expect(router.lookup('build/testEnds/blue')).to.deep.equal({
+      path: 'build/::ends/blue',
+      params: { _0: 'testEnds' }
+    })
+    router.remove('build/::ends/blue')
+    expect(router.lookup('build/testEnds/blue')).to.deep.equal(null)
+    expect(router.lookup('build/testEnds/green')).to.deep.equal({
+      path: 'build/::ends/green',
+      params: { _0: 'testEnds' }
     })
   })
 
