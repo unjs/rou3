@@ -6,7 +6,8 @@
 [![Codecov][codecov-src]][codecov-href]
 [![bundle][bundle-src]][bundle-href]
 
-Lightweight and fast router for JavaScript based on [Radix Tree](https://en.wikipedia.org/wiki/Radix_tree).
+Lightweight and fast router for JavaScript based on [Radix Tree](https://en.wikipedia.org/wiki/Radix_tree). 
+This fork adds functional matching `::function` to the base library. 
 
 ## Usage
 
@@ -64,7 +65,7 @@ router.lookup('/')
 
 ### `router.insert(path, data)`
 
-`path` can be static or using `:placeholder`s and `**` for wildcard paths.
+`path` can be static or using `:placeholder`s and `**` for wildcard paths or else using `::functionName` for functional match.
 
 The `data` object will be returned on matching params. It should be an object like `{ handler }` and not containing reserved keyword `params`.
 
@@ -84,7 +85,11 @@ You can initialize router instance with options:
 const router = createRouter({
   strictTrailingSlash: true,
   routes: {
-    '/foo': {}
+    '/foo': {},
+    '/::len': {} // Matches all routes /<two length string>/
+  },
+  funcs: {
+    len: (str) => str.length === 2,
   }
 })
 
@@ -92,6 +97,7 @@ const router = createRouter({
 
 - `routes`: An object specifying initial routes to add
 - `strictTrailingSlash`: By default router ignored trailing slash for matching and adding routes. When set to `true`, matching with trailing slash is different.
+- `funcs`: An object containing the functions used in the routes
 
 ### Route Matcher
 
@@ -109,6 +115,9 @@ const router = createRouter({
     '/foo/bar': { m: 'foo/bar' },  // Matches /foo/bar only
     '/foo/bar/baz': { m: 'foo/bar/baz' }, // Matches /foo/bar/baz only
     '/foo/*/baz': { m: 'foo/*/baz' } // Matches /foo/<any>/baz
+  },
+  funcs: {
+    len: (str) => str.length === 2,
   }
 })
 
