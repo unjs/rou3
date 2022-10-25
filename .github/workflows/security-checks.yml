@@ -1,0 +1,15 @@
+name: Snyk Security Check
+on: [push, pull_request]
+jobs:
+    security:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@main
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: lts/*
+            - name: Run Snyk to check for vulnerabilities
+              uses: snyk/actions/node@master
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_AUTH_TOKEN }}

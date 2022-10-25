@@ -1,0 +1,30 @@
+name: tests
+
+on: [workflow_call]
+
+jobs:
+    conventional-commit-checker:
+        name: Conventional Commit Checker
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+            - uses: webiny/action-conventional-commits@v1.0.5
+
+    test:
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+                node-version: [14.x, 16.x, 18.x]
+        runs-on: ${{ matrix.os }}
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Install dependencies
+              run: npm it
