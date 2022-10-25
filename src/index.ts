@@ -1,4 +1,4 @@
-export * from './router'
-export * from './matcher'
+export * from './router';
+export * from './matcher';
 
-export * from './types'
+export * from './types';

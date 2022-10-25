@@ -1,8 +1,22 @@
 {
-  "extends": [
-    "@nuxtjs/eslint-config-typescript"
-  ],
-  "rules": {
-    "no-unused-expressions": 0
-  }
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+    },
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "extends": [
+        "prettier",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
+    ],
+    "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "prefer-rest-params": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/ban-ts-comment": "warn"
+    }
 }

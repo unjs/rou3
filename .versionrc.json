@@ -1,0 +1,49 @@
+{
+    "tagPrefix": "v",
+    "name": "conventionalcommits",
+    "owner": "immobiliare",
+    "repository": "dats",
+    "repoUrl": "https://github.com/immobiliare/fastify-metrics",
+    "types": [
+        {
+            "type": "feat",
+            "section": "Features"
+        },
+        {
+            "type": "fix",
+            "section": "Bug Fixes"
+        },
+        {
+            "type": "ci",
+            "section": "CI/CD"
+        },
+        {
+            "type": "refactor",
+            "section": "Refactor"
+        },
+        {
+            "type": "perf",
+            "section": "Performance"
+        },
+        {
+            "type": "docs",
+            "section": "Documentation"
+        },
+        {
+            "type": "test",
+            "section": "Test"
+        },
+        {
+            "type": "chore",
+            "hidden": true
+        },
+        {
+            "type": "style",
+            "hidden": true
+        }
+    ],
+    "commitUrlFormat": "https://github.com/immobiliare/fastify-metrics/commit/{{hash}}",
+    "compareUrlFormat": "https://github.com/immobiliare/fastify-metrics/compare/{{previousTag}}...{{currentTag}}",
+    "issueUrlFormat": "https://github.com/immobiliare/fastify-metrics/issues/{{id}}",
+    "userUrlFormat": "https://github.com/{{user}}"
+}
