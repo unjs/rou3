@@ -15,10 +15,8 @@ $ npm i
 $ npm test
 # run the code linter
 $ npm run lint
-# run in debug mode
-$ DEBUG=dats ...
-# new release
-$ npm run release
+# Build the lib
+$ npm run build
 ```
 
 ### Commit Convention

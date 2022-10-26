@@ -7,7 +7,18 @@
 [![bundle][bundle-src]][bundle-href]
 
 Lightweight and fast router for JavaScript based on [Radix Tree](https://en.wikipedia.org/wiki/Radix_tree). 
-This fork adds functional matching `::function` to the base library. 
+This fork of [`unjs/radix3`](https://github.com/unjs/radix3) adds functional matching `::function` to the base library.
+
+- [🌳 radix3](#%F0%9F%8C%B3-radix3)
+  * [Usage](#usage)
+  * [Methods](#methods)
+    + [`router.insert(path, data)`](#routerinsertpath-data)
+    + [`router.lookup(path)`](#routerlookuppath)
+    + [`router.remove(path)`](#routerremovepath)
+  * [Options](#options)
+    + [Route Matcher](#route-matcher)
+  * [Performance](#performance)
+  * [License](#license)
 
 ## Usage
 
@@ -15,23 +26,23 @@ This fork adds functional matching `::function` to the base library.
 
 ```sh
 # npm
-npm i radix3
+npm i @immobiliarelabs/radix3
 
 # yarn
-yarn add radix3
+yarn add @immobiliarelabs/radix3
 
 # pnpm
-pnpm i radix3
+pnpm i @immobiliarelabs/radix3
 ```
 
 **Import:**
 
 ```js
 // ESM
-import { createRouter } from 'radix3'
+import { createRouter } from '@immobiliarelabs/radix3'
 
 // CJS
-const { createRouter } = require('radix3')
+const { createRouter } = require('@immobiliarelabs/radix3')
 ```
 
 **Create a router instance and insert routes:**
@@ -142,10 +153,24 @@ const matches = matcher.matchAll('/foo/bar/baz')
 
 See [benchmark](./benchmark).
 
+## Powered Apps
+
+`@immobiliarelabs/radix3` is a fork of [radix3](https://github.com/unjs/radix3) and `@immobiliarelabs/radix3` was created by the amazing Node.js team at ImmobiliareLabs, the Tech dept of [Immobiliare.it](https://www.immobiliare.it), the #1 real estate company in Italy.
+
+We are currently using radix3 in our products as well as our internal toolings.
+
+**If you are using radix3 in production [drop us a message](mailto:opensource@immobiliare.it)**.
+
+## Support & Contribute
+
+Made with ❤️ by [ImmobiliareLabs](https://github.com/immobiliare) & [Contributors](./CONTRIBUTING.md#contributors)
+
+We'd love for you to contribute to radix3!
+If you have any questions on how to use radix3, bugs and enhancement please feel free to reach out by opening a [GitHub Issue](https://github.com/immobiliare/radix3/issues).
+
 ## License
 
-Based on original work of [`charlieduong94/radix-router`](https://github.com/charlieduong94/radix-router)
-by [Charlie Duong](https://github.com/charlieduong94) (MIT)
+Based on original work of [`charlieduong94/radix-router`](https://github.com/charlieduong94/radix-router) by [Charlie Duong](https://github.com/charlieduong94) (MIT) and [`unjs/radix3`](https://github.com/unjs/radix3) [LICENSE](https://github.com/unjs/radix3/blob/main/LICENSE)
 
 [MIT](./LICENSE) - Made with ❤️
 
