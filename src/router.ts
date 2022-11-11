@@ -150,7 +150,7 @@ function remove (ctx: RadixRouterContext, path: string) {
     node.data = null
     if (Object.keys(node.children).length === 0) {
       const parentNode = node.parent
-      delete parentNode[lastSection]
+      parentNode.children.delete(lastSection)
       parentNode.wildcardChildNode = null
       parentNode.placeholderChildNode = null
     }
