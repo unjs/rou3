@@ -1,8 +1,10 @@
 {
   "extends": [
-    "@nuxtjs/eslint-config-typescript"
+    "eslint-config-unjs"
   ],
   "rules": {
+    "unicorn/no-null": 0,
+    "unicorn/prevent-abbreviations": 0,
     "no-unused-expressions": 0
   }
 }

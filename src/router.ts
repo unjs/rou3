@@ -1,18 +1,18 @@
-import type { RadixRouterContext, RadixNode, MatchedRoute, RadixRouter, RadixNodeData, RadixRouterOptions } from './types'
-import { NODE_TYPES } from './types'
+import type { RadixRouterContext, RadixNode, MatchedRoute, RadixRouter, RadixNodeData, RadixRouterOptions } from "./types";
+import { NODE_TYPES } from "./types";
 
 export function createRouter<T extends RadixNodeData = RadixNodeData> (options: RadixRouterOptions = {}): RadixRouter<T> {
   const ctx: RadixRouterContext = {
     options,
     rootNode: createRadixNode(),
     staticRoutesMap: {}
-  }
+  };
 
-  const normalizeTrailingSlash = p => options.strictTrailingSlash ? p : (p.replace(/\/$/, '') || '/')
+  const normalizeTrailingSlash = p => options.strictTrailingSlash ? p : (p.replace(/\/$/, "") || "/");
 
   if (options.routes) {
     for (const path in options.routes) {
-      insert(ctx, normalizeTrailingSlash(path), options.routes[path])
+      insert(ctx, normalizeTrailingSlash(path), options.routes[path]);
     }
   }
 
@@ -22,142 +22,139 @@ export function createRouter<T extends RadixNodeData = RadixNodeData> (options: 
     lookup: (path: string) => lookup(ctx, normalizeTrailingSlash(path)),
     insert: (path: string, data: any) => insert(ctx, normalizeTrailingSlash(path), data),
     remove: (path: string) => remove(ctx, normalizeTrailingSlash(path))
-  }
+  };
 }
 
 function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
-  const staticPathNode = ctx.staticRoutesMap[path]
+  const staticPathNode = ctx.staticRoutesMap[path];
   if (staticPathNode) {
-    return staticPathNode.data
+    return staticPathNode.data;
   }
 
-  const sections = path.split('/')
+  const sections = path.split("/");
 
-  const params: MatchedRoute['params'] = {}
-  let paramsFound = false
-  let wildcardNode = null
-  let node = ctx.rootNode
-  let wildCardParam = null
+  const params: MatchedRoute["params"] = {};
+  let paramsFound = false;
+  let wildcardNode = null;
+  let node = ctx.rootNode;
+  let wildCardParam = null;
 
   for (let i = 0; i < sections.length; i++) {
-    const section = sections[i]
+    const section = sections[i];
 
     if (node.wildcardChildNode !== null) {
-      wildcardNode = node.wildcardChildNode
-      wildCardParam = sections.slice(i).join('/')
+      wildcardNode = node.wildcardChildNode;
+      wildCardParam = sections.slice(i).join("/");
     }
 
     // Exact matches take precedence over placeholders
-    const nextNode = node.children.get(section)
+    const nextNode = node.children.get(section);
     if (nextNode !== undefined) {
-      node = nextNode
+      node = nextNode;
     } else {
-      node = node.placeholderChildNode
+      node = node.placeholderChildNode;
       if (node !== null) {
-        params[node.paramName] = section
-        paramsFound = true
+        params[node.paramName] = section;
+        paramsFound = true;
       } else {
-        break
+        break;
       }
     }
   }
 
   if ((node === null || node.data === null) && wildcardNode !== null) {
-    node = wildcardNode
-    params[node.paramName || '_'] = wildCardParam
-    paramsFound = true
+    node = wildcardNode;
+    params[node.paramName || "_"] = wildCardParam;
+    paramsFound = true;
   }
 
   if (!node) {
-    return null
+    return null;
   }
 
   if (paramsFound) {
     return {
       ...node.data,
       params: paramsFound ? params : undefined
-    }
+    };
   }
 
-  return node.data
+  return node.data;
 }
 
 function insert (ctx: RadixRouterContext, path: string, data: any) {
-  let isStaticRoute = true
+  let isStaticRoute = true;
 
-  const sections = path.split('/')
+  const sections = path.split("/");
 
-  let node = ctx.rootNode
+  let node = ctx.rootNode;
 
-  let _unnamedPlaceholderCtr = 0
+  let _unnamedPlaceholderCtr = 0;
 
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i]
-
-    let childNode: RadixNode<RadixNodeData>
+  for (const section of sections) {
+    let childNode: RadixNode<RadixNodeData>;
 
     if ((childNode = node.children.get(section))) {
-      node = childNode
+      node = childNode;
     } else {
-      const type = getNodeType(section)
+      const type = getNodeType(section);
 
       // Create new node to represent the next part of the path
-      childNode = createRadixNode({ type, parent: node })
+      childNode = createRadixNode({ type, parent: node });
 
-      node.children.set(section, childNode)
+      node.children.set(section, childNode);
 
       if (type === NODE_TYPES.PLACEHOLDER) {
-        childNode.paramName = section === '*' ? `_${_unnamedPlaceholderCtr++}` : section.slice(1)
-        node.placeholderChildNode = childNode
-        isStaticRoute = false
+        childNode.paramName = section === "*" ? `_${_unnamedPlaceholderCtr++}` : section.slice(1);
+        node.placeholderChildNode = childNode;
+        isStaticRoute = false;
       } else if (type === NODE_TYPES.WILDCARD) {
-        node.wildcardChildNode = childNode
-        childNode.paramName = section.substring(3 /* "**:" */) || '_'
-        isStaticRoute = false
+        node.wildcardChildNode = childNode;
+        childNode.paramName = section.slice(3 /* "**:" */) || "_";
+        isStaticRoute = false;
       }
 
-      node = childNode
+      node = childNode;
     }
   }
 
   // Store whatever data was provided into the node
-  node.data = data
+  node.data = data;
 
   // Optimization, if a route is static and does not have any
   // variable sections, we can store it into a map for faster retrievals
   if (isStaticRoute === true) {
-    ctx.staticRoutesMap[path] = node
+    ctx.staticRoutesMap[path] = node;
   }
 
-  return node
+  return node;
 }
 
 function remove (ctx: RadixRouterContext, path: string) {
-  let success = false
-  const sections = path.split('/')
-  let node = ctx.rootNode
+  let success = false;
+  const sections = path.split("/");
+  let node = ctx.rootNode;
 
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i]
-    node = node.children.get(section)
+  for (const section of sections) {
+    node = node.children.get(section);
     if (!node) {
-      return success
+      return success;
     }
   }
 
   if (node.data) {
-    const lastSection = sections[sections.length - 1]
-    node.data = null
+    const lastSection = sections[sections.length - 1];
+    node.data = null;
     if (Object.keys(node.children).length === 0) {
-      const parentNode = node.parent
-      parentNode.children.delete(lastSection)
-      parentNode.wildcardChildNode = null
-      parentNode.placeholderChildNode = null
+      const parentNode = node.parent;
+      parentNode.children.delete(lastSection);
+      parentNode.wildcardChildNode = null;
+      parentNode.placeholderChildNode = null;
     }
-    success = true
+    success = true;
   }
 
-  return success
+  return success;
 }
 
 function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
@@ -169,11 +166,11 @@ function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
     paramName: options.paramName || null,
     wildcardChildNode: null,
     placeholderChildNode: null
-  }
+  };
 }
 
 function getNodeType (str: string) {
-  if (str.startsWith('**')) { return NODE_TYPES.WILDCARD }
-  if (str[0] === ':' || str === '*') { return NODE_TYPES.PLACEHOLDER }
-  return NODE_TYPES.NORMAL
+  if (str.startsWith("**")) { return NODE_TYPES.WILDCARD; }
+  if (str[0] === ":" || str === "*") { return NODE_TYPES.PLACEHOLDER; }
+  return NODE_TYPES.NORMAL;
 }

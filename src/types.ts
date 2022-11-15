@@ -2,14 +2,14 @@ export const NODE_TYPES = {
   NORMAL: 0 as 0,
   WILDCARD: 1 as 1,
   PLACEHOLDER: 2 as 2
-}
+};
 
 type _NODE_TYPES = typeof NODE_TYPES
 export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES]
 
 type _RadixNodeDataObject = { params?: never, [key: string]: any }
 export type RadixNodeData<T extends _RadixNodeDataObject = _RadixNodeDataObject> = T
-export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<T, 'params'> & { params?: Record<string, any> }
+export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<T, "params"> & { params?: Record<string, any> }
 
 export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   type: NODE_TYPE

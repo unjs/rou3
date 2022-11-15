@@ -1,24 +1,24 @@
-import { describe, it, expect } from 'vitest'
-import { createRouter, toRouteMatcher } from '../src'
+import { describe, it, expect } from "vitest";
+import { createRouter, toRouteMatcher } from "../src";
 
 export function createRoutes (paths) {
-  return Object.fromEntries(paths.map(path => [path, { pattern: path }]))
+  return Object.fromEntries(paths.map(path => [path, { pattern: path }]));
 }
 
-describe('Route matcher', function () {
-  it('readme example works', () => {
+describe("Route matcher", function () {
+  it("readme example works", () => {
     const router = createRouter({
       routes: {
-        '/foo': { m: 'foo' },
-        '/foo/**': { m: 'foo/**' },
-        '/foo/bar': { m: 'foo/bar' },
-        '/foo/bar/baz': { m: 'foo/bar/baz' },
-        '/foo/*/baz': { m: 'foo/*/baz' }
+        "/foo": { m: "foo" },
+        "/foo/**": { m: "foo/**" },
+        "/foo/bar": { m: "foo/bar" },
+        "/foo/bar/baz": { m: "foo/bar/baz" },
+        "/foo/*/baz": { m: "foo/*/baz" }
       }
-    })
+    });
 
-    const matcher = toRouteMatcher(router)
-    const matches = matcher.matchAll('/foo/bar/baz')
+    const matcher = toRouteMatcher(router);
+    const matches = matcher.matchAll("/foo/bar/baz");
 
     expect(matches).to.toMatchInlineSnapshot(`
       [
@@ -32,26 +32,26 @@ describe('Route matcher', function () {
           "m": "foo/bar/baz",
         },
       ]
-    `)
-  })
+    `);
+  });
 
   const routes = createRoutes([
-    '/',
-    '/foo',
-    '/foo/*',
-    '/foo/**',
-    '/foo/bar',
-    '/foo/baz',
-    '/foo/baz/**',
-    '/foo/*/sub'
-  ])
+    "/",
+    "/foo",
+    "/foo/*",
+    "/foo/**",
+    "/foo/bar",
+    "/foo/baz",
+    "/foo/baz/**",
+    "/foo/*/sub"
+  ]);
 
-  const router = createRouter({ routes })
-  const matcher = toRouteMatcher(router)
+  const router = createRouter({ routes });
+  const matcher = toRouteMatcher(router);
 
-  const _match = path => matcher.matchAll(path).map(r => r.pattern)
+  const _match = path => matcher.matchAll(path).map(r => r.pattern);
 
-  it('can create route table', () => {
+  it("can create route table", () => {
     expect(matcher.ctx.table).to.toMatchInlineSnapshot(`
       {
         "dynamic": Map {
@@ -91,47 +91,47 @@ describe('Route matcher', function () {
           },
         },
       }
-    `)
-  })
+    `);
+  });
 
-  it('can match routes', () => {
-    expect(_match('/')).to.toMatchInlineSnapshot(`
+  it("can match routes", () => {
+    expect(_match("/")).to.toMatchInlineSnapshot(`
       [
         "/",
       ]
-    `)
-    expect(_match('/foo')).to.toMatchInlineSnapshot(`
+    `);
+    expect(_match("/foo")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
         "/foo",
       ]
-    `)
-    expect(_match('/foo/bar')).to.toMatchInlineSnapshot(`
+    `);
+    expect(_match("/foo/bar")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
         "/foo/*",
         "/foo/bar",
       ]
-    `)
-    expect(_match('/foo/baz')).to.toMatchInlineSnapshot(`
+    `);
+    expect(_match("/foo/baz")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
         "/foo/baz/**",
         "/foo/*",
         "/foo/baz",
       ]
-    `)
-    expect(_match('/foo/123/sub')).to.toMatchInlineSnapshot(`
+    `);
+    expect(_match("/foo/123/sub")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
         "/foo/*/sub",
       ]
-    `)
-    expect(_match('/foo/123')).to.toMatchInlineSnapshot(`
+    `);
+    expect(_match("/foo/123")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
         "/foo/*",
       ]
-    `)
-  })
-})
+    `);
+  });
+});
