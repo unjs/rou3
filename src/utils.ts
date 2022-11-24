@@ -1,9 +1,9 @@
 import { toRouteMatcher, createRouter } from ".";
 
 export interface CreateFilterOptions {
-    include?: (string | RegExp)[]
-    exclude?: (string | RegExp)[]
-    strictTrailingSlash?: boolean;
+  include?: (string | RegExp)[]
+  exclude?: (string | RegExp)[]
+  strictTrailingSlash?: boolean;
 }
 
 export function createFilter (options: CreateFilterOptions = {}) : (path: string) => boolean {
@@ -17,20 +17,15 @@ export function createFilter (options: CreateFilterOptions = {}) : (path: string
         return v.result;
       }
       const stringRules = v.rules.filter(r => typeof r === "string") as string[];
-      if (stringRules.length > 0) {
-        const routes = {};
-        for (const r of stringRules) {
-          // quick scan of literal string matches
-          if (r === path) {
-            return v.result;
-          }
-          // need to flip the array data for radix3 format, true value is arbitrary
-          routes[r] = true;
-        }
-        const routeRulesMatcher = toRouteMatcher(createRouter({ routes, ...options }));
-        if (routeRulesMatcher.matchAll(path).length > 0) {
-          return Boolean(v.result);
-        }
+      if (stringRules.length === 0) {
+        continue;
+      }
+      const routes: Record<string, true> = {};
+      // need to flip the array data, true value is arbitrary
+      for (const r of stringRules) { routes[r] = true; }
+      const routeRulesMatcher = toRouteMatcher(createRouter({ routes, ...options }));
+      if (routeRulesMatcher.matchAll(path).length > 0) {
+        return Boolean(v.result);
       }
     }
     return include.length === 0;
