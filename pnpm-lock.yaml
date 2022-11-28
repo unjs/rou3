@@ -9,7 +9,7 @@ specifiers:
   eslint: ^8.28.0
   eslint-config-unjs: ^0.0.2
   jiti: ^1.16.0
-  listhen: ^1.0.0
+  listhen: ^1.0.1
   ohmyfetch: ^0.4.21
   standard-version: ^9.5.0
   typescript: ^4.9.3
@@ -25,7 +25,7 @@ devDependencies:
   eslint: 8.28.0
   eslint-config-unjs: 0.0.2_hsf322ms6xhhd4b5ne6lb74y4a
   jiti: 1.16.0
-  listhen: 1.0.0
+  listhen: 1.0.1
   ohmyfetch: 0.4.21
   standard-version: 9.5.0
   typescript: 4.9.3
@@ -1150,7 +1150,7 @@ packages:
   /c12/0.2.13:
     resolution: {integrity: sha512-wJL0/knDbqM/3moLb+8Xd+w3JdkggkIIhiNBkxZ1mWlskKC/vajb85wM3UPg/D9nK6RbI1NgaVTg6AeXBVbknA==}
     dependencies:
-      defu: 6.1.0
+      defu: 6.1.1
       dotenv: 16.0.3
       gittar: 0.1.1
       jiti: 1.16.0
@@ -3908,8 +3908,8 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
     dev: true
 
-  /listhen/1.0.0:
-    resolution: {integrity: sha512-frdf7TVqT/JSHzRjEuo/vWIgbBYzEuY3oeTq8Yv1XkQVTKDPs2M4yotXICqYZYj2QxbkqKssSo8Wa6QCtBnFhg==}
+  /listhen/1.0.1:
+    resolution: {integrity: sha512-RBzBGHMCc5wP8J5Vf8WgF4CAJH8dWHi9LaKB7vfzZt54CiH/0dp01rudy2hFD9wCrTM+UfxFVnn5wTIiY+Qhiw==}
     dependencies:
       clipboardy: 3.0.0
       colorette: 2.0.19
@@ -4201,7 +4201,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      defu: 6.1.0
+      defu: 6.1.1
       esbuild: 0.14.54
       fs-extra: 10.1.0
       globby: 11.1.0
@@ -4819,7 +4819,7 @@ packages:
   /rc9/1.2.2:
     resolution: {integrity: sha512-zbe8+HR2X28eZepAwohuKkebbEsA67h0DO9I7g12QrHa2CQopR9gztOLPIPXXGTvcxeUjAN4wZ+b29t3m/u05g==}
     dependencies:
-      defu: 6.1.0
+      defu: 6.1.1
       destr: 1.2.0
       flat: 5.0.2
     dev: true
