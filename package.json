@@ -43,7 +43,7 @@
     "ohmyfetch": "^0.4.21",
     "standard-version": "^9.5.0",
     "typescript": "^4.9.4",
-    "unbuild": "^0.9.4",
+    "unbuild": "^1.0.2",
     "vitest": "^0.25.6"
   },
   "packageManager": "pnpm@7.18.1"
