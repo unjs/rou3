@@ -143,7 +143,7 @@ by [Charlie Duong](https://github.com/charlieduong94) (MIT)
 [npm-version-href]: https://npmjs.com/package/radix3
 [npm-downloads-src]: https://img.shields.io/npm/dm/radix3?style=flat&colorA=18181B&colorB=F0DB4F
 [npm-downloads-href]: https://npmjs.com/package/radix3
-[codecov-src]: https://img.shields.io/codecov/c/gh/unjs/unstorage/main?style=flat&colorA=18181B&colorB=F0DB4F
+[codecov-src]: https://img.shields.io/codecov/c/gh/unjs/radix3/main?style=flat&colorA=18181B&colorB=F0DB4F
 [codecov-href]: https://codecov.io/gh/unjs/radix3
 [bundle-src]: https://img.shields.io/bundlephobia/minzip/radix3?style=flat&colorA=18181B&colorB=F0DB4F
 [bundle-href]: https://bundlephobia.com/result?p=radix3
