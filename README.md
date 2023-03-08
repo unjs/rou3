@@ -2,9 +2,10 @@
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![Github Actions][github-actions-src]][github-actions-href]
-[![Codecov][codecov-src]][codecov-href]
 [![bundle][bundle-src]][bundle-href]
+[![Codecov][codecov-src]][codecov-href]
+[![License][license-src]][license-href]
+[![JSDocs][jsdocs-src]][jsdocs-href]
 
 Lightweight and fast router for JavaScript based on [Radix Tree](https://en.wikipedia.org/wiki/Radix_tree).
 
@@ -44,27 +45,27 @@ router.insert('/path/foo/**', { payload: 'wildcard route' })
 router.insert('/path/foo/**:name', { payload: 'named wildcard route' })
 ```
 
-***Match route to access matched data:**
+**Match route to access matched data:**
 
 ```js
-// { payload: 'this path' }
 router.lookup('/path')
+// { payload: 'this path' }
 
-// { payload: 'named route', params: { name: 'fooval' } }
 router.lookup('/path/fooval')
+// { payload: 'named route', params: { name: 'fooval' } }
 
-// { payload: 'wildcard route' }
 router.lookup('/path/foo/bar/baz')
+// { payload: 'wildcard route' }
 
-// null (no route matched for/)
 router.lookup('/')
+// null (no route matched for/)
 ```
 
 ## Methods
 
 ### `router.insert(path, data)`
 
-`path` can be static or using `:placeholder`s and `**` for wildcard paths.
+`path` can be static or using `:placeholder` or `**` for wildcard paths.
 
 The `data` object will be returned on matching params. It should be an object like `{ handler }` and not containing reserved keyword `params`.
 
@@ -87,15 +88,12 @@ const router = createRouter({
     '/foo': {}
   }
 })
-
 ```
 
 - `routes`: An object specifying initial routes to add
 - `strictTrailingSlash`: By default router ignored trailing slash for matching and adding routes. When set to `true`, matching with trailing slash is different.
 
 ### Route Matcher
-
-**Experimental feature:** Behavior might change in a semver-minor release.
 
 Creates a multi matcher from router tree that can match **all routes** matching path:
 
@@ -141,17 +139,15 @@ by [Charlie Duong](https://github.com/charlieduong94) (MIT)
 [MIT](./LICENSE) - Made with ❤️
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/radix3?style=flat-square
+[npm-version-src]: https://img.shields.io/npm/v/radix3?style=flat&colorA=18181B&colorB=F0DB4F
 [npm-version-href]: https://npmjs.com/package/radix3
-
-[npm-downloads-src]: https://img.shields.io/npm/dm/radix3?style=flat-square
+[npm-downloads-src]: https://img.shields.io/npm/dm/radix3?style=flat&colorA=18181B&colorB=F0DB4F
 [npm-downloads-href]: https://npmjs.com/package/radix3
-
-[github-actions-src]: https://img.shields.io/github/workflow/status/unjs/radix3/ci/main?style=flat-square
-[github-actions-href]: https://github.com/unjs/radix3/actions?query=workflow%3Aci
-
-[codecov-src]: https://img.shields.io/codecov/c/gh/unjs/radix3/main?style=flat-square
+[codecov-src]: https://img.shields.io/codecov/c/gh/unjs/unstorage/main?style=flat&colorA=18181B&colorB=F0DB4F
 [codecov-href]: https://codecov.io/gh/unjs/radix3
-
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/radix3?style=flat-square
+[bundle-src]: https://img.shields.io/bundlephobia/minzip/radix3?style=flat&colorA=18181B&colorB=F0DB4F
 [bundle-href]: https://bundlephobia.com/result?p=radix3
+[license-src]: https://img.shields.io/github/license/unjs/radix3.svg?style=flat&colorA=18181B&colorB=F0DB4F
+[license-href]: https://github.com/unjs/radix3/blob/main/LICENSE
+[jsdocs-src]: https://img.shields.io/badge/jsDocs.io-reference-18181B?style=flat&colorA=18181B&colorB=F0DB4F
+[jsdocs-href]: https://www.jsdocs.io/package/radix3
