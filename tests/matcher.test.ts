@@ -10,10 +10,11 @@ describe("Route matcher", function () {
     const router = createRouter({
       routes: {
         "/foo": { m: "foo" },
-        "/foo/**": { m: "foo/**" },
+        "/foo/**": { m: "foo/**", order: "2" },
         "/foo/bar": { m: "foo/bar" },
-        "/foo/bar/baz": { m: "foo/bar/baz" },
-        "/foo/*/baz": { m: "foo/*/baz" },
+        "/foo/bar/baz": { m: "foo/bar/baz", order: "4" },
+        "/foo/*/baz": { m: "foo/*/baz", order: "3" },
+        "/**": { order: "1" },
       },
     });
 
@@ -23,13 +24,19 @@ describe("Route matcher", function () {
     expect(matches).to.toMatchInlineSnapshot(`
       [
         {
+          "order": "1",
+        },
+        {
           "m": "foo/**",
+          "order": "2",
         },
         {
           "m": "foo/*/baz",
+          "order": "3",
         },
         {
           "m": "foo/bar/baz",
+          "order": "4",
         },
       ]
     `);
