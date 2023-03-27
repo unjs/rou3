@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.0.1
+
+[compare changes](https://github.com/unjs/radix3/compare/v1.0.0...v1.0.1)
+
+
+### 🩹 Fixes
+
+  - **matchAll:** Sort route with same type ([#45](https://github.com/unjs/radix3/pull/45))
+
+### 🏡 Chore
+
+  - **readme:** Improvements ([75fc5c5](https://github.com/unjs/radix3/commit/75fc5c5))
+  - **readme:** Use correct link ([58b49a7](https://github.com/unjs/radix3/commit/58b49a7))
+  - Update lockfile ([a423c97](https://github.com/unjs/radix3/commit/a423c97))
+
+### 🎨 Styles
+
+  - Format with prettier ([3eababa](https://github.com/unjs/radix3/commit/3eababa))
+
+### ❤️  Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Sébastien Chopin <seb@nuxtlabs.com>
+
 ## [1.0.0](https://github.com/unjs/radix3/compare/v0.2.1...v1.0.0) (2022-11-15)
 
 
