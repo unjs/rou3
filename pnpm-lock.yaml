@@ -11,6 +11,7 @@ specifiers:
   jiti: ^1.18.2
   listhen: ^1.0.4
   ohmyfetch: ^0.4.21
+  prettier: ^2.8.7
   standard-version: ^9.5.0
   typescript: ^5.0.2
   unbuild: ^1.1.2
@@ -27,6 +28,7 @@ devDependencies:
   jiti: 1.18.2
   listhen: 1.0.4
   ohmyfetch: 0.4.21
+  prettier: 2.8.7
   standard-version: 9.5.0
   typescript: 5.0.2
   unbuild: 1.1.2
@@ -4730,6 +4732,12 @@ packages:
   /prelude-ls/1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+    dev: true
+
+  /prettier/2.8.7:
+    resolution: {integrity: sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /pretty-bytes/5.6.0:

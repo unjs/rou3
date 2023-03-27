@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { createRouter, NODE_TYPES } from "../src";
 
-export function createRoutes (paths) {
-  return Object.fromEntries(paths.map(path => [path, { path }]));
+export function createRoutes(paths) {
+  return Object.fromEntries(paths.map((path) => [path, { path }]));
 }
 
-function testRouter (paths, tests?) {
+function testRouter(paths, tests?) {
   const routes = createRoutes(paths);
   const router = createRouter({ routes });
 
@@ -26,74 +26,79 @@ describe("Router lookup", function () {
       "/",
       "/route",
       "/another-router",
-      "/this/is/yet/another/route"
+      "/this/is/yet/another/route",
     ]);
   });
 
   describe("retrieve placeholders", function () {
-    testRouter([
-      "carbon/:element",
-      "carbon/:element/test/:testing",
-      "this/:route/has/:cool/stuff"
-    ], {
-      "carbon/test1": {
-        path: "carbon/:element",
-        params: {
-          element: "test1"
-        }
-      },
-      "/carbon": null,
-      "carbon/": null,
-      "carbon/test2/test/test23": {
-        path: "carbon/:element/test/:testing",
-        params: {
-          element: "test2",
-          testing: "test23"
-        }
-      },
-      "this/test/has/more/stuff": {
-        path: "this/:route/has/:cool/stuff",
-        params: {
-          route: "test",
-          cool: "more"
-        }
+    testRouter(
+      [
+        "carbon/:element",
+        "carbon/:element/test/:testing",
+        "this/:route/has/:cool/stuff",
+      ],
+      {
+        "carbon/test1": {
+          path: "carbon/:element",
+          params: {
+            element: "test1",
+          },
+        },
+        "/carbon": null,
+        "carbon/": null,
+        "carbon/test2/test/test23": {
+          path: "carbon/:element/test/:testing",
+          params: {
+            element: "test2",
+            testing: "test23",
+          },
+        },
+        "this/test/has/more/stuff": {
+          path: "this/:route/has/:cool/stuff",
+          params: {
+            route: "test",
+            cool: "more",
+          },
+        },
       }
-    });
+    );
   });
 
   describe("should be able to perform wildcard lookups", function () {
-    testRouter([
-      "polymer/**:id",
-      "polymer/another/route",
-      "route/:p1/something/**:rest"
-    ], {
-      "polymer/another/route": { path: "polymer/another/route" },
-      "polymer/anon": { path: "polymer/**:id", params: { id: "anon" } },
-      "polymer/foo/bar/baz": { path: "polymer/**:id", params: { id: "foo/bar/baz" } },
-      "route/param1/something/c/d": { path: "route/:p1/something/**:rest", params: { p1: "param1", rest: "c/d" } }
-    });
+    testRouter(
+      ["polymer/**:id", "polymer/another/route", "route/:p1/something/**:rest"],
+      {
+        "polymer/another/route": { path: "polymer/another/route" },
+        "polymer/anon": { path: "polymer/**:id", params: { id: "anon" } },
+        "polymer/foo/bar/baz": {
+          path: "polymer/**:id",
+          params: { id: "foo/bar/baz" },
+        },
+        "route/param1/something/c/d": {
+          path: "route/:p1/something/**:rest",
+          params: { p1: "param1", rest: "c/d" },
+        },
+      }
+    );
   });
 
   describe("unnamed placeholders", function () {
-    testRouter([
-      "polymer/**",
-      "polymer/route/*"
-    ], {
+    testRouter(["polymer/**", "polymer/route/*"], {
       "polymer/foo/bar": { path: "polymer/**", params: { _: "foo/bar" } },
       "polymer/route/anon": { path: "polymer/route/*", params: { _0: "anon" } },
-      "polymer/constructor": { path: "polymer/**", params: { _: "constructor" } }
+      "polymer/constructor": {
+        path: "polymer/**",
+        params: { _: "constructor" },
+      },
     });
   });
 
   describe("should be able to match routes with trailing slash", function () {
-    testRouter([
-      "route/without/trailing/slash",
-      "route/with/trailing/slash/"
-    ], {
+    testRouter(["route/without/trailing/slash", "route/with/trailing/slash/"], {
       "route/without/trailing/slash": { path: "route/without/trailing/slash" },
       "route/with/trailing/slash/": { path: "route/with/trailing/slash/" },
       "route/without/trailing/slash/": { path: "route/without/trailing/slash" },
-      "route/with/trailing/slash": { path: "route/with/trailing/slash/" }
+      "route/with/trailing/slash": { path: "route/with/trailing/slash/" },
     });
   });
 });
@@ -122,7 +127,9 @@ describe("Router insert", function () {
     expect(slashNode).to.exist;
 
     const slashChooNode = slashNode!.children.get("choo");
-    const slashSlashChooNode = slashNode!.children.get("")!.children.get("choo");
+    const slashSlashChooNode = slashNode!.children
+      .get("")!
+      .children.get("choo");
 
     expect(slashChooNode).to.exist;
     expect(slashSlashChooNode).to.exist;
@@ -166,8 +173,8 @@ describe("Router insert", function () {
       routes: {
         "/api/v1": { value: 1 },
         "/api/v2": { value: 2 },
-        "/api/v3": { value: 3 }
-      }
+        "/api/v3": { value: 3 },
+      },
     });
 
     const rootSlashNode = router.ctx.rootNode.children.get("");
@@ -186,7 +193,7 @@ describe("Router insert", function () {
 
   it("should allow routes to be overwritten by performing another insert", function () {
     const router = createRouter({
-      routes: { "/api/v1": { data: 1 } }
+      routes: { "/api/v1": { data: 1 } },
     });
 
     let apiRouteData = router.lookup("/api/v1");
@@ -195,11 +202,15 @@ describe("Router insert", function () {
     router.insert("/api/v1", {
       path: "/api/v1",
       data: 2,
-      anotherField: 3
+      anotherField: 3,
     });
 
     apiRouteData = router.lookup("/api/v1");
-    expect(apiRouteData).deep.equal({ data: 2, path: "/api/v1", anotherField: 3 });
+    expect(apiRouteData).deep.equal({
+      data: 2,
+      path: "/api/v1",
+      anotherField: 3,
+    });
     expect(apiRouteData!.anotherField).to.equal(3);
   });
 });
@@ -217,8 +228,8 @@ describe("Router remove", function () {
         "choot",
         "choot/:choo",
         "ui/**",
-        "ui/components/**"
-      ])
+        "ui/components/**",
+      ]),
     });
 
     router.remove("choot");
@@ -226,29 +237,26 @@ describe("Router remove", function () {
 
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
       path: "ui/components/**",
-      params: { _: "snackbars" }
+      params: { _: "snackbars" },
     });
 
     router.remove("ui/components/**");
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
       path: "ui/**",
-      params: { _: "components/snackbars" }
+      params: { _: "components/snackbars" },
     });
   });
 
   it("should be able to remove placeholder routes", function () {
     const router = createRouter({
-      routes: createRoutes([
-        "placeholder/:choo",
-        "placeholder/:choo/:choo2"
-      ])
+      routes: createRoutes(["placeholder/:choo", "placeholder/:choo/:choo2"]),
     });
 
     expect(router.lookup("placeholder/route")).to.deep.equal({
       path: "placeholder/:choo",
       params: {
-        choo: "route"
-      }
+        choo: "route",
+      },
     });
 
     // TODO
@@ -259,35 +267,30 @@ describe("Router remove", function () {
       path: "placeholder/:choo/:choo2",
       params: {
         choo: "route",
-        choo2: "route2"
-      }
+        choo2: "route2",
+      },
     });
   });
 
   it("should be able to remove wildcard routes", function () {
     const router = createRouter({
-      routes: createRoutes([
-        "ui/**",
-        "ui/components/**"
-      ])
+      routes: createRoutes(["ui/**", "ui/components/**"]),
     });
 
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
       path: "ui/components/**",
-      params: { _: "snackbars" }
+      params: { _: "snackbars" },
     });
     router.remove("ui/components/**");
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
       path: "ui/**",
-      params: { _: "components/snackbars" }
+      params: { _: "components/snackbars" },
     });
   });
 
   it("should return a result signifying that the remove operation was successful or not", function () {
     const router = createRouter({
-      routes: createRoutes([
-        "/some/route"
-      ])
+      routes: createRoutes(["/some/route"]),
     });
 
     let removeResult = router.remove("/some/route");

@@ -25,7 +25,8 @@
     "bench:profile": "0x -o -D benchmark/.profile -- node ./benchmark/direct.mjs",
     "build": "unbuild",
     "dev": "vitest",
-    "lint": "eslint --ext .ts,.mjs .",
+    "lint": "eslint --ext .ts,.mjs . && prettier -c src tests",
+    "lint:fix": "eslint --fix --ext .ts,.mjs . && prettier -w src tests",
     "playground": "pnpm jiti ./playground.ts",
     "release": "pnpm test && pnpm build && changelogen --release && git push --follow-tags && pnpm publish",
     "test": "pnpm lint && vitest run"
@@ -41,6 +42,7 @@
     "jiti": "^1.18.2",
     "listhen": "^1.0.4",
     "ohmyfetch": "^0.4.21",
+    "prettier": "^2.8.7",
     "standard-version": "^9.5.0",
     "typescript": "^5.0.2",
     "unbuild": "^1.1.2",

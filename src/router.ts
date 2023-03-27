@@ -1,14 +1,24 @@
-import type { RadixRouterContext, RadixNode, MatchedRoute, RadixRouter, RadixNodeData, RadixRouterOptions } from "./types";
+import type {
+  RadixRouterContext,
+  RadixNode,
+  MatchedRoute,
+  RadixRouter,
+  RadixNodeData,
+  RadixRouterOptions,
+} from "./types";
 import { NODE_TYPES } from "./types";
 
-export function createRouter<T extends RadixNodeData = RadixNodeData> (options: RadixRouterOptions = {}): RadixRouter<T> {
+export function createRouter<T extends RadixNodeData = RadixNodeData>(
+  options: RadixRouterOptions = {}
+): RadixRouter<T> {
   const ctx: RadixRouterContext = {
     options,
     rootNode: createRadixNode(),
-    staticRoutesMap: {}
+    staticRoutesMap: {},
   };
 
-  const normalizeTrailingSlash = p => options.strictTrailingSlash ? p : (p.replace(/\/$/, "") || "/");
+  const normalizeTrailingSlash = (p) =>
+    options.strictTrailingSlash ? p : p.replace(/\/$/, "") || "/";
 
   if (options.routes) {
     for (const path in options.routes) {
@@ -20,12 +30,13 @@ export function createRouter<T extends RadixNodeData = RadixNodeData> (options: 
     ctx,
     // @ts-ignore
     lookup: (path: string) => lookup(ctx, normalizeTrailingSlash(path)),
-    insert: (path: string, data: any) => insert(ctx, normalizeTrailingSlash(path), data),
-    remove: (path: string) => remove(ctx, normalizeTrailingSlash(path))
+    insert: (path: string, data: any) =>
+      insert(ctx, normalizeTrailingSlash(path), data),
+    remove: (path: string) => remove(ctx, normalizeTrailingSlash(path)),
   };
 }
 
-function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
+function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
   const staticPathNode = ctx.staticRoutesMap[path];
   if (staticPathNode) {
     return staticPathNode.data;
@@ -75,14 +86,14 @@ function lookup (ctx: RadixRouterContext, path: string): MatchedRoute {
   if (paramsFound) {
     return {
       ...node.data,
-      params: paramsFound ? params : undefined
+      params: paramsFound ? params : undefined,
     };
   }
 
   return node.data;
 }
 
-function insert (ctx: RadixRouterContext, path: string, data: any) {
+function insert(ctx: RadixRouterContext, path: string, data: any) {
   let isStaticRoute = true;
 
   const sections = path.split("/");
@@ -105,7 +116,8 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
       node.children.set(section, childNode);
 
       if (type === NODE_TYPES.PLACEHOLDER) {
-        childNode.paramName = section === "*" ? `_${_unnamedPlaceholderCtr++}` : section.slice(1);
+        childNode.paramName =
+          section === "*" ? `_${_unnamedPlaceholderCtr++}` : section.slice(1);
         node.placeholderChildNode = childNode;
         isStaticRoute = false;
       } else if (type === NODE_TYPES.WILDCARD) {
@@ -130,7 +142,7 @@ function insert (ctx: RadixRouterContext, path: string, data: any) {
   return node;
 }
 
-function remove (ctx: RadixRouterContext, path: string) {
+function remove(ctx: RadixRouterContext, path: string) {
   let success = false;
   const sections = path.split("/");
   let node = ctx.rootNode;
@@ -157,7 +169,7 @@ function remove (ctx: RadixRouterContext, path: string) {
   return success;
 }
 
-function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
+function createRadixNode(options: Partial<RadixNode> = {}): RadixNode {
   return {
     type: options.type || NODE_TYPES.NORMAL,
     parent: options.parent || null,
@@ -165,12 +177,16 @@ function createRadixNode (options: Partial<RadixNode> = {}): RadixNode {
     data: options.data || null,
     paramName: options.paramName || null,
     wildcardChildNode: null,
-    placeholderChildNode: null
+    placeholderChildNode: null,
   };
 }
 
-function getNodeType (str: string) {
-  if (str.startsWith("**")) { return NODE_TYPES.WILDCARD; }
-  if (str[0] === ":" || str === "*") { return NODE_TYPES.PLACEHOLDER; }
+function getNodeType(str: string) {
+  if (str.startsWith("**")) {
+    return NODE_TYPES.WILDCARD;
+  }
+  if (str[0] === ":" || str === "*") {
+    return NODE_TYPES.PLACEHOLDER;
+  }
   return NODE_TYPES.NORMAL;
 }
