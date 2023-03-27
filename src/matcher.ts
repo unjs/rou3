@@ -32,27 +32,36 @@ function _createRouteTable(): RouteTable {
 }
 
 function _matchRoutes(path: string, table: RouteTable): RadixNodeData[] {
+  // Order should be from less specific to most specific
   const matches = [];
+
   // Wildcard
-  for (const [key, value] of table.wildcard) {
+  for (const [key, value] of _sortRoutesMap(table.wildcard)) {
     if (path.startsWith(key)) {
       matches.push(value);
     }
   }
+
   // Dynamic
-  for (const [key, value] of table.dynamic) {
+  for (const [key, value] of _sortRoutesMap(table.dynamic)) {
     if (path.startsWith(key + "/")) {
       const subPath =
         "/" + path.slice(key.length).split("/").splice(2).join("/");
       matches.push(..._matchRoutes(subPath, value));
     }
   }
+
   // Static
   const staticMatch = table.static.get(path);
   if (staticMatch) {
     matches.push(staticMatch);
   }
+
   return matches.filter(Boolean);
+}
+
+function _sortRoutesMap(m: Map<string, any>) {
+  return [...m.entries()].sort((a, b) => a[0].length - b[0].length);
 }
 
 function _routerNodeToTable(
