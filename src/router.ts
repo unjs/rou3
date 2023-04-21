@@ -116,8 +116,22 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
       node.children.set(section, childNode);
 
       if (type === NODE_TYPES.PLACEHOLDER) {
-        childNode.paramName =
-          section === "*" ? `_${_unnamedPlaceholderCtr++}` : section.slice(1);
+        if (section === "*") {
+          childNode.paramName = `_${_unnamedPlaceholderCtr++}`;
+        } else {
+          const PARAMS_RE = /:\w+|[^:]+/g;
+          const params = [...section.matchAll(PARAMS_RE)].map((i) => i[0]);
+          if (params.length === 1) {
+            childNode.paramName = params[0].slice(1);
+          } else {
+            childNode.type = NODE_TYPES.MIXED;
+            childNode.mixedParams = params.map((p) =>
+              p[0] === ":"
+                ? { type: "dynamic", name: p.slice(1) }
+                : { type: "static", name: p }
+            );
+          }
+        }
         node.placeholderChildNode = childNode;
         isStaticRoute = false;
       } else if (type === NODE_TYPES.WILDCARD) {
@@ -185,7 +199,7 @@ function getNodeType(str: string) {
   if (str.startsWith("**")) {
     return NODE_TYPES.WILDCARD;
   }
-  if (str[0] === ":" || str === "*") {
+  if (str.includes(":") || str === "*") {
     return NODE_TYPES.PLACEHOLDER;
   }
   return NODE_TYPES.NORMAL;

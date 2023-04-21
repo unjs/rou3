@@ -93,6 +93,16 @@ describe("Router lookup", function () {
     });
   });
 
+  describe("mixed params in same segemnt", function () {
+    const mixedPath = "/files/:category/:id,name:name.txt";
+    testRouter([mixedPath], {
+      "/files/test/id:123,name=foobar.txt": {
+        path: mixedPath,
+        params: { category: "test", id: "123", name: "foobar" },
+      },
+    });
+  });
+
   describe("should be able to match routes with trailing slash", function () {
     testRouter(["route/without/trailing/slash", "route/with/trailing/slash/"], {
       "route/without/trailing/slash": { path: "route/without/trailing/slash" },
