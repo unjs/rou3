@@ -98,7 +98,7 @@ function lookup(
     return null;
   }
 
-  if (node.method && node.method !== method) {
+  if (method && node.method !== method) {
     return null;
   }
 
