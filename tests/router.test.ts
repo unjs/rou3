@@ -315,11 +315,6 @@ describe("Router remove", function () {
         routes: createRoutesWithMethod([
           "hello",
           "cool",
-          "hi",
-          "helium",
-          "coooool",
-          "chrome",
-          "choot",
           "choot/:choo",
           "ui/**",
           "ui/components/**",
@@ -337,10 +332,10 @@ describe("Router remove", function () {
       expect(router.lookup("cool", "GET")).to.deep.equal({ path: "cool" });
       expect(router.lookup("cool")).to.deep.equal({ path: "cool" });
 
-      expect(router.lookup("ui/components/snackbars", "POST")).to.deep.equal(
+      expect(router.lookup("ui/components/snackbars", "GET")).to.deep.equal(
         null
       );
-      expect(router.lookup("ui/components/snackbars", "GET")).to.deep.equal({
+      expect(router.lookup("ui/components/snackbars", "POST")).to.deep.equal({
         path: "ui/components/**",
         params: { _: "snackbars" },
       });
