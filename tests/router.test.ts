@@ -324,18 +324,24 @@ describe("Router remove", function () {
       // console.log("CONTEXT");
       // console.dir(router.ctx, { depth: 4 });
 
-      expect(router.lookup("hello", "GET")).to.deep.equal(null);
-      expect(router.lookup("hello", "POST")).to.deep.equal({ path: "hello" });
+      expect(router.lookup("hello", { method: "GET" })).to.deep.equal(null);
+      expect(router.lookup("hello", { method: "POST" })).to.deep.equal({
+        path: "hello",
+      });
       expect(router.lookup("hello")).to.deep.equal({ path: "hello" });
 
-      expect(router.lookup("cool", "POST")).to.deep.equal(null);
-      expect(router.lookup("cool", "GET")).to.deep.equal({ path: "cool" });
+      expect(router.lookup("cool", { method: "POST" })).to.deep.equal(null);
+      expect(router.lookup("cool", { method: "GET" })).to.deep.equal({
+        path: "cool",
+      });
       expect(router.lookup("cool")).to.deep.equal({ path: "cool" });
 
-      expect(router.lookup("ui/components/snackbars", "GET")).to.deep.equal(
-        null
-      );
-      expect(router.lookup("ui/components/snackbars", "POST")).to.deep.equal({
+      expect(
+        router.lookup("ui/components/snackbars", { method: "GET" })
+      ).to.deep.equal(null);
+      expect(
+        router.lookup("ui/components/snackbars", { method: "POST" })
+      ).to.deep.equal({
         path: "ui/components/**",
         params: { _: "snackbars" },
       });

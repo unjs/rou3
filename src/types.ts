@@ -59,18 +59,23 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
   /**
    * Perform lookup of given path in radix tree
    * @param path - the path to search for
+   * @param method - the HTTP method to search for
    *
    * @returns The data that was originally inserted into the tree
    */
-  lookup(path: string, method?: HTTPMethod): MatchedRoute<T> | null;
+  lookup(
+    path: string,
+    options?: { method?: HTTPMethod }
+  ): MatchedRoute<T> | null;
 
   /**
    * Perform an insert into the radix tree
    * @param path - the prefix to match
    * @param data - the associated data to path
+   * @param method - the HTTP method to search for
    *
    */
-  insert(path: string, data: T, method?: HTTPMethod): void;
+  insert(path: string, data: T, options?: { method?: HTTPMethod }): void;
 
   /**
    * Perform a remove on the tree

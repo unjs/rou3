@@ -39,10 +39,10 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   return {
     ctx,
     // @ts-expect-error - types are not matching
-    lookup: (path: string, method?: HTTPMethod) =>
-      lookup(ctx, normalizeTrailingSlash(path), method),
-    insert: (path: string, data: any, method?: HTTPMethod) =>
-      insert(ctx, normalizeTrailingSlash(path), data, method),
+    lookup: (path: string, options?: { method?: HTTPMethod }) =>
+      lookup(ctx, normalizeTrailingSlash(path), options?.method),
+    insert: (path: string, data: any, options?: { method?: HTTPMethod }) =>
+      insert(ctx, normalizeTrailingSlash(path), data, options?.method),
     remove: (path: string) => remove(ctx, normalizeTrailingSlash(path)),
   };
 }
