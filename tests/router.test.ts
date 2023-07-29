@@ -1,11 +1,17 @@
 import { describe, it, expect } from "vitest";
 import { createRouter, NODE_TYPES } from "../src";
 
-export function createRoutes(paths) {
+export function createRoutes(paths: string[]) {
   return Object.fromEntries(paths.map((path) => [path, { path }]));
 }
 
-function testRouter(paths, tests?) {
+function createRoutesWithMethod(routes: string[]) {
+  return Object.fromEntries(
+    routes.map((path, i) => [path, [i & 1 ? "GET" : "POST", { path }]])
+  );
+}
+
+function testRouter(paths: string[], tests?: any) {
   const routes = createRoutes(paths);
   const router = createRouter({ routes });
 
@@ -140,7 +146,7 @@ describe("Router insert", function () {
     const route = "/api/v2/route";
     router.insert(route, {});
 
-    expect(router.ctx.staticRoutesMap[route]).to.exist;
+    expect(router.ctx.staticRoutesMap[`ALL ${route}`]).to.exist;
   });
   it("should not insert variable routes into the static route map", function () {
     const router = createRouter();
@@ -149,8 +155,8 @@ describe("Router insert", function () {
     router.insert(routeA, {});
     router.insert(routeB, {});
 
-    expect(router.ctx.staticRoutesMap[routeA]).to.not.exist;
-    expect(router.ctx.staticRoutesMap[routeB]).to.not.exist;
+    expect(router.ctx.staticRoutesMap[`ALL ${routeA}`]).to.not.exist;
+    expect(router.ctx.staticRoutesMap[`ALL ${routeB}`]).to.not.exist;
   });
 
   it("should insert placeholder and wildcard nodes correctly into the tree", function () {
@@ -301,5 +307,43 @@ describe("Router remove", function () {
 
     removeResult = router.remove("/some/route/that/never/existed");
     expect(removeResult).to.equal(false);
+  });
+
+  describe("Router with method", function () {
+    it("should be able to match with methods", function () {
+      const router = createRouter({
+        routes: createRoutesWithMethod([
+          "hello",
+          "cool",
+          "hi",
+          "helium",
+          "coooool",
+          "chrome",
+          "choot",
+          "choot/:choo",
+          "ui/**",
+          "ui/components/**",
+        ]),
+      });
+
+      // console.log("CONTEXT");
+      // console.dir(router.ctx, { depth: 4 });
+
+      expect(router.lookup("hello")).to.deep.equal(null);
+      expect(router.lookup("hello", "GET")).to.deep.equal(null);
+      expect(router.lookup("hello", "POST")).to.deep.equal({ path: "hello" });
+
+      expect(router.lookup("cool")).to.deep.equal(null);
+      expect(router.lookup("cool", "POST")).to.deep.equal(null);
+      expect(router.lookup("cool", "GET")).to.deep.equal({ path: "cool" });
+
+      expect(router.lookup("ui/components/snackbars", "POST")).to.deep.equal(
+        null
+      );
+      expect(router.lookup("ui/components/snackbars", "GET")).to.deep.equal({
+        path: "ui/components/**",
+        params: { _: "snackbars" },
+      });
+    });
   });
 });

@@ -5,8 +5,9 @@ import type {
   RadixRouter,
   RadixNodeData,
   RadixRouterOptions,
+  HTTPMethod,
 } from "./types";
-import { NODE_TYPES } from "./types";
+import { HTTPMethods, NODE_TYPES } from "./types";
 
 export function createRouter<T extends RadixNodeData = RadixNodeData>(
   options: RadixRouterOptions = {}
@@ -17,27 +18,41 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
     staticRoutesMap: {},
   };
 
-  const normalizeTrailingSlash = (p) =>
+  const normalizeTrailingSlash = (p: string) =>
     options.strictTrailingSlash ? p : p.replace(/\/$/, "") || "/";
 
   if (options.routes) {
     for (const path in options.routes) {
-      insert(ctx, normalizeTrailingSlash(path), options.routes[path]);
+      Array.isArray(options.routes[path]) &&
+      options.routes[path].length === 2 &&
+      HTTPMethods.includes(options.routes[path][0])
+        ? insert(
+            ctx,
+            normalizeTrailingSlash(path),
+            options.routes[path][1],
+            options.routes[path][0]
+          )
+        : insert(ctx, normalizeTrailingSlash(path), options.routes[path]);
     }
   }
 
   return {
     ctx,
-    // @ts-ignore
-    lookup: (path: string) => lookup(ctx, normalizeTrailingSlash(path)),
-    insert: (path: string, data: any) =>
-      insert(ctx, normalizeTrailingSlash(path), data),
+    // @ts-expect-error - types are not matching
+    lookup: (path: string, method?: HTTPMethod) =>
+      lookup(ctx, normalizeTrailingSlash(path), method),
+    insert: (path: string, data: any, method?: HTTPMethod) =>
+      insert(ctx, normalizeTrailingSlash(path), data, method),
     remove: (path: string) => remove(ctx, normalizeTrailingSlash(path)),
   };
 }
 
-function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
-  const staticPathNode = ctx.staticRoutesMap[path];
+function lookup(
+  ctx: RadixRouterContext,
+  path: string,
+  method?: HTTPMethod
+): MatchedRoute {
+  const staticPathNode = ctx.staticRoutesMap[`${method ?? "ALL"} ${path}`];
   if (staticPathNode) {
     return staticPathNode.data;
   }
@@ -83,6 +98,10 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
     return null;
   }
 
+  if (node.method && node.method !== method) {
+    return null;
+  }
+
   if (paramsFound) {
     return {
       ...node.data,
@@ -93,7 +112,12 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
   return node.data;
 }
 
-function insert(ctx: RadixRouterContext, path: string, data: any) {
+function insert(
+  ctx: RadixRouterContext,
+  path: string,
+  data: unknown,
+  method?: HTTPMethod
+) {
   let isStaticRoute = true;
 
   const sections = path.split("/");
@@ -111,7 +135,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
       const type = getNodeType(section);
 
       // Create new node to represent the next part of the path
-      childNode = createRadixNode({ type, parent: node });
+      childNode = createRadixNode({ type, parent: node, method });
 
       node.children.set(section, childNode);
 
@@ -136,7 +160,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
   // Optimization, if a route is static and does not have any
   // variable sections, we can store it into a map for faster retrievals
   if (isStaticRoute === true) {
-    ctx.staticRoutesMap[path] = node;
+    ctx.staticRoutesMap[`${method ?? "ALL"} ${path}`] = node;
   }
 
   return node;
@@ -175,6 +199,7 @@ function createRadixNode(options: Partial<RadixNode> = {}): RadixNode {
     parent: options.parent || null,
     children: new Map(),
     data: options.data || null,
+    method: options.method || null,
     paramName: options.paramName || null,
     wildcardChildNode: null,
     placeholderChildNode: null,
