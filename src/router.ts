@@ -5,7 +5,7 @@ import type {
   RadixRouter,
   RadixNodeData,
   RadixRouterOptions,
-  HTTPMethod,
+  LookupOptions,
 } from "./types";
 import { HTTPMethods, NODE_TYPES } from "./types";
 
@@ -25,7 +25,7 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
     for (const path in options.routes) {
       Array.isArray(options.routes[path]) &&
       options.routes[path].length === 2 &&
-      HTTPMethods.includes(options.routes[path][0])
+      HTTPMethods.includes(options.routes[path][0].method)
         ? insert(
             ctx,
             normalizeTrailingSlash(path),
@@ -39,10 +39,10 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   return {
     ctx,
     // @ts-expect-error - types are not matching
-    lookup: (path: string, options?: { method?: HTTPMethod }) =>
-      lookup(ctx, normalizeTrailingSlash(path), options?.method),
-    insert: (path: string, data: any, options?: { method?: HTTPMethod }) =>
-      insert(ctx, normalizeTrailingSlash(path), data, options?.method),
+    lookup: (path: string, options?: LookupOptions) =>
+      lookup(ctx, normalizeTrailingSlash(path), options),
+    insert: (path: string, data: any, options?: LookupOptions) =>
+      insert(ctx, normalizeTrailingSlash(path), data, options),
     remove: (path: string) => remove(ctx, normalizeTrailingSlash(path)),
   };
 }
@@ -50,8 +50,10 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
 function lookup(
   ctx: RadixRouterContext,
   path: string,
-  method?: HTTPMethod
+  options?: LookupOptions
 ): MatchedRoute {
+  const method = options?.method;
+
   const staticPathNode = ctx.staticRoutesMap[`${method ?? "ALL"} ${path}`];
   if (staticPathNode) {
     return staticPathNode.data;
@@ -116,8 +118,10 @@ function insert(
   ctx: RadixRouterContext,
   path: string,
   data: unknown,
-  method?: HTTPMethod
+  options?: LookupOptions
 ) {
+  const method = options?.method;
+
   let isStaticRoute = true;
 
   const sections = path.split("/");

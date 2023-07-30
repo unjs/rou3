@@ -53,6 +53,7 @@ export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
   staticRoutesMap: Record<string, RadixNode>;
 }
 
+export type LookupOptions = { method?: HTTPMethod };
 export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
   ctx: RadixRouterContext<T>;
 
@@ -63,10 +64,7 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    *
    * @returns The data that was originally inserted into the tree
    */
-  lookup(
-    path: string,
-    options?: { method?: HTTPMethod }
-  ): MatchedRoute<T> | null;
+  lookup(path: string, options?: LookupOptions): MatchedRoute<T> | null;
 
   /**
    * Perform an insert into the radix tree
@@ -75,7 +73,7 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    * @param method - insert options such as method
    *
    */
-  insert(path: string, data: T, options?: { method?: HTTPMethod }): void;
+  insert(path: string, data: T, options?: LookupOptions): void;
 
   /**
    * Perform a remove on the tree
