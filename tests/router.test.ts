@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { createRouter, HTTPMethod, NODE_TYPES } from "../src";
+import {
+  createRouter,
+  NODE_TYPES,
+  type HTTPMethod,
+  type RadixRouterOptions,
+} from "../src";
 
 type RouteDefinition = string | { path: string; method: HTTPMethod };
 export function createRoutes(paths: RouteDefinition[]) {
@@ -9,7 +14,7 @@ export function createRoutes(paths: RouteDefinition[]) {
         ? [path, { path }]
         : [path.path, { method: path.method, payload: { path: path.path } }];
     })
-  );
+  ) as Required<Pick<RadixRouterOptions, "routes">>["routes"];
 }
 
 function testRouter(paths: string[], tests?: any) {
