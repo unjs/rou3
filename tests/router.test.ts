@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { createRouter, HTTPMethod, NODE_TYPES } from "../src";
 
 type RouteDefinition = string | { path: string; method: HTTPMethod };
-
 export function createRoutes(paths: RouteDefinition[]) {
   return Object.fromEntries(
     paths.map((path) => {
@@ -150,6 +149,15 @@ describe("Router insert", function () {
 
     expect(router.ctx.staticRoutesMap.ALL[route]).to.exist;
   });
+
+  it("should insert static routes with methods into the static route map", function () {
+    const router = createRouter();
+    const route = "/api/v2/route";
+    router.insert({ path: route, method: "PUT", payload: {} });
+
+    expect(router.ctx.staticRoutesMap.PUT[route]).to.exist;
+  });
+
   it("should not insert variable routes into the static route map", function () {
     const router = createRouter();
     const routeA = "/api/v2/**";
