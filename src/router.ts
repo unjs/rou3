@@ -8,8 +8,9 @@ import type {
   LookupOptions,
   RadixRouterOptionsPayload,
   InsertOptions,
+  StaticRoutesMap,
 } from "./types";
-import { NODE_TYPES } from "./types";
+import { HTTPMethods, NODE_TYPES } from "./types";
 
 export function createRouter<T extends RadixNodeData = RadixNodeData>(
   options: RadixRouterOptions = {}
@@ -17,7 +18,9 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   const ctx: RadixRouterContext = {
     options,
     rootNode: createRadixNode(),
-    staticRoutesMap: {},
+    staticRoutesMap: Object.fromEntries(
+      HTTPMethods.map((method) => [method, {}])
+    ) as StaticRoutesMap,
   };
 
   const normalizeTrailingSlash = (p: string) =>
@@ -73,7 +76,7 @@ function lookup(
 ): MatchedRoute {
   const method = options?.method;
 
-  const staticPathNode = ctx.staticRoutesMap[`${method ?? "ALL"} ${path}`];
+  const staticPathNode = ctx.staticRoutesMap[method ?? "ALL"][path];
   if (staticPathNode) {
     return staticPathNode.data;
   }
@@ -134,7 +137,7 @@ function lookup(
 }
 
 function insert<T>(ctx: RadixRouterContext, options: InsertOptions<T>) {
-  const { path, payload: data, method } = options;
+  const { path, payload: data, method = undefined } = options;
 
   let isStaticRoute = true;
 
@@ -178,7 +181,7 @@ function insert<T>(ctx: RadixRouterContext, options: InsertOptions<T>) {
   // Optimization, if a route is static and does not have any
   // variable sections, we can store it into a map for faster retrievals
   if (isStaticRoute === true) {
-    ctx.staticRoutesMap[`${method ?? "ALL"} ${path}`] = node;
+    ctx.staticRoutesMap[method || "ALL"][path] = node;
   }
 
   return node;

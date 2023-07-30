@@ -148,7 +148,7 @@ describe("Router insert", function () {
     const route = "/api/v2/route";
     router.insert(route, {});
 
-    expect(router.ctx.staticRoutesMap[`ALL ${route}`]).to.exist;
+    expect(router.ctx.staticRoutesMap.ALL[route]).to.exist;
   });
   it("should not insert variable routes into the static route map", function () {
     const router = createRouter();
@@ -157,8 +157,8 @@ describe("Router insert", function () {
     router.insert(routeA, {});
     router.insert(routeB, {});
 
-    expect(router.ctx.staticRoutesMap[`ALL ${routeA}`]).to.not.exist;
-    expect(router.ctx.staticRoutesMap[`ALL ${routeB}`]).to.not.exist;
+    expect(router.ctx.staticRoutesMap.ALL[routeA]).to.not.exist;
+    expect(router.ctx.staticRoutesMap.ALL[routeB]).to.not.exist;
   });
 
   it("should insert placeholder and wildcard nodes correctly into the tree", function () {

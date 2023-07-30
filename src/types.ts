@@ -1,4 +1,4 @@
-const HTTPMethods = [
+export const HTTPMethods = [
   "GET",
   "HEAD",
   "PATCH",
@@ -49,10 +49,11 @@ export interface RadixRouterOptions {
   routes?: Record<string, unknown> | Record<string, RadixRouterOptionsPayload>;
 }
 
+export type StaticRoutesMap = Record<HTTPMethod, Record<string, RadixNode>>;
 export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
   options: RadixRouterOptions;
   rootNode: RadixNode<T>;
-  staticRoutesMap: Record<string, RadixNode>;
+  staticRoutesMap: StaticRoutesMap;
 }
 
 export type LookupOptions = { method?: HTTPMethod };
