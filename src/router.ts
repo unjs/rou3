@@ -6,6 +6,7 @@ import type {
   RadixNodeData,
   RadixRouterOptions,
   LookupOptions,
+  RadixRouterOptionsPayload,
 } from "./types";
 import { HTTPMethods, NODE_TYPES } from "./types";
 
@@ -21,18 +22,22 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   const normalizeTrailingSlash = (p: string) =>
     options.strictTrailingSlash ? p : p.replace(/\/$/, "") || "/";
 
+  const isRadixRouterOptionsPayload = (
+    payload: RadixRouterOptions["routes"][string]
+  ): payload is RadixRouterOptionsPayload =>
+    typeof payload === "object" && "method" in payload && "payload" in payload;
+
   if (options.routes) {
     for (const path in options.routes) {
-      Array.isArray(options.routes[path]) &&
-      options.routes[path].length === 2 &&
-      HTTPMethods.includes(options.routes[path][0].method)
+      const routeOptions = options.routes[path];
+      isRadixRouterOptionsPayload(routeOptions)
         ? insert(
             ctx,
             normalizeTrailingSlash(path),
-            options.routes[path][1],
-            options.routes[path][0]
+            routeOptions.payload,
+            routeOptions
           )
-        : insert(ctx, normalizeTrailingSlash(path), options.routes[path]);
+        : insert(ctx, normalizeTrailingSlash(path), routeOptions);
     }
   }
 

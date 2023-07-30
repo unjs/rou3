@@ -42,9 +42,15 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   placeholderChildNode: RadixNode<T> | null;
 }
 
+export type RadixRouterOptionsPayload = {
+  method: HTTPMethod;
+  payload: unknown;
+};
+
 export interface RadixRouterOptions {
   strictTrailingSlash?: boolean;
-  routes?: Record<string, any>;
+  method?: boolean;
+  routes?: Record<string, unknown> | Record<string, RadixRouterOptionsPayload>;
 }
 
 export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {

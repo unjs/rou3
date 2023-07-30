@@ -1,15 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { createRouter, NODE_TYPES } from "../src";
+import { createRouter, LookupOptions, NODE_TYPES } from "../src";
 
-export function createRoutes(paths: string[]) {
-  return Object.fromEntries(paths.map((path) => [path, { path }]));
-}
-
-function createRoutesWithMethod(routes: string[]) {
+export function createRoutes(paths: string[], options?: LookupOptions) {
   return Object.fromEntries(
-    routes.map((path, i) => [
+    paths.map((path) => [
       path,
-      [{ method: i & 1 ? "GET" : "POST" }, { path }],
+      options ? { method: options.method, payload: { path } } : { path },
     ])
   );
 }
@@ -314,31 +310,28 @@ describe("Router remove", function () {
 
   describe("Router with method", function () {
     const router = createRouter({
-      routes: createRoutesWithMethod([
-        "hello",
-        "cool",
-        "choot/:choo",
-        "ui/**",
-        "ui/components/**",
-        "**",
-      ]),
+      method: true,
+      routes: createRoutes(["hello", "ui/components/**", "**"], {
+        method: "GET",
+      }),
     });
     // console.log("CONTEXT");
     // console.dir(router.ctx, { depth: 4 });
     it("can match simple route with method ", function () {
-      expect(router.lookup("hello", { method: "GET" })).to.deep.equal(null);
-      expect(router.lookup("hello", { method: "POST" })).to.deep.equal({
+      expect(router.lookup("hello", { method: "POST" })).to.deep.equal(null);
+      expect(router.lookup("hello", { method: "GET" })).to.deep.equal({
         path: "hello",
       });
       expect(router.lookup("hello")).to.deep.equal({ path: "hello" });
-
+    });
+    it("can insert routes with method ", function () {
+      router.insert("cool", { path: "cool" }, { method: "GET" });
       expect(router.lookup("cool", { method: "POST" })).to.deep.equal(null);
       expect(router.lookup("cool", { method: "GET" })).to.deep.equal({
         path: "cool",
       });
       expect(router.lookup("cool")).to.deep.equal({ path: "cool" });
     });
-
     it("can match wildcard route with method ", function () {
       expect(router.lookup("**", { method: "DELETE" })).to.deep.equal(null);
       expect(router.lookup("**", { method: "GET" })).to.deep.equal({
@@ -349,8 +342,8 @@ describe("Router remove", function () {
 
     it("can match route with parameters and method ", function () {
       const snacbkars = "ui/components/snackbars";
-      expect(router.lookup(snacbkars, { method: "GET" })).to.deep.equal(null);
-      expect(router.lookup(snacbkars, { method: "POST" })).to.deep.equal({
+      expect(router.lookup(snacbkars, { method: "POST" })).to.deep.equal(null);
+      expect(router.lookup(snacbkars, { method: "GET" })).to.deep.equal({
         path: "ui/components/**",
         params: { _: "snackbars" },
       });
