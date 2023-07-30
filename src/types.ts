@@ -1,4 +1,4 @@
-export const HTTPMethods = [
+const HTTPMethods = [
   "GET",
   "HEAD",
   "PATCH",

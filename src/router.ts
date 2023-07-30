@@ -8,7 +8,7 @@ import type {
   LookupOptions,
   RadixRouterOptionsPayload,
 } from "./types";
-import { HTTPMethods, NODE_TYPES } from "./types";
+import { NODE_TYPES } from "./types";
 
 export function createRouter<T extends RadixNodeData = RadixNodeData>(
   options: RadixRouterOptions = {}
