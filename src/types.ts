@@ -42,11 +42,7 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   placeholderChildNode: RadixNode<T> | null;
 }
 
-export type RadixRouterOptionsPayload = {
-  method: HTTPMethod;
-  payload: unknown;
-};
-
+export type RadixRouterOptionsPayload = Omit<InsertOptions, "path">;
 export interface RadixRouterOptions {
   strictTrailingSlash?: boolean;
   method?: boolean;
@@ -60,7 +56,7 @@ export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
 }
 
 export type LookupOptions = { method?: HTTPMethod };
-export type InsertOptions<T> = {
+export type InsertOptions<T = unknown> = {
   path: string;
   payload: T;
   method?: HTTPMethod;
