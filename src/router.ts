@@ -7,6 +7,7 @@ import type {
   RadixRouterOptions,
   LookupOptions,
   RadixRouterOptionsPayload,
+  InsertOptions,
 } from "./types";
 import { NODE_TYPES } from "./types";
 
@@ -30,24 +31,37 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   if (options.routes) {
     for (const path in options.routes) {
       const routeOptions = options.routes[path];
-      isRadixRouterOptionsPayload(routeOptions)
-        ? insert(
-            ctx,
-            normalizeTrailingSlash(path),
-            routeOptions.payload,
-            routeOptions
-          )
-        : insert(ctx, normalizeTrailingSlash(path), routeOptions);
+      options.method && isRadixRouterOptionsPayload(routeOptions)
+        ? insert(ctx, {
+            path: normalizeTrailingSlash(path),
+            method: routeOptions.method,
+            payload: routeOptions.payload,
+          })
+        : insert(ctx, {
+            path: normalizeTrailingSlash(path),
+            payload: routeOptions,
+          });
     }
   }
+
+  const insertRoute = (pathOrOptions: string | InsertOptions<T>, data?: T) =>
+    typeof pathOrOptions === "string"
+      ? insert(ctx, {
+          path: normalizeTrailingSlash(pathOrOptions),
+          payload: data,
+        })
+      : insert(ctx, {
+          path: normalizeTrailingSlash(pathOrOptions.path),
+          payload: pathOrOptions.payload,
+          method: pathOrOptions.method,
+        });
 
   return {
     ctx,
     // @ts-expect-error - types are not matching
     lookup: (path: string, options?: LookupOptions) =>
       lookup(ctx, normalizeTrailingSlash(path), options),
-    insert: (path: string, data: any, options?: LookupOptions) =>
-      insert(ctx, normalizeTrailingSlash(path), data, options),
+    insert: insertRoute,
     remove: (path: string) => remove(ctx, normalizeTrailingSlash(path)),
   };
 }
@@ -119,13 +133,8 @@ function lookup(
   return node.data;
 }
 
-function insert(
-  ctx: RadixRouterContext,
-  path: string,
-  data: unknown,
-  options?: LookupOptions
-) {
-  const method = options?.method;
+function insert<T>(ctx: RadixRouterContext, options: InsertOptions<T>) {
+  const { path, payload: data, method } = options;
 
   let isStaticRoute = true;
 

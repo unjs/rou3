@@ -330,7 +330,7 @@ describe("Router remove", function () {
       expect(router.lookup("hello")).to.deep.equal({ path: "hello" });
     });
     it("can insert routes with method ", function () {
-      router.insert("cool", { path: "cool" }, { method: "GET" });
+      router.insert({ path: "cool", method: "GET", payload: { path: "cool" } });
       expect(router.lookup("cool", { method: "POST" })).to.deep.equal(null);
       expect(router.lookup("cool", { method: "GET" })).to.deep.equal({
         path: "cool",

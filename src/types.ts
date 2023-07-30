@@ -60,6 +60,12 @@ export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
 }
 
 export type LookupOptions = { method?: HTTPMethod };
+export type InsertOptions<T> = {
+  path: string;
+  payload: T;
+  method?: HTTPMethod;
+};
+
 export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
   ctx: RadixRouterContext<T>;
 
@@ -76,10 +82,15 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    * Perform an insert into the radix tree
    * @param path - the prefix to match
    * @param data - the associated data to path
-   * @param method - insert options such as method
    *
    */
-  insert(path: string, data: T, options?: LookupOptions): void;
+  insert(path: string, data: T): void;
+  /**
+   * Perform an insert into the radix tree
+   * @param options - the options to insert
+   *
+   */
+  insert(options: InsertOptions<T>): void;
 
   /**
    * Perform a remove on the tree
