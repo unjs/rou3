@@ -3,7 +3,7 @@ import {
   RadixRouter,
   RadixNodeData,
   NODE_TYPES,
-  DehydratedRouteTable,
+  MatcherExport,
 } from "./types";
 
 export interface RouteTable {
@@ -37,44 +37,44 @@ function _createRouteTable(): RouteTable {
   };
 }
 
-export function exportMatcherTable(table: RouteTable): DehydratedRouteTable {
+export function exportMatcher({ ctx }: { ctx: { table: RouteTable }}): MatcherExport {
   const obj = Object.create(null);
 
-  for (const property in table) {
+  for (const property in ctx.table) {
     obj[property] =
       property === "dynamic"
         ? Object.fromEntries(
-            [...table[property].entries()].map(([key, value]) => [
+            [...ctx.table[property].entries()].map(([key, value]) => [
               key,
-              exportMatcherTable(value),
+              exportMatcher({ ctx: { table: value } }),
             ])
           )
-        : Object.fromEntries(table[property].entries());
+        : Object.fromEntries(ctx.table[property].entries());
   }
 
   return obj;
 }
 
-function _createTableFromExport(tableImport: DehydratedRouteTable): RouteTable {
+function _createTableFromExport(matcherExport: MatcherExport): RouteTable {
   const table: Partial<RouteTable> = {};
-  for (const property in tableImport) {
+  for (const property in matcherExport) {
     table[property] =
       property === "dynamic"
         ? new Map(
-            Object.entries(tableImport[property]).map(([key, value]) => [
+            Object.entries(matcherExport[property]).map(([key, value]) => [
               key,
               _createTableFromExport(value as any),
             ])
           )
-        : new Map(Object.entries(tableImport[property]));
+        : new Map(Object.entries(matcherExport[property]));
   }
   return table as RouteTable;
 }
 
-export function createMatcherFromTable(
-  tableImport: DehydratedRouteTable
+export function createMatcherFromExport(
+  matcherExport: MatcherExport
 ): RouteMatcher {
-  return _createMatcher(_createTableFromExport(tableImport));
+  return _createMatcher(_createTableFromExport(matcherExport));
 }
 
 function _matchRoutes(path: string, table: RouteTable): RadixNodeData[] {
