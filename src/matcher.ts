@@ -37,9 +37,7 @@ function _createRouteTable(): RouteTable {
   };
 }
 
-export function exportMatcherTable(
-  table: RouteTable
-): Record<"static" | "wildcard" | "dynamic", any> {
+export function exportMatcherTable(table: RouteTable): DehydratedRouteTable {
   const obj = Object.create(null);
 
   for (const property in table) {
