@@ -64,3 +64,9 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    */
   remove(path: string): boolean;
 }
+
+export interface DehydratedRouteTable {
+  dynamic: Map<string, DehydratedRouteTable>
+  wildcard: Map<string, { pattern: string }>
+  static: Map<string, { pattern: string }>
+}

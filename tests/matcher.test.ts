@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRouter, toRouteMatcher } from "../src";
+import { createRouter, exportMatcherTable, toRouteMatcher } from "../src";
 
 export function createRoutes(paths) {
   return Object.fromEntries(paths.map((path) => [path, { pattern: path }]));
@@ -141,4 +141,48 @@ describe("Route matcher", function () {
       ]
     `);
   });
+
+  it("can be exported", () => {
+    const jsonData = exportMatcherTable(matcher.ctx.table)
+    expect(jsonData).toMatchInlineSnapshot(`
+      {
+        "dynamic": {
+          "/foo": {
+            "dynamic": {},
+            "static": {
+              "/": {
+                "pattern": "/foo/*",
+              },
+              "/sub": {
+                "pattern": "/foo/*/sub",
+              },
+            },
+            "wildcard": {},
+          },
+        },
+        "static": {
+          "/": {
+            "pattern": "/",
+          },
+          "/foo": {
+            "pattern": "/foo",
+          },
+          "/foo/bar": {
+            "pattern": "/foo/bar",
+          },
+          "/foo/baz": {
+            "pattern": "/foo/baz",
+          },
+        },
+        "wildcard": {
+          "/foo": {
+            "pattern": "/foo/**",
+          },
+          "/foo/baz": {
+            "pattern": "/foo/baz/**",
+          },
+        },
+      }
+    `)
+  })
 });
