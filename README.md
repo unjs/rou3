@@ -127,6 +127,23 @@ const matches = matcher.matchAll('/foo/bar/baz')
 // ]
 ```
 
+### Route Matcher Export
+
+It is also possible to export and then rehydrate a matcher from pre-compiled rules.
+
+```ts
+import { exportMatcher, createMatcherFromExport } from 'radix3'
+
+// Assuming you already have a matcher
+// you can export this to a JSON-type object
+const json = exportMatcher(matcher)
+
+// and then rehydrate this later
+const newMatcher = createMatcherFromExport(json)
+
+const matches = newMatcher.matchAll('/foo/bar/baz')
+```
+
 ## Performance
 
 See [benchmark](./benchmark).

@@ -64,3 +64,9 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    */
   remove(path: string): boolean;
 }
+
+export interface MatcherExport {
+  dynamic: Map<string, MatcherExport>;
+  wildcard: Map<string, { pattern: string }>;
+  static: Map<string, { pattern: string }>;
+}
