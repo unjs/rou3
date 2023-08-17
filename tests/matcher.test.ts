@@ -113,6 +113,12 @@ describe("Route matcher", function () {
         "/foo",
       ]
     `);
+    expect(_match("/foo?key=123")).to.toMatchInlineSnapshot(`
+      [
+        "/foo/**",
+        "/foo",
+      ]
+    `);
     expect(_match("/foo/bar")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
