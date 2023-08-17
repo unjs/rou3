@@ -37,22 +37,26 @@ function _createRouteTable(): RouteTable {
   };
 }
 
-export function exportMatcher({ ctx }: { ctx: { table: RouteTable }}): MatcherExport {
+function _exportMatcherFromTable(table: RouteTable): MatcherExport {
   const obj = Object.create(null);
 
-  for (const property in ctx.table) {
+  for (const property in table) {
     obj[property] =
       property === "dynamic"
         ? Object.fromEntries(
-            [...ctx.table[property].entries()].map(([key, value]) => [
+            [...table[property].entries()].map(([key, value]) => [
               key,
-              exportMatcher({ ctx: { table: value } }),
+              _exportMatcherFromTable(value),
             ])
           )
-        : Object.fromEntries(ctx.table[property].entries());
+        : Object.fromEntries(table[property].entries());
   }
 
   return obj;
+}
+
+export function exportMatcher(matcher: RouteMatcher): MatcherExport {
+  return _exportMatcherFromTable(matcher.ctx.table);
 }
 
 function _createTableFromExport(matcherExport: MatcherExport): RouteTable {
