@@ -55,7 +55,7 @@ export function exportMatcherTable(table: RouteTable): DehydratedRouteTable {
   return obj;
 }
 
-function createTableFromExport(tableImport: DehydratedRouteTable): RouteTable {
+function _createTableFromExport(tableImport: DehydratedRouteTable): RouteTable {
   const table: Partial<RouteTable> = {};
   for (const property in tableImport) {
     table[property] =
@@ -63,7 +63,7 @@ function createTableFromExport(tableImport: DehydratedRouteTable): RouteTable {
         ? new Map(
             Object.entries(tableImport[property]).map(([key, value]) => [
               key,
-              createTableFromExport(value as any),
+              _createTableFromExport(value as any),
             ])
           )
         : new Map(Object.entries(tableImport[property]));
@@ -74,7 +74,7 @@ function createTableFromExport(tableImport: DehydratedRouteTable): RouteTable {
 export function createMatcherFromTable(
   tableImport: DehydratedRouteTable
 ): RouteMatcher {
-  return _createMatcher(createTableFromExport(tableImport));
+  return _createMatcher(_createTableFromExport(tableImport));
 }
 
 function _matchRoutes(path: string, table: RouteTable): RadixNodeData[] {
