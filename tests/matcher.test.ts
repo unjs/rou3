@@ -143,7 +143,7 @@ describe("Route matcher", function () {
   });
 
   it("can be exported", () => {
-    const jsonData = exportMatcherTable(matcher.ctx.table)
+    const jsonData = exportMatcherTable(matcher.ctx.table);
     expect(jsonData).toMatchInlineSnapshot(`
       {
         "dynamic": {
@@ -183,6 +183,6 @@ describe("Route matcher", function () {
           },
         },
       }
-    `)
-  })
+    `);
+  });
 });

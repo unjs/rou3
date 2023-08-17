@@ -66,7 +66,7 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
 }
 
 export interface DehydratedRouteTable {
-  dynamic: Map<string, DehydratedRouteTable>
-  wildcard: Map<string, { pattern: string }>
-  static: Map<string, { pattern: string }>
+  dynamic: Map<string, DehydratedRouteTable>;
+  wildcard: Map<string, { pattern: string }>;
+  static: Map<string, { pattern: string }>;
 }
