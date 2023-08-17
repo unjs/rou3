@@ -141,7 +141,7 @@ const json = exportMatcher(matcher)
 // and then rehydrate this later
 const newMatcher = createMatcherFromExport(json)
 
-const matches = matcher.matchAll('/foo/bar/baz')
+const matches = newMatcher.matchAll('/foo/bar/baz')
 ```
 
 ## Performance
