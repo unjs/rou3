@@ -42,7 +42,7 @@
     "jiti": "^1.18.2",
     "listhen": "^1.0.4",
     "ohmyfetch": "^0.4.21",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.3",
     "standard-version": "^9.5.0",
     "typescript": "^5.0.4",
     "unbuild": "^1.2.1",
