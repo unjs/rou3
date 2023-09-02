@@ -6,7 +6,6 @@ import type {
   RadixNodeData,
   RadixRouterOptions,
   LookupOptions,
-  RadixRouterOptionsPayload,
   InsertOptions,
   StaticRoutesMap,
 } from "./types";
@@ -23,49 +22,43 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
     ) as StaticRoutesMap,
   };
 
-  const normalizeTrailingSlash = (p: string) =>
+  const normalizePath = (p: string) =>
     options.strictTrailingSlash ? p : p.replace(/\/$/, "") || "/";
 
-  const isRadixRouterOptionsPayload = (
-    payload: RadixRouterOptions["routes"][string]
-  ): payload is RadixRouterOptionsPayload =>
-    typeof payload === "object" && "method" in payload && "payload" in payload;
+  const getInsertOptions = (p: string) =>
+    "method" in options
+      ? {
+          path: normalizePath(p),
+          payload: options.routes[p].payload,
+          method: options.routes[p].method,
+        }
+      : {
+          path: normalizePath(p),
+          payload: options.routes[p],
+        };
 
   if (options.routes) {
     for (const path in options.routes) {
-      const routeOptions = options.routes[path];
-      options.method && isRadixRouterOptionsPayload(routeOptions)
-        ? insert(ctx, {
-            path: normalizeTrailingSlash(path),
-            method: routeOptions.method,
-            payload: routeOptions.payload,
-          })
-        : insert(ctx, {
-            path: normalizeTrailingSlash(path),
-            payload: routeOptions,
-          });
+      insert(ctx, getInsertOptions(path));
     }
   }
 
-  const insertRoute = (pathOrOptions: string | InsertOptions<T>, data?: T) =>
-    typeof pathOrOptions === "string"
-      ? insert(ctx, {
-          path: normalizeTrailingSlash(pathOrOptions),
-          payload: data,
-        })
-      : insert(ctx, {
-          path: normalizeTrailingSlash(pathOrOptions.path),
-          payload: pathOrOptions.payload,
-          method: pathOrOptions.method,
-        });
+  const insertRoute = (pathOrObj: string | InsertOptions<T>, data?: T) => {
+    const isStr = typeof pathOrObj === "string";
+    return insert(ctx, {
+      path: normalizePath(isStr ? pathOrObj : pathOrObj.path),
+      payload: isStr ? data : pathOrObj.payload,
+      method: isStr ? undefined : pathOrObj.method,
+    });
+  };
 
   return {
     ctx,
     // @ts-expect-error - types are not matching
     lookup: (path: string, options?: LookupOptions) =>
-      lookup(ctx, normalizeTrailingSlash(path), options),
+      lookup(ctx, normalizePath(path), options),
     insert: insertRoute,
-    remove: (path: string) => remove(ctx, normalizeTrailingSlash(path)),
+    remove: (path: string) => remove(ctx, normalizePath(path)),
   };
 }
 

@@ -43,11 +43,19 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
 }
 
 export type RadixRouterOptionsPayload = Omit<InsertOptions, "path">;
-export interface RadixRouterOptions {
+
+interface RadixRouterOptionsV1 {
   strictTrailingSlash?: boolean;
-  method?: boolean;
-  routes?: Record<string, unknown> | Record<string, RadixRouterOptionsPayload>;
+  routes?: Record<string, unknown>;
 }
+
+interface RadixRouterOptionsV2 {
+  strictTrailingSlash?: boolean;
+  method: boolean;
+  routes: Record<string, RadixRouterOptionsPayload>;
+}
+
+export type RadixRouterOptions = RadixRouterOptionsV1 | RadixRouterOptionsV2;
 
 export type StaticRoutesMap = Record<HTTPMethod, Record<string, RadixNode>>;
 export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
