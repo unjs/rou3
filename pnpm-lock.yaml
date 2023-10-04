@@ -33,7 +33,7 @@ devDependencies:
     specifier: ^1.5.5
     version: 1.5.5
   prettier:
-    specifier: ^3.0.0
+    specifier: ^3.0.3
     version: 3.0.3
   standard-version:
     specifier: ^9.5.0
