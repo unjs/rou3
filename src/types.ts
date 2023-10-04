@@ -2,6 +2,7 @@ export const NODE_TYPES = {
   NORMAL: 0 as const,
   WILDCARD: 1 as const,
   PLACEHOLDER: 2 as const,
+  MIXED: 3 as const,
 };
 
 type _NODE_TYPES = typeof NODE_TYPES;
@@ -22,6 +23,7 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   children: Map<string, RadixNode<T>>;
   data: RadixNodeData | null;
   paramName: string | null;
+  paramMatcher?: string | RegExp;
   wildcardChildNode: RadixNode<T> | null;
   placeholderChildNode: RadixNode<T> | null;
 }
