@@ -47,7 +47,7 @@ function _exportMatcherFromTable(table: RouteTable): MatcherExport {
             [...table[property].entries()].map(([key, value]) => [
               key,
               _exportMatcherFromTable(value),
-            ])
+            ]),
           )
         : Object.fromEntries(table[property].entries());
   }
@@ -68,7 +68,7 @@ function _createTableFromExport(matcherExport: MatcherExport): RouteTable {
             Object.entries(matcherExport[property]).map(([key, value]) => [
               key,
               _createTableFromExport(value as any),
-            ])
+            ]),
           )
         : new Map(Object.entries(matcherExport[property]));
   }
@@ -76,7 +76,7 @@ function _createTableFromExport(matcherExport: MatcherExport): RouteTable {
 }
 
 export function createMatcherFromExport(
-  matcherExport: MatcherExport
+  matcherExport: MatcherExport,
 ): RouteMatcher {
   return _createMatcher(_createTableFromExport(matcherExport));
 }
@@ -116,7 +116,7 @@ function _sortRoutesMap(m: Map<string, any>) {
 
 function _routerNodeToTable(
   initialPath: string,
-  initialNode: RadixNode
+  initialNode: RadixNode,
 ): RouteTable {
   const table: RouteTable = _createRouteTable();
   function _addNode(path: string, node: RadixNode) {

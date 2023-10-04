@@ -9,7 +9,7 @@ export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 
 type _RadixNodeDataObject = { params?: never; [key: string]: any };
 export type RadixNodeData<
-  T extends _RadixNodeDataObject = _RadixNodeDataObject
+  T extends _RadixNodeDataObject = _RadixNodeDataObject,
 > = T;
 export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<
   T,

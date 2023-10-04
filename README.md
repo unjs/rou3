@@ -28,36 +28,36 @@ pnpm i radix3
 
 ```js
 // ESM
-import { createRouter } from 'radix3'
+import { createRouter } from "radix3";
 
 // CJS
-const { createRouter } = require('radix3')
+const { createRouter } = require("radix3");
 ```
 
 **Create a router instance and insert routes:**
 
 ```js
-const router = createRouter(/* options */)
+const router = createRouter(/* options */);
 
-router.insert('/path', { payload: 'this path' })
-router.insert('/path/:name', { payload: 'named route' })
-router.insert('/path/foo/**', { payload: 'wildcard route' })
-router.insert('/path/foo/**:name', { payload: 'named wildcard route' })
+router.insert("/path", { payload: "this path" });
+router.insert("/path/:name", { payload: "named route" });
+router.insert("/path/foo/**", { payload: "wildcard route" });
+router.insert("/path/foo/**:name", { payload: "named wildcard route" });
 ```
 
 **Match route to access matched data:**
 
 ```js
-router.lookup('/path')
+router.lookup("/path");
 // { payload: 'this path' }
 
-router.lookup('/path/fooval')
+router.lookup("/path/fooval");
 // { payload: 'named route', params: { name: 'fooval' } }
 
-router.lookup('/path/foo/bar/baz')
+router.lookup("/path/foo/bar/baz");
 // { payload: 'wildcard route' }
 
-router.lookup('/')
+router.lookup("/");
 // null (no route matched for/)
 ```
 
@@ -85,9 +85,9 @@ You can initialize router instance with options:
 const router = createRouter({
   strictTrailingSlash: true,
   routes: {
-    '/foo': {}
-  }
-})
+    "/foo": {},
+  },
+});
 ```
 
 - `routes`: An object specifying initial routes to add
@@ -98,21 +98,21 @@ const router = createRouter({
 Creates a multi matcher from router tree that can match **all routes** matching path:
 
 ```ts
-import { createRouter, toRouteMatcher } from 'radix3'
+import { createRouter, toRouteMatcher } from "radix3";
 
 const router = createRouter({
   routes: {
-    '/foo': { m: 'foo' }, // Matches /foo only
-    '/foo/**': { m: 'foo/**' }, // Matches /foo/<any>
-    '/foo/bar': { m: 'foo/bar' },  // Matches /foo/bar only
-    '/foo/bar/baz': { m: 'foo/bar/baz' }, // Matches /foo/bar/baz only
-    '/foo/*/baz': { m: 'foo/*/baz' } // Matches /foo/<any>/baz
-  }
-})
+    "/foo": { m: "foo" }, // Matches /foo only
+    "/foo/**": { m: "foo/**" }, // Matches /foo/<any>
+    "/foo/bar": { m: "foo/bar" }, // Matches /foo/bar only
+    "/foo/bar/baz": { m: "foo/bar/baz" }, // Matches /foo/bar/baz only
+    "/foo/*/baz": { m: "foo/*/baz" }, // Matches /foo/<any>/baz
+  },
+});
 
-const matcher = toRouteMatcher(router)
+const matcher = toRouteMatcher(router);
 
-const matches = matcher.matchAll('/foo/bar/baz')
+const matches = matcher.matchAll("/foo/bar/baz");
 
 // [
 //   {
@@ -132,16 +132,16 @@ const matches = matcher.matchAll('/foo/bar/baz')
 It is also possible to export and then rehydrate a matcher from pre-compiled rules.
 
 ```ts
-import { exportMatcher, createMatcherFromExport } from 'radix3'
+import { exportMatcher, createMatcherFromExport } from "radix3";
 
 // Assuming you already have a matcher
 // you can export this to a JSON-type object
-const json = exportMatcher(matcher)
+const json = exportMatcher(matcher);
 
 // and then rehydrate this later
-const newMatcher = createMatcherFromExport(json)
+const newMatcher = createMatcherFromExport(json);
 
-const matches = newMatcher.matchAll('/foo/bar/baz')
+const matches = newMatcher.matchAll("/foo/bar/baz");
 ```
 
 ## Performance
@@ -156,6 +156,7 @@ by [Charlie Duong](https://github.com/charlieduong94) (MIT)
 [MIT](./LICENSE) - Made with ❤️
 
 <!-- Badges -->
+
 [npm-version-src]: https://img.shields.io/npm/v/radix3?style=flat&colorA=18181B&colorB=F0DB4F
 [npm-version-href]: https://npmjs.com/package/radix3
 [npm-downloads-src]: https://img.shields.io/npm/dm/radix3?style=flat&colorA=18181B&colorB=F0DB4F

@@ -60,7 +60,7 @@ describe("Router lookup", function () {
             cool: "more",
           },
         },
-      }
+      },
     );
   });
 
@@ -78,7 +78,7 @@ describe("Router lookup", function () {
           path: "route/:p1/something/**:rest",
           params: { p1: "param1", rest: "c/d" },
         },
-      }
+      },
     );
   });
 

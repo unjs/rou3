@@ -9,7 +9,7 @@ import type {
 import { NODE_TYPES } from "./types";
 
 export function createRouter<T extends RadixNodeData = RadixNodeData>(
-  options: RadixRouterOptions = {}
+  options: RadixRouterOptions = {},
 ): RadixRouter<T> {
   const ctx: RadixRouterContext = {
     options,
@@ -60,16 +60,16 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
 
     // Exact matches take precedence over placeholders
     const nextNode = node.children.get(section);
-    if (nextNode !== undefined) {
-      node = nextNode;
-    } else {
+    if (nextNode === undefined) {
       node = node.placeholderChildNode;
-      if (node !== null) {
+      if (node === null) {
+        break;
+      } else {
         params[node.paramName] = section;
         paramsFound = true;
-      } else {
-        break;
       }
+    } else {
+      node = nextNode;
     }
   }
 
@@ -155,7 +155,7 @@ function remove(ctx: RadixRouterContext, path: string) {
   }
 
   if (node.data) {
-    const lastSection = sections[sections.length - 1];
+    const lastSection = sections.at(-1);
     node.data = null;
     if (Object.keys(node.children).length === 0) {
       const parentNode = node.parent;
