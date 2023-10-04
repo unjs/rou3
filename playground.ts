@@ -10,5 +10,5 @@ console.log([
   router.lookup("/path"),
   router.lookup("/path/fooval"),
   router.lookup("/path/foo/bar/baz"),
-  router.lookup("/")
+  router.lookup("/"),
 ]);

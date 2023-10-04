@@ -1,4 +1,10 @@
-import { RadixNode, RadixRouter, RadixNodeData, NODE_TYPES } from "./types";
+import {
+  RadixNode,
+  RadixRouter,
+  RadixNodeData,
+  NODE_TYPES,
+  MatcherExport,
+} from "./types";
 
 export interface RouteTable {
   static: Map<string, RadixNodeData>;
@@ -17,10 +23,10 @@ export function toRouteMatcher(router: RadixRouter): RouteMatcher {
 }
 
 function _createMatcher(table: RouteTable): RouteMatcher {
-  return <RouteMatcher>{
+  return {
     ctx: { table },
     matchAll: (path) => _matchRoutes(path, table),
-  };
+  } satisfies RouteMatcher;
 }
 
 function _createRouteTable(): RouteTable {
@@ -29,6 +35,50 @@ function _createRouteTable(): RouteTable {
     wildcard: new Map(),
     dynamic: new Map(),
   };
+}
+
+function _exportMatcherFromTable(table: RouteTable): MatcherExport {
+  const obj = Object.create(null);
+
+  for (const property in table) {
+    obj[property] =
+      property === "dynamic"
+        ? Object.fromEntries(
+            [...table[property].entries()].map(([key, value]) => [
+              key,
+              _exportMatcherFromTable(value),
+            ]),
+          )
+        : Object.fromEntries(table[property].entries());
+  }
+
+  return obj;
+}
+
+export function exportMatcher(matcher: RouteMatcher): MatcherExport {
+  return _exportMatcherFromTable(matcher.ctx.table);
+}
+
+function _createTableFromExport(matcherExport: MatcherExport): RouteTable {
+  const table: Partial<RouteTable> = {};
+  for (const property in matcherExport) {
+    table[property] =
+      property === "dynamic"
+        ? new Map(
+            Object.entries(matcherExport[property]).map(([key, value]) => [
+              key,
+              _createTableFromExport(value as any),
+            ]),
+          )
+        : new Map(Object.entries(matcherExport[property]));
+  }
+  return table as RouteTable;
+}
+
+export function createMatcherFromExport(
+  matcherExport: MatcherExport,
+): RouteMatcher {
+  return _createMatcher(_createTableFromExport(matcherExport));
 }
 
 function _matchRoutes(path: string, table: RouteTable): RadixNodeData[] {
@@ -66,7 +116,7 @@ function _sortRoutesMap(m: Map<string, any>) {
 
 function _routerNodeToTable(
   initialPath: string,
-  initialNode: RadixNode
+  initialNode: RadixNode,
 ): RouteTable {
   const table: RouteTable = _createRouteTable();
   function _addNode(path: string, node: RadixNode) {
