@@ -23,7 +23,7 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   children: Map<string, RadixNode<T>>;
   data: RadixNodeData | null;
   paramName: string | null;
-  mixedParams?: { type: "static" | "dynamic"; name: string }[];
+  paramMatcher?: string | RegExp;
   wildcardChildNode: RadixNode<T> | null;
   placeholderChildNode: RadixNode<T> | null;
 }

@@ -94,9 +94,9 @@ describe("Router lookup", function () {
   });
 
   describe("mixed params in same segemnt", function () {
-    const mixedPath = "/files/:category/:id,name:name.txt";
+    const mixedPath = "/files/:category/:id,name=:name.txt";
     testRouter([mixedPath], {
-      "/files/test/id:123,name=foobar.txt": {
+      "/files/test/123,name=foobar.txt": {
         path: mixedPath,
         params: { category: "test", id: "123", name: "foobar" },
       },

@@ -65,7 +65,12 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
       if (node === null) {
         break;
       } else {
-        params[node.paramName] = section;
+        if (node.type === NODE_TYPES.MIXED && node.paramMatcher) {
+          const matches = section.match(node.paramMatcher);
+          Object.assign(params, matches.groups);
+        } else {
+          params[node.paramName] = section;
+        }
         paramsFound = true;
       }
     } else {
@@ -125,11 +130,11 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
             childNode.paramName = params[0].slice(1);
           } else {
             childNode.type = NODE_TYPES.MIXED;
-            childNode.mixedParams = params.map((p) =>
-              p[0] === ":"
-                ? { type: "dynamic", name: p.slice(1) }
-                : { type: "static", name: p }
+            const sectionRegexString = section.replace(
+              /:(\w+)/g,
+              (_, id) => `(?<${id}>\\w+)`,
             );
+            childNode.paramMatcher = new RegExp(`^${sectionRegexString}$`);
           }
         }
         node.placeholderChildNode = childNode;
