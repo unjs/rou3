@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.0
+
+[compare changes](https://github.com/unjs/radix3/compare/v1.0.1...v1.1.0)
+
+
+### 🚀 Enhancements
+
+  - Allow exporting/importing matchers ([#62](https://github.com/unjs/radix3/pull/62))
+
+### ❤️  Contributors
+
+- Daniel Roe <daniel@roe.dev>
+
 ## v1.0.1
 
 [compare changes](https://github.com/unjs/radix3/compare/v1.0.0...v1.0.1)

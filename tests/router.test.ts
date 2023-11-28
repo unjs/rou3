@@ -60,7 +60,7 @@ describe("Router lookup", function () {
             cool: "more",
           },
         },
-      }
+      },
     );
   });
 
@@ -78,7 +78,7 @@ describe("Router lookup", function () {
           path: "route/:p1/something/**:rest",
           params: { p1: "param1", rest: "c/d" },
         },
-      }
+      },
     );
   });
 
@@ -89,6 +89,16 @@ describe("Router lookup", function () {
       "polymer/constructor": {
         path: "polymer/**",
         params: { _: "constructor" },
+      },
+    });
+  });
+
+  describe("mixed params in same segemnt", function () {
+    const mixedPath = "/files/:category/:id,name=:name.txt";
+    testRouter([mixedPath], {
+      "/files/test/123,name=foobar.txt": {
+        path: mixedPath,
+        params: { category: "test", id: "123", name: "foobar" },
       },
     });
   });
@@ -244,6 +254,19 @@ describe("Router remove", function () {
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
       path: "ui/**",
       params: { _: "components/snackbars" },
+    });
+  });
+
+  it("removes data but does not delete a node if it has children", function () {
+    const router = createRouter({
+      routes: createRoutes(["a/b", "a/b/:param1"]),
+    });
+
+    router.remove("a/b");
+    expect(router.lookup("a/b")).to.deep.equal(null);
+    expect(router.lookup("a/b/c")).to.deep.equal({
+      params: { param1: "c" },
+      path: "a/b/:param1",
     });
   });
 

@@ -2,6 +2,7 @@ export const NODE_TYPES = {
   NORMAL: 0 as const,
   WILDCARD: 1 as const,
   PLACEHOLDER: 2 as const,
+  MIXED: 3 as const,
 };
 
 type _NODE_TYPES = typeof NODE_TYPES;
@@ -9,7 +10,7 @@ export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 
 type _RadixNodeDataObject = { params?: never; [key: string]: any };
 export type RadixNodeData<
-  T extends _RadixNodeDataObject = _RadixNodeDataObject
+  T extends _RadixNodeDataObject = _RadixNodeDataObject,
 > = T;
 export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<
   T,
@@ -22,6 +23,7 @@ export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   children: Map<string, RadixNode<T>>;
   data: RadixNodeData | null;
   paramName: string | null;
+  paramMatcher?: string | RegExp;
   wildcardChildNode: RadixNode<T> | null;
   placeholderChildNode: RadixNode<T> | null;
 }
@@ -63,4 +65,10 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    * @returns A boolean signifying if the remove was successful or not
    */
   remove(path: string): boolean;
+}
+
+export interface MatcherExport {
+  dynamic: Map<string, MatcherExport>;
+  wildcard: Map<string, { pattern: string }>;
+  static: Map<string, { pattern: string }>;
 }

@@ -9,7 +9,7 @@ import type {
 import { NODE_TYPES } from "./types";
 
 export function createRouter<T extends RadixNodeData = RadixNodeData>(
-  options: RadixRouterOptions = {}
+  options: RadixRouterOptions = {},
 ): RadixRouter<T> {
   const ctx: RadixRouterContext = {
     options,
@@ -60,16 +60,21 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
 
     // Exact matches take precedence over placeholders
     const nextNode = node.children.get(section);
-    if (nextNode !== undefined) {
-      node = nextNode;
-    } else {
+    if (nextNode === undefined) {
       node = node.placeholderChildNode;
-      if (node !== null) {
-        params[node.paramName] = section;
-        paramsFound = true;
-      } else {
+      if (node === null) {
         break;
+      } else {
+        if (node.type === NODE_TYPES.MIXED && node.paramMatcher) {
+          const matches = section.match(node.paramMatcher);
+          Object.assign(params, matches.groups);
+        } else {
+          params[node.paramName] = section;
+        }
+        paramsFound = true;
       }
+    } else {
+      node = nextNode;
     }
   }
 
@@ -116,8 +121,22 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
       node.children.set(section, childNode);
 
       if (type === NODE_TYPES.PLACEHOLDER) {
-        childNode.paramName =
-          section === "*" ? `_${_unnamedPlaceholderCtr++}` : section.slice(1);
+        if (section === "*") {
+          childNode.paramName = `_${_unnamedPlaceholderCtr++}`;
+        } else {
+          const PARAMS_RE = /:\w+|[^:]+/g;
+          const params = [...section.matchAll(PARAMS_RE)].map((i) => i[0]);
+          if (params.length === 1) {
+            childNode.paramName = params[0].slice(1);
+          } else {
+            childNode.type = NODE_TYPES.MIXED;
+            const sectionRegexString = section.replace(
+              /:(\w+)/g,
+              (_, id) => `(?<${id}>\\w+)`,
+            );
+            childNode.paramMatcher = new RegExp(`^${sectionRegexString}$`);
+          }
+        }
         node.placeholderChildNode = childNode;
         isStaticRoute = false;
       } else if (type === NODE_TYPES.WILDCARD) {
@@ -155,9 +174,9 @@ function remove(ctx: RadixRouterContext, path: string) {
   }
 
   if (node.data) {
-    const lastSection = sections[sections.length - 1];
+    const lastSection = sections.at(-1);
     node.data = null;
-    if (Object.keys(node.children).length === 0) {
+    if (node.children.size === 0) {
       const parentNode = node.parent;
       parentNode.children.delete(lastSection);
       parentNode.wildcardChildNode = null;
@@ -185,7 +204,7 @@ function getNodeType(str: string) {
   if (str.startsWith("**")) {
     return NODE_TYPES.WILDCARD;
   }
-  if (str[0] === ":" || str === "*") {
+  if (str.includes(":") || str === "*") {
     return NODE_TYPES.PLACEHOLDER;
   }
   return NODE_TYPES.NORMAL;
