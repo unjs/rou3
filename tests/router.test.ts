@@ -257,7 +257,7 @@ describe("Router remove", function () {
     });
   });
 
-  it("does not remove child nodes when a non-leaf node is removed", function () {
+  it("removes data but does not delete a node if it has children", function () {
     const router = createRouter({
       routes: createRoutes(["a/b", "a/b/:param1"]),
     });
