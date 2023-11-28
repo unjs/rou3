@@ -257,6 +257,19 @@ describe("Router remove", function () {
     });
   });
 
+  it("should be able to do something", function () {
+    const router = createRouter({
+      routes: createRoutes(["a/b", "a/b/:param1"]),
+    });
+
+    router.remove("a/b");
+    expect(router.lookup("a/b")).to.deep.equal(null);
+    expect(router.lookup("a/b/c")).to.deep.equal({
+      params: { param1: "c" },
+      path: "a/b/:param1",
+    });
+  });
+
   it("should be able to remove placeholder routes", function () {
     const router = createRouter({
       routes: createRoutes(["placeholder/:choo", "placeholder/:choo/:choo2"]),
