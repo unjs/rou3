@@ -41,11 +41,11 @@
     "eslint-config-unjs": "^0.2.1",
     "jiti": "^1.21.0",
     "listhen": "^1.5.5",
-    "prettier": "^3.1.0",
+    "prettier": "^3.1.1",
     "standard-version": "^9.5.0",
-    "typescript": "^5.3.2",
+    "typescript": "^5.3.3",
     "unbuild": "^2.0.0",
     "vitest": "^0.34.6"
   },
-  "packageManager": "pnpm@8.11.0"
+  "packageManager": "pnpm@8.12.0"
 }
