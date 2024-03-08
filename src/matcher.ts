@@ -7,8 +7,8 @@ import {
 } from "./types";
 
 export interface RouteTable {
-  static: Map<string, RadixNodeData>;
-  wildcard: Map<string, RadixNodeData>;
+  static: Map<string, RadixNodeData | null>;
+  wildcard: Map<string, RadixNodeData | null>;
   dynamic: Map<string, RouteTable>;
 }
 
@@ -49,7 +49,7 @@ function _exportMatcherFromTable(table: RouteTable): MatcherExport {
               _exportMatcherFromTable(value),
             ]),
           )
-        : Object.fromEntries(table[property].entries());
+        : Object.fromEntries(table[property as keyof typeof table].entries());
   }
 
   return obj;
@@ -62,7 +62,7 @@ export function exportMatcher(matcher: RouteMatcher): MatcherExport {
 function _createTableFromExport(matcherExport: MatcherExport): RouteTable {
   const table: Partial<RouteTable> = {};
   for (const property in matcherExport) {
-    table[property] =
+    table[property as keyof MatcherExport] =
       property === "dynamic"
         ? new Map(
             Object.entries(matcherExport[property]).map(([key, value]) => [
@@ -70,7 +70,9 @@ function _createTableFromExport(matcherExport: MatcherExport): RouteTable {
               _createTableFromExport(value as any),
             ]),
           )
-        : new Map(Object.entries(matcherExport[property]));
+        : new Map(
+            Object.entries(matcherExport[property as keyof MatcherExport]),
+          );
   }
   return table as RouteTable;
 }
