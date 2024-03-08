@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.1
+
+[compare changes](https://github.com/unjs/radix3/compare/v1.1.0...v1.1.1)
+
+### 🩹 Fixes
+
+- **toRouteMatcher:** Respect non strict trailing slash ([#91](https://github.com/unjs/radix3/pull/91))
+- **matcher:** Avoid prefix overlap for wildcards ([#92](https://github.com/unjs/radix3/pull/92))
+
+### 💅 Refactors
+
+- Strict type checks ([ad79316](https://github.com/unjs/radix3/commit/ad79316))
+
+### 🏡 Chore
+
+- **release:** V1.1.0 ([c04bc04](https://github.com/unjs/radix3/commit/c04bc04))
+- Update dependencies ([c953444](https://github.com/unjs/radix3/commit/c953444))
+- Run ci against `v1` branch too ([aaf0771](https://github.com/unjs/radix3/commit/aaf0771))
+- Update dev dependencies ([ff6faab](https://github.com/unjs/radix3/commit/ff6faab))
+- Apply automated updates ([8e4a5bb](https://github.com/unjs/radix3/commit/8e4a5bb))
+
+### 🎨 Styles
+
+- Format with prettier v3 ([e77a5d5](https://github.com/unjs/radix3/commit/e77a5d5))
+
+### 🤖 CI
+
+- Add autofix script ([c314b40](https://github.com/unjs/radix3/commit/c314b40))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v1.1.0
 
 [compare changes](https://github.com/unjs/radix3/compare/v1.0.1...v1.1.0)
