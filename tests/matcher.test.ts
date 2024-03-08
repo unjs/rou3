@@ -184,8 +184,8 @@ describe("Route matcher", function () {
         "/c/**",
       ]
     `);
-    expect(_match("/c/123")).toMatchObject(_match("/c/123/"))
-    expect(_match("/c/123")).toMatchObject(_match("/c"))
+    expect(_match("/c/123")).toMatchObject(_match("/c/123/"));
+    expect(_match("/c/123")).toMatchObject(_match("/c"));
 
     expect(_match("/cart")).to.toMatchInlineSnapshot(`
       [
