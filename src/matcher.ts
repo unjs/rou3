@@ -19,13 +19,18 @@ export interface RouteMatcher {
 
 export function toRouteMatcher(router: RadixRouter): RouteMatcher {
   const table = _routerNodeToTable("", router.ctx.rootNode);
-  return _createMatcher(table);
+  return _createMatcher(table, !!router.ctx.options.strictTrailingSlash);
 }
 
-function _createMatcher(table: RouteTable): RouteMatcher {
+function _createMatcher(table: RouteTable, strictTrailingSlash: boolean): RouteMatcher {
   return {
     ctx: { table },
-    matchAll: (path) => _matchRoutes(path, table),
+    matchAll: (path) => {
+      if (!strictTrailingSlash && path.endsWith("/")) {
+        path = path.slice(0, -1) || "/";
+      }
+      return _matchRoutes(path, table)
+    },
   } satisfies RouteMatcher;
 }
 
