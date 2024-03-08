@@ -101,7 +101,7 @@ function _matchRoutes(
 
   // Wildcard
   for (const [key, value] of _sortRoutesMap(table.wildcard)) {
-    if (path.startsWith(key)) {
+    if (path === key || path.startsWith(key + "/")) {
       matches.push(value);
     }
   }
@@ -139,7 +139,9 @@ function _routerNodeToTable(
         node.type === NODE_TYPES.NORMAL &&
         !(path.includes("*") || path.includes(":"))
       ) {
-        table.static.set(path, node.data);
+        if (node.data) {
+          table.static.set(path, node.data);
+        }
       } else if (node.type === NODE_TYPES.WILDCARD) {
         table.wildcard.set(path.replace("/**", ""), node.data);
       } else if (node.type === NODE_TYPES.PLACEHOLDER) {
