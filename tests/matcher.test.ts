@@ -51,6 +51,10 @@ describe("Route matcher", function () {
     "/foo/baz",
     "/foo/baz/**",
     "/foo/*/sub",
+    "/without-trailing",
+    "/with-trailing/",
+    "/c/**",
+    "/cart",
   ]);
 
   const router = createRouter({ routes });
@@ -88,6 +92,15 @@ describe("Route matcher", function () {
           "/foo/baz" => {
             "pattern": "/foo/baz",
           },
+          "/without-trailing" => {
+            "pattern": "/without-trailing",
+          },
+          "/with-trailing" => {
+            "pattern": "/with-trailing/",
+          },
+          "/cart" => {
+            "pattern": "/cart",
+          },
         },
         "wildcard": Map {
           "/foo" => {
@@ -95,6 +108,9 @@ describe("Route matcher", function () {
           },
           "/foo/baz" => {
             "pattern": "/foo/baz/**",
+          },
+          "/c" => {
+            "pattern": "/c/**",
           },
         },
       }
@@ -142,6 +158,42 @@ describe("Route matcher", function () {
     `);
   });
 
+  it("trailing slash", () => {
+    // Defined with trailing slash
+    expect(_match("/with-trailing")).to.toMatchInlineSnapshot(`
+      [
+        "/with-trailing/",
+      ]
+    `);
+    expect(_match("/with-trailing")).toMatchObject(_match("/with-trailing/"));
+
+    // Defined without trailing slash
+    expect(_match("/without-trailing")).to.toMatchInlineSnapshot(`
+      [
+        "/without-trailing",
+      ]
+    `);
+    expect(_match("/without-trailing")).toMatchObject(
+      _match("/without-trailing/"),
+    );
+  });
+
+  it("prefix overlap", () => {
+    expect(_match("/c/123")).to.toMatchInlineSnapshot(`
+      [
+        "/c/**",
+      ]
+    `);
+    expect(_match("/c/123")).toMatchObject(_match("/c/123/"))
+    expect(_match("/c/123")).toMatchObject(_match("/c"))
+
+    expect(_match("/cart")).to.toMatchInlineSnapshot(`
+      [
+        "/cart",
+      ]
+    `);
+  });
+
   it("can be exported", () => {
     const jsonData = exportMatcher(matcher);
     expect(jsonData).toMatchInlineSnapshot(`
@@ -164,6 +216,9 @@ describe("Route matcher", function () {
           "/": {
             "pattern": "/",
           },
+          "/cart": {
+            "pattern": "/cart",
+          },
           "/foo": {
             "pattern": "/foo",
           },
@@ -173,8 +228,17 @@ describe("Route matcher", function () {
           "/foo/baz": {
             "pattern": "/foo/baz",
           },
+          "/with-trailing": {
+            "pattern": "/with-trailing/",
+          },
+          "/without-trailing": {
+            "pattern": "/without-trailing",
+          },
         },
         "wildcard": {
+          "/c": {
+            "pattern": "/c/**",
+          },
           "/foo": {
             "pattern": "/foo/**",
           },
