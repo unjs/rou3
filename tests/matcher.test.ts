@@ -53,6 +53,8 @@ describe("Route matcher", function () {
     "/foo/*/sub",
     "/without-trailing",
     "/with-trailing/",
+    "/c/**",
+    "/cart",
   ]);
 
   const router = createRouter({ routes });
@@ -96,6 +98,9 @@ describe("Route matcher", function () {
           "/with-trailing" => {
             "pattern": "/with-trailing/",
           },
+          "/cart" => {
+            "pattern": "/cart",
+          },
         },
         "wildcard": Map {
           "/foo" => {
@@ -103,6 +108,9 @@ describe("Route matcher", function () {
           },
           "/foo/baz" => {
             "pattern": "/foo/baz/**",
+          },
+          "/c" => {
+            "pattern": "/c/**",
           },
         },
       }
@@ -170,6 +178,19 @@ describe("Route matcher", function () {
     );
   });
 
+  it("prefix overlap", () => {
+    expect(_match("/c/123")).to.toMatchInlineSnapshot(`
+      [
+        "/c/**",
+      ]
+    `);
+    expect(_match("/cart")).to.toMatchInlineSnapshot(`
+      [
+        "/cart",
+      ]
+    `);
+  });
+
   it("can be exported", () => {
     const jsonData = exportMatcher(matcher);
     expect(jsonData).toMatchInlineSnapshot(`
@@ -192,6 +213,9 @@ describe("Route matcher", function () {
           "/": {
             "pattern": "/",
           },
+          "/cart": {
+            "pattern": "/cart",
+          },
           "/foo": {
             "pattern": "/foo",
           },
@@ -209,6 +233,9 @@ describe("Route matcher", function () {
           },
         },
         "wildcard": {
+          "/c": {
+            "pattern": "/c/**",
+          },
           "/foo": {
             "pattern": "/foo/**",
           },
