@@ -5,7 +5,8 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "declaration": true
+    "declaration": true,
+    "strict": true
   },
   "include": ["src"]
 }

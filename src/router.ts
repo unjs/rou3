@@ -17,7 +17,7 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
     staticRoutesMap: {},
   };
 
-  const normalizeTrailingSlash = (p) =>
+  const normalizeTrailingSlash = (p: string) =>
     options.strictTrailingSlash ? p : p.replace(/\/$/, "") || "/";
 
   if (options.routes) {
@@ -28,7 +28,6 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
 
   return {
     ctx,
-    // @ts-ignore
     lookup: (path: string) => lookup(ctx, normalizeTrailingSlash(path)),
     insert: (path: string, data: any) =>
       insert(ctx, normalizeTrailingSlash(path), data),
@@ -36,10 +35,13 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   };
 }
 
-function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
+function lookup<T extends RadixNodeData = RadixNodeData>(
+  ctx: RadixRouterContext,
+  path: string,
+): MatchedRoute<T> | null {
   const staticPathNode = ctx.staticRoutesMap[path];
   if (staticPathNode) {
-    return staticPathNode.data;
+    return staticPathNode.data as MatchedRoute<T>;
   }
 
   const sections = path.split("/");
@@ -47,7 +49,7 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
   const params: MatchedRoute["params"] = {};
   let paramsFound = false;
   let wildcardNode = null;
-  let node = ctx.rootNode;
+  let node: RadixNode | null = ctx.rootNode;
   let wildCardParam = null;
 
   for (let i = 0; i < sections.length; i++) {
@@ -65,7 +67,9 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
       if (node === null) {
         break;
       } else {
-        params[node.paramName] = section;
+        if (node.paramName) {
+          params[node.paramName] = section;
+        }
         paramsFound = true;
       }
     } else {
@@ -87,10 +91,10 @@ function lookup(ctx: RadixRouterContext, path: string): MatchedRoute {
     return {
       ...node.data,
       params: paramsFound ? params : undefined,
-    };
+    } as MatchedRoute<T>;
   }
 
-  return node.data;
+  return node.data as MatchedRoute<T>;
 }
 
 function insert(ctx: RadixRouterContext, path: string, data: any) {
@@ -103,7 +107,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
   let _unnamedPlaceholderCtr = 0;
 
   for (const section of sections) {
-    let childNode: RadixNode<RadixNodeData>;
+    let childNode: RadixNode<RadixNodeData> | undefined;
 
     if ((childNode = node.children.get(section))) {
       node = childNode;
@@ -145,7 +149,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
 function remove(ctx: RadixRouterContext, path: string) {
   let success = false;
   const sections = path.split("/");
-  let node = ctx.rootNode;
+  let node: RadixNode | undefined = ctx.rootNode;
 
   for (const section of sections) {
     node = node.children.get(section);
@@ -155,13 +159,12 @@ function remove(ctx: RadixRouterContext, path: string) {
   }
 
   if (node.data) {
-    const lastSection = sections.at(-1);
+    const lastSection = sections.at(-1) || "";
     node.data = null;
-    if (Object.keys(node.children).length === 0) {
-      const parentNode = node.parent;
-      parentNode.children.delete(lastSection);
-      parentNode.wildcardChildNode = null;
-      parentNode.placeholderChildNode = null;
+    if (Object.keys(node.children).length === 0 && node.parent) {
+      node.parent.children.delete(lastSection);
+      node.parent.wildcardChildNode = null;
+      node.parent.placeholderChildNode = null;
     }
     success = true;
   }
