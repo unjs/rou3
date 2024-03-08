@@ -19,13 +19,16 @@ export interface RouteMatcher {
 
 export function toRouteMatcher(router: RadixRouter): RouteMatcher {
   const table = _routerNodeToTable("", router.ctx.rootNode);
-  return _createMatcher(table);
+  return _createMatcher(table, router.ctx.options.strictTrailingSlash);
 }
 
-function _createMatcher(table: RouteTable): RouteMatcher {
+function _createMatcher(
+  table: RouteTable,
+  strictTrailingSlash?: boolean,
+): RouteMatcher {
   return {
     ctx: { table },
-    matchAll: (path) => _matchRoutes(path, table),
+    matchAll: (path: string) => _matchRoutes(path, table, strictTrailingSlash),
   } satisfies RouteMatcher;
 }
 
@@ -83,7 +86,16 @@ export function createMatcherFromExport(
   return _createMatcher(_createTableFromExport(matcherExport));
 }
 
-function _matchRoutes(path: string, table: RouteTable): RadixNodeData[] {
+function _matchRoutes(
+  path: string,
+  table: RouteTable,
+  strictTrailingSlash?: boolean,
+): RadixNodeData[] {
+  // By default trailing slashes are not strict
+  if (strictTrailingSlash !== true && path.endsWith("/")) {
+    path = path.slice(0, -1) || "/";
+  }
+
   // Order should be from less specific to most specific
   const matches = [];
 
