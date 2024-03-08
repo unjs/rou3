@@ -22,7 +22,10 @@ export function toRouteMatcher(router: RadixRouter): RouteMatcher {
   return _createMatcher(table, router.ctx.options.strictTrailingSlash);
 }
 
-function _createMatcher(table: RouteTable, strictTrailingSlash?: boolean): RouteMatcher {
+function _createMatcher(
+  table: RouteTable,
+  strictTrailingSlash?: boolean,
+): RouteMatcher {
   return {
     ctx: { table },
     matchAll: (path: string) => _matchRoutes(path, table, strictTrailingSlash),
@@ -83,7 +86,11 @@ export function createMatcherFromExport(
   return _createMatcher(_createTableFromExport(matcherExport));
 }
 
-function _matchRoutes(path: string, table: RouteTable, strictTrailingSlash?: boolean): RadixNodeData[] {
+function _matchRoutes(
+  path: string,
+  table: RouteTable,
+  strictTrailingSlash?: boolean,
+): RadixNodeData[] {
   // By default trailing slashes are not strict
   if (strictTrailingSlash !== true && path.endsWith("/")) {
     path = path.slice(0, -1) || "/";
