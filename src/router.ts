@@ -63,15 +63,22 @@ function lookup<T extends RadixNodeData = RadixNodeData>(
     // Exact matches take precedence over placeholders
     const nextNode = node.children.get(section);
     if (nextNode === undefined) {
-      node = node.placeholderChildNode;
-      if (node === null) {
-        break;
+      if (node && node.placeholderChildren.length > 1) {
+        // https://github.com/unjs/radix3/issues/95
+        const remaining = sections.length - i;
+        node =
+          node.placeholderChildren.find((c) => c.maxDepth === remaining) ||
+          null;
       } else {
-        if (node.paramName) {
-          params[node.paramName] = section;
-        }
-        paramsFound = true;
+        node = node.placeholderChildren[0] || null;
       }
+      if (!node) {
+        break;
+      }
+      if (node.paramName) {
+        params[node.paramName] = section;
+      }
+      paramsFound = true;
     } else {
       node = nextNode;
     }
@@ -106,6 +113,8 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
 
   let _unnamedPlaceholderCtr = 0;
 
+  const nodePath = [node];
+
   for (const section of sections) {
     let childNode: RadixNode<RadixNodeData> | undefined;
 
@@ -122,7 +131,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
       if (type === NODE_TYPES.PLACEHOLDER) {
         childNode.paramName =
           section === "*" ? `_${_unnamedPlaceholderCtr++}` : section.slice(1);
-        node.placeholderChildNode = childNode;
+        node.placeholderChildren.push(childNode);
         isStaticRoute = false;
       } else if (type === NODE_TYPES.WILDCARD) {
         node.wildcardChildNode = childNode;
@@ -130,8 +139,13 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
         isStaticRoute = false;
       }
 
+      nodePath.push(childNode);
       node = childNode;
     }
+  }
+
+  for (const [depth, node] of nodePath.entries()) {
+    node.maxDepth = Math.max(nodePath.length - depth, node.maxDepth || 0);
   }
 
   // Store whatever data was provided into the node
@@ -164,7 +178,7 @@ function remove(ctx: RadixRouterContext, path: string) {
     if (Object.keys(node.children).length === 0 && node.parent) {
       node.parent.children.delete(lastSection);
       node.parent.wildcardChildNode = null;
-      node.parent.placeholderChildNode = null;
+      node.parent.placeholderChildren = [];
     }
     success = true;
   }
@@ -175,12 +189,13 @@ function remove(ctx: RadixRouterContext, path: string) {
 function createRadixNode(options: Partial<RadixNode> = {}): RadixNode {
   return {
     type: options.type || NODE_TYPES.NORMAL,
+    depth: 0,
     parent: options.parent || null,
     children: new Map(),
     data: options.data || null,
     paramName: options.paramName || null,
     wildcardChildNode: null,
-    placeholderChildNode: null,
+    placeholderChildren: [],
   };
 }
 

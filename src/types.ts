@@ -18,12 +18,13 @@ export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<
 
 export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   type: NODE_TYPE;
+  maxDepth: number;
   parent: RadixNode<T> | null;
   children: Map<string, RadixNode<T>>;
   data: RadixNodeData | null;
   paramName: string | null;
   wildcardChildNode: RadixNode<T> | null;
-  placeholderChildNode: RadixNode<T> | null;
+  placeholderChildren: RadixNode<T>[];
 }
 
 export interface RadixRouterOptions {
