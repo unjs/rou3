@@ -189,7 +189,7 @@ function remove(ctx: RadixRouterContext, path: string) {
 function createRadixNode(options: Partial<RadixNode> = {}): RadixNode {
   return {
     type: options.type || NODE_TYPES.NORMAL,
-    depth: 0,
+    maxDepth: 0,
     parent: options.parent || null,
     children: new Map(),
     data: options.data || null,
