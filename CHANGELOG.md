@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.2
+
+[compare changes](https://github.com/unjs/radix3/compare/v1.1.1...v1.1.2)
+
+### 🩹 Fixes
+
+- Consider max depth when multiple placeholders are candidate ([#96](https://github.com/unjs/radix3/pull/96))
+
+### 🏡 Chore
+
+- Use `npm publish` ([d4a245b](https://github.com/unjs/radix3/commit/d4a245b))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v1.1.1
 
 [compare changes](https://github.com/unjs/radix3/compare/v1.1.0...v1.1.1)
