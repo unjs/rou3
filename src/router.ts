@@ -113,7 +113,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
 
   let _unnamedPlaceholderCtr = 0;
 
-  const nodePath = [node];
+  const matchedNodes = [node];
 
   for (const section of sections) {
     let childNode: RadixNode<RadixNodeData> | undefined;
@@ -139,13 +139,13 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
         isStaticRoute = false;
       }
 
-      nodePath.push(childNode);
+      matchedNodes.push(childNode);
       node = childNode;
     }
   }
 
-  for (const [depth, node] of nodePath.entries()) {
-    node.maxDepth = Math.max(nodePath.length - depth, node.maxDepth || 0);
+  for (const [depth, node] of matchedNodes.entries()) {
+    node.maxDepth = Math.max(matchedNodes.length - depth, node.maxDepth || 0);
   }
 
   // Store whatever data was provided into the node
