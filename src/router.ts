@@ -66,8 +66,19 @@ function lookup<T extends RadixNodeData = RadixNodeData>(
       if (node && node.placeholderChildren.length > 1) {
         // https://github.com/unjs/radix3/issues/95
         const remaining = sections.length - i;
+
+        const sortedPlaceholderChildren = [...node.placeholderChildren].sort(
+          (a, b) =>
+            a.maxDepth === remaining && b.maxDepth === remaining
+              ? 0
+              : a.maxDepth === remaining
+                ? -1
+                : b.maxDepth === remaining
+                  ? 1
+                  : b.maxDepth - a.maxDepth,
+        );
         node =
-          node.placeholderChildren.find((c) => c.maxDepth === remaining) ||
+          sortedPlaceholderChildren.find((c) => c.maxDepth >= remaining) ||
           null;
       } else {
         node = node.placeholderChildren[0] || null;
