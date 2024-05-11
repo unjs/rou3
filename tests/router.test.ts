@@ -135,6 +135,34 @@ describe("Router lookup", function () {
       "route/with/trailing/slash": { path: "route/with/trailing/slash/" },
     });
   });
+
+  describe("routes with lower maxDepth should be considered too", function () {
+    testRouter(
+      [
+        "route/:owner/:repo/:packageAndRefOrSha",
+        "route/:owner/:repo/:npmOrg/:packageAndRefOrSha",
+      ],
+      {
+        "route/tinylibs/tinybench/tiny@232": {
+          path: "route/:owner/:repo/:packageAndRefOrSha",
+          params: {
+            owner: "tinylibs",
+            repo: "tinybench",
+            packageAndRefOrSha: "tiny@232",
+          },
+        },
+        "route/tinylibs/tinybench/@tinylibs/tiny@232": {
+          path: "route/:owner/:repo/:npmOrg/:packageAndRefOrSha",
+          params: {
+            owner: "tinylibs",
+            repo: "tinybench",
+            npmOrg: "@tinylibs",
+            packageAndRefOrSha: "tiny@232",
+          },
+        },
+      },
+    );
+  });
 });
 
 describe("Router insert", function () {

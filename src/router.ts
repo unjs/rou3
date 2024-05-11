@@ -71,11 +71,11 @@ function lookup<T extends RadixNodeData = RadixNodeData>(
           (a, b) =>
             a.maxDepth === remaining && b.maxDepth === remaining
               ? 0
-              : a.maxDepth === remaining
+              : (a.maxDepth === remaining
                 ? -1
                 : b.maxDepth === remaining
                   ? 1
-                  : b.maxDepth - a.maxDepth,
+                  : b.maxDepth - a.maxDepth),
         );
         node =
           sortedPlaceholderChildren.find((c) => c.maxDepth >= remaining) ||
