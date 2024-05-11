@@ -139,23 +139,23 @@ describe("Router lookup", function () {
   describe("routes with lower maxDepth should be considered too", function () {
     testRouter(
       [
-        "route/",
-        "route/:packageAndRefOrSha",
-        "route/:owner/:repo/",
-        "route/:owner/:repo/:packageAndRefOrSha",
-        "route/:owner/:repo/:npmOrg/:packageAndRefOrSha",
+        // "/",
+        // "/:packageAndRefOrSha",
+        "/:owner/:repo/",
+        "/:owner/:repo/:packageAndRefOrSha",
+        "/:owner/:repo/:npmOrg/:packageAndRefOrSha",
       ],
       {
-        "route/tinylibs/tinybench/tiny@232": {
-          path: "route/:owner/:repo/:packageAndRefOrSha",
+        "/tinylibs/tinybench/tiny@232": {
+          path: "/:owner/:repo/:packageAndRefOrSha",
           params: {
             owner: "tinylibs",
             repo: "tinybench",
             packageAndRefOrSha: "tiny@232",
           },
         },
-        "route/tinylibs/tinybench/@tinylibs/tiny@232": {
-          path: "route/:owner/:repo/:npmOrg/:packageAndRefOrSha",
+        "/tinylibs/tinybench/@tinylibs/tiny@232": {
+          path: "/:owner/:repo/:npmOrg/:packageAndRefOrSha",
           params: {
             owner: "tinylibs",
             repo: "tinybench",
