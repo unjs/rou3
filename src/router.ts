@@ -22,7 +22,6 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
 
   if (options.routes) {
     for (const path in options.routes) {
-      console.log("insert", path);
       insert(ctx, normalizeTrailingSlash(path), options.routes[path]);
     }
   }
@@ -46,7 +45,6 @@ function lookup<T extends RadixNodeData = RadixNodeData>(
   }
 
   const sections = path.split("/");
-  console.log("sections", sections);
 
   const params: MatchedRoute["params"] = {};
   let paramsFound = false;
@@ -56,7 +54,6 @@ function lookup<T extends RadixNodeData = RadixNodeData>(
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
-    console.log(i, "section", section, node);
 
     if (node.wildcardChildNode !== null) {
       wildcardNode = node.wildcardChildNode;
@@ -67,37 +64,15 @@ function lookup<T extends RadixNodeData = RadixNodeData>(
     const nextNode = node.children.get(section);
     if (nextNode === undefined) {
       if (node && node.placeholderChildren.length > 1) {
-        console.log("node && node.placeholderChildren.length > 1");
         // https://github.com/unjs/radix3/issues/95
         const remaining = sections.length - i;
-        console.log("i", i, "remaining", remaining, "sections", sections);
-        console.log("node.placeholderChildren", node.placeholderChildren);
-        // prioritize items with the exact maxDepth as remaining
-        const sortedPlaceholderChildren = [...node.placeholderChildren].sort(
-          (a, b) => {
-            if (a.maxDepth === remaining && b.maxDepth === remaining) {
-              return 0;
-            }
-            else if (a.maxDepth === remaining) {
-              return -1;
-            }
-            else if (b.maxDepth === remaining) {
-              return 1;
-            }
-            else {
-              return b.maxDepth - a.maxDepth;
-            }
-          },
-        );
-
         node =
-          sortedPlaceholderChildren.find((c) => c.maxDepth >= remaining) || null;
+          node.placeholderChildren.find((c) => c.maxDepth === remaining) ||
+          null;
       } else {
-        console.log("here");
         node = node.placeholderChildren[0] || null;
       }
       if (!node) {
-        console.log("unfound node");
         break;
       }
       if (node.paramName) {
@@ -163,30 +138,14 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
         childNode.paramName = section.slice(3 /* "**:" */) || "_";
         isStaticRoute = false;
       }
+
+      matchedNodes.push(childNode);
       node = childNode;
     }
-    matchedNodes.push(childNode);
   }
 
-  console.log(path, "matchedNodes length", matchedNodes.length);
-  for (const [depth, matchedNode] of matchedNodes.entries()) {
-    const prev = matchedNode.maxDepth;
-
-    matchedNode.maxDepth = Math.max(
-      matchedNodes.length - depth,
-      matchedNode.maxDepth || 0,
-    );
-    console.log("sections", sections, "depth", depth);
-    console.log(
-      "prev node.maxDepth",
-      prev,
-      "maybe",
-      matchedNodes.length - depth,
-      "node.maxDepth",
-      sections[depth] ?? " ",
-      matchedNode.maxDepth,
-    );
-    // node.maxDepth = matchedNodes.length - depth;
+  for (const [depth, node] of matchedNodes.entries()) {
+    node.maxDepth = Math.max(matchedNodes.length - depth, node.maxDepth || 0);
   }
 
   // Store whatever data was provided into the node
