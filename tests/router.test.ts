@@ -139,6 +139,9 @@ describe("Router lookup", function () {
   describe("routes with lower maxDepth should be considered too", function () {
     testRouter(
       [
+        "route/",
+        "route/:packageAndRefOrSha",
+        "route/:owner/:repo/",
         "route/:owner/:repo/:packageAndRefOrSha",
         "route/:owner/:repo/:npmOrg/:packageAndRefOrSha",
       ],
