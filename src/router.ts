@@ -71,21 +71,19 @@ function lookup<T extends RadixNodeData = RadixNodeData>(
           (a, b) => {
             if (a.maxDepth === remaining && b.maxDepth === remaining) {
               return 0;
-            }
-            else if (a.maxDepth === remaining) {
+            } else if (a.maxDepth === remaining) {
               return -1;
-            }
-            else if (b.maxDepth === remaining) {
+            } else if (b.maxDepth === remaining) {
               return 1;
-            }
-            else {
+            } else {
               return b.maxDepth - a.maxDepth;
             }
           },
         );
 
         node =
-          sortedPlaceholderChildren.find((c) => c.maxDepth >= remaining) || null;
+          sortedPlaceholderChildren.find((c) => c.maxDepth >= remaining) ||
+          null;
       } else {
         node = node.placeholderChildren[0] || null;
       }
