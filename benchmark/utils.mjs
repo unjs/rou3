@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 import { readFileSync } from "node:fs";
 import os from "node:os";
 import { createRouter } from "radix3";

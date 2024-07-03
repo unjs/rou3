@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 import Benchmark from "benchmark"; // https://www.npmjs.com/package/benchmark'
 import {
   printEnv,

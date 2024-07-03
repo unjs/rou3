@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 
 import autocannon from "autocannon"; // https://github.com/mcollina/autocannon
 import { listen } from "listhen";
