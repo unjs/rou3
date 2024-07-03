@@ -8,7 +8,7 @@ export function formatTree(
 ) {
   result.push(
     // prettier-ignore
-    `${prefix}${depth === 0 ? "" : "├── "}${node.key ? `/${node.key}` : (depth === 0 ? "<root>" : "<?>")}${node.data === undefined ? "" : ` ┈> [${node.data.path}]`}`,
+    `${prefix}${depth === 0 ? "" : "├── "}${node.key ? `/${node.key}` : (depth === 0 ? "<root>" : "<?>")}${node.data === undefined ? "" : ` ┈> [${node.data.path || JSON.stringify(node.data)}]`}`,
   );
 
   const childrenArray = [

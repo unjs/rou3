@@ -1,29 +1,40 @@
-import { describe, it, expect } from "vitest";
-import { createRouter, exportMatcher, toRouteMatcher } from "../src";
+import { describe, it, expect, beforeAll } from "vitest";
+import { createRouter } from "../src";
+import { formatTree } from "./_utils";
 
 export function createRoutes(paths) {
-  return Object.fromEntries(paths.map((path) => [path, { pattern: path }]));
+  return Object.fromEntries(paths.map((path) => [path, { path }]));
 }
 
-describe("Route matcher", function () {
-  it("readme example works", () => {
-    const router = createRouter({
-      routes: {
-        "/foo": { m: "foo" },
-        "/foo/**": { m: "foo/**", order: "2" },
-        "/foo/bar": { m: "foo/bar" },
-        "/foo/bar/baz": { m: "foo/bar/baz", order: "4" },
-        "/foo/*/baz": { m: "foo/*/baz", order: "3" },
-        "/**": { order: "1" },
-      },
-    });
+it("readme example works", () => {
+  const router = createRouter({
+    routes: {
+      "/foo": { m: "foo" },
+      "/foo/**": { m: "foo/**", order: "2" },
+      "/foo/bar": { m: "foo/bar" },
+      "/foo/bar/baz": { m: "foo/bar/baz", order: "4" },
+      "/foo/*/baz": { m: "foo/*/baz", order: "3" },
+      "/**": { m: "/**", order: "1" },
+    },
+  });
 
-    const matcher = toRouteMatcher(router);
-    const matches = matcher.matchAll("/foo/bar/baz");
+  expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
+      "<root>
+          ├── /foo ┈> [{"m":"foo"}]
+          │       ├── /bar ┈> [{"m":"foo/bar"}]
+          │       │       ├── /baz ┈> [{"m":"foo/bar/baz","order":"4"}]
+          │       ├── /*
+          │       │       ├── /baz ┈> [{"m":"foo/*/baz","order":"3"}]
+          │       ├── /** ┈> [{"m":"foo/**","order":"2"}]
+          ├── /** ┈> [{"m":"/**","order":"1"}]"
+    `);
 
-    expect(matches).to.toMatchInlineSnapshot(`
+  const matches = router.matchAll("/foo/bar/baz");
+
+  expect(matches).to.toMatchInlineSnapshot(`
       [
         {
+          "m": "/**",
           "order": "1",
         },
         {
@@ -40,8 +51,9 @@ describe("Route matcher", function () {
         },
       ]
     `);
-  });
+});
 
+describe("route matcher", () => {
   const routes = createRoutes([
     "/",
     "/foo",
@@ -58,195 +70,137 @@ describe("Route matcher", function () {
   ]);
 
   const router = createRouter({ routes });
-  const matcher = toRouteMatcher(router);
 
-  const _match = (path) => matcher.matchAll(path).map((r) => r.pattern);
-
-  it("can create route table", () => {
-    expect(matcher.ctx.table).to.toMatchInlineSnapshot(`
-      {
-        "dynamic": Map {
-          "/foo" => {
-            "dynamic": Map {},
-            "static": Map {
-              "/sub" => {
-                "pattern": "/foo/*/sub",
-              },
-              "/" => {
-                "pattern": "/foo/*",
-              },
-            },
-            "wildcard": Map {},
-          },
-        },
-        "static": Map {
-          "/" => {
-            "pattern": "/",
-          },
-          "/foo" => {
-            "pattern": "/foo",
-          },
-          "/foo/bar" => {
-            "pattern": "/foo/bar",
-          },
-          "/foo/baz" => {
-            "pattern": "/foo/baz",
-          },
-          "/without-trailing" => {
-            "pattern": "/without-trailing",
-          },
-          "/with-trailing" => {
-            "pattern": "/with-trailing/",
-          },
-          "/cart" => {
-            "pattern": "/cart",
-          },
-        },
-        "wildcard": Map {
-          "/foo" => {
-            "pattern": "/foo/**",
-          },
-          "/foo/baz" => {
-            "pattern": "/foo/baz/**",
-          },
-          "/c" => {
-            "pattern": "/c/**",
-          },
-        },
-      }
+  it("snapshot", () => {
+    expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
+      "<root> ┈> [/]
+          ├── /foo ┈> [/foo]
+          │       ├── /bar ┈> [/foo/bar]
+          │       ├── /baz ┈> [/foo/baz]
+          │       │       ├── /** ┈> [/foo/baz/**]
+          │       ├── /* ┈> [/foo/*]
+          │       │       ├── /sub ┈> [/foo/*/sub]
+          │       ├── /** ┈> [/foo/**]
+          ├── /without-trailing ┈> [/without-trailing]
+          ├── /with-trailing ┈> [/with-trailing/]
+          ├── /c
+          │       ├── /** ┈> [/c/**]
+          ├── /cart ┈> [/cart]"
     `);
   });
 
   it("can match routes", () => {
-    expect(_match("/")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/")).to.toMatchInlineSnapshot(`
       [
-        "/",
+        {
+          "path": "/",
+        },
       ]
     `);
-    expect(_match("/foo")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/foo")).to.toMatchInlineSnapshot(`
       [
-        "/foo/**",
-        "/foo",
+        {
+          "path": "/foo/**",
+        },
+        {
+          "path": "/foo",
+        },
       ]
     `);
-    expect(_match("/foo/bar")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/foo/bar")).to.toMatchInlineSnapshot(`
       [
-        "/foo/**",
-        "/foo/*",
-        "/foo/bar",
+        {
+          "path": "/foo/**",
+        },
+        {
+          "path": "/foo/*",
+        },
+        {
+          "path": "/foo/bar",
+        },
       ]
     `);
-    expect(_match("/foo/baz")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/foo/baz")).to.toMatchInlineSnapshot(`
       [
-        "/foo/**",
-        "/foo/baz/**",
-        "/foo/*",
-        "/foo/baz",
+        {
+          "path": "/foo/**",
+        },
+        {
+          "path": "/foo/*",
+        },
+        {
+          "path": "/foo/baz/**",
+        },
+        {
+          "path": "/foo/baz",
+        },
       ]
     `);
-    expect(_match("/foo/123/sub")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/foo/123/sub")).to.toMatchInlineSnapshot(`
       [
-        "/foo/**",
-        "/foo/*/sub",
+        {
+          "path": "/foo/**",
+        },
+        {
+          "path": "/foo/*/sub",
+        },
       ]
     `);
-    expect(_match("/foo/123")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/foo/123")).to.toMatchInlineSnapshot(`
       [
-        "/foo/**",
-        "/foo/*",
+        {
+          "path": "/foo/**",
+        },
+        {
+          "path": "/foo/*",
+        },
       ]
     `);
   });
 
   it("trailing slash", () => {
     // Defined with trailing slash
-    expect(_match("/with-trailing")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/with-trailing")).to.toMatchInlineSnapshot(`
       [
-        "/with-trailing/",
+        {
+          "path": "/with-trailing/",
+        },
       ]
     `);
-    expect(_match("/with-trailing")).toMatchObject(_match("/with-trailing/"));
+    expect(router.matchAll("/with-trailing")).toMatchObject(
+      router.matchAll("/with-trailing/"),
+    );
 
     // Defined without trailing slash
-    expect(_match("/without-trailing")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/without-trailing")).to.toMatchInlineSnapshot(`
       [
-        "/without-trailing",
+        {
+          "path": "/without-trailing",
+        },
       ]
     `);
-    expect(_match("/without-trailing")).toMatchObject(
-      _match("/without-trailing/"),
+    expect(router.matchAll("/without-trailing")).toMatchObject(
+      router.matchAll("/without-trailing/"),
     );
   });
 
   it("prefix overlap", () => {
-    expect(_match("/c/123")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/c/123")).to.toMatchInlineSnapshot(`
       [
-        "/c/**",
+        {
+          "path": "/c/**",
+        },
       ]
     `);
-    expect(_match("/c/123")).toMatchObject(_match("/c/123/"));
-    expect(_match("/c/123")).toMatchObject(_match("/c"));
+    expect(router.matchAll("/c/123")).toMatchObject(router.matchAll("/c/123/"));
+    expect(router.matchAll("/c/123")).toMatchObject(router.matchAll("/c"));
 
-    expect(_match("/cart")).to.toMatchInlineSnapshot(`
+    expect(router.matchAll("/cart")).to.toMatchInlineSnapshot(`
       [
-        "/cart",
+        {
+          "path": "/cart",
+        },
       ]
-    `);
-  });
-
-  it("can be exported", () => {
-    const jsonData = exportMatcher(matcher);
-    expect(jsonData).toMatchInlineSnapshot(`
-      {
-        "dynamic": {
-          "/foo": {
-            "dynamic": {},
-            "static": {
-              "/": {
-                "pattern": "/foo/*",
-              },
-              "/sub": {
-                "pattern": "/foo/*/sub",
-              },
-            },
-            "wildcard": {},
-          },
-        },
-        "static": {
-          "/": {
-            "pattern": "/",
-          },
-          "/cart": {
-            "pattern": "/cart",
-          },
-          "/foo": {
-            "pattern": "/foo",
-          },
-          "/foo/bar": {
-            "pattern": "/foo/bar",
-          },
-          "/foo/baz": {
-            "pattern": "/foo/baz",
-          },
-          "/with-trailing": {
-            "pattern": "/with-trailing/",
-          },
-          "/without-trailing": {
-            "pattern": "/without-trailing",
-          },
-        },
-        "wildcard": {
-          "/c": {
-            "pattern": "/c/**",
-          },
-          "/foo": {
-            "pattern": "/foo/**",
-          },
-          "/foo/baz": {
-            "pattern": "/foo/baz/**",
-          },
-        },
-      }
     `);
   });
 });
