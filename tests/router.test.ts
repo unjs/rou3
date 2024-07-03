@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createRouter, NODE_TYPES } from "../src";
+import { skip } from "node:test";
 
 export function createRoutes(paths) {
   return Object.fromEntries(paths.map((path) => [path, { path }]));
@@ -14,9 +15,12 @@ function testRouter(paths, tests?) {
   }
 
   for (const path in tests) {
-    it(`lookup ${path} should be ${JSON.stringify(tests[path])}`, () => {
-      expect(router.lookup(path)).to.deep.equal(tests[path]);
-    });
+    it.skipIf(tests[path]?.skip)(
+      `lookup ${path} should be ${JSON.stringify(tests[path])}`,
+      () => {
+        expect(router.lookup(path)).to.deep.equal(tests[path]);
+      },
+    );
   }
 }
 
@@ -63,40 +67,43 @@ describe("Router lookup", function () {
       },
     );
 
-    // TODO: Backport https://github.com/unjs/radix3/pull/96 from v1
-    // testRouter(["/", "/:a", "/:a/:y/:x/:b", "/:a/:x/:b", "/:a/:b"], {
-    //   "/": { path: "/" },
-    //   "/a": {
-    //     path: "/:a",
-    //     params: {
-    //       a: "a",
-    //     },
-    //   },
-    //   "/a/b": {
-    //     path: "/:a/:b",
-    //     params: {
-    //       a: "a",
-    //       b: "b",
-    //     },
-    //   },
-    //   "/a/x/b": {
-    //     path: "/:a/:x/:b",
-    //     params: {
-    //       a: "a",
-    //       b: "b",
-    //       x: "x",
-    //     },
-    //   },
-    //   "/a/y/x/b": {
-    //     path: "/:a/:y/:x/:b",
-    //     params: {
-    //       a: "a",
-    //       b: "b",
-    //       x: "x",
-    //       y: "y",
-    //     },
-    //   },
-    // });
+    testRouter(["/", "/:a", "/:a/:y/:x/:b", "/:a/:x/:b", "/:a/:b"], {
+      "/": { path: "/" },
+      "/a": {
+        path: "/:a",
+        params: {
+          a: "a",
+        },
+      },
+      "/a/b": {
+        path: "/:a/:b",
+        params: {
+          a: "a",
+          b: "b",
+        },
+      },
+      "/a/x/b": {
+        path: "/:a/:x/:b",
+        // TODO: https://github.com/unjs/radix3/pull/96
+        skip: true,
+        params: {
+          a: "a",
+          b: "b",
+          x: "x",
+        },
+      },
+      "/a/y/x/b": {
+        path: "/:a/:y/:x/:b",
+        // TODO: https://github.com/unjs/radix3/pull/96
+        skip: true,
+        params: {
+          a: "a",
+          b: "b",
+          x: "x",
+          y: "y",
+        },
+      },
+    });
   });
 
   describe("should be able to perform wildcard lookups", function () {
@@ -128,7 +135,7 @@ describe("Router lookup", function () {
     });
   });
 
-  describe("mixed params in same segemnt", function () {
+  describe("mixed params in same segment", function () {
     const mixedPath = "/files/:category/:id,name=:name.txt";
     testRouter([mixedPath], {
       "/files/test/123,name=foobar.txt": {
@@ -213,7 +220,7 @@ describe("Router insert", function () {
     expect(chootChooWildcardNode!.type).to.equal(NODE_TYPES.WILDCARD);
   });
 
-  it("should be able to initialize routes via the router contructor", function () {
+  it("should be able to initialize routes via the router constructor", function () {
     const router = createRouter({
       routes: {
         "/api/v1": { value: 1 },
