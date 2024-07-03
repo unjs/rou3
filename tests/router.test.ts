@@ -62,6 +62,41 @@ describe("Router lookup", function () {
         },
       },
     );
+
+    // TODO: Backport https://github.com/unjs/radix3/pull/96 from v1
+    // testRouter(["/", "/:a", "/:a/:y/:x/:b", "/:a/:x/:b", "/:a/:b"], {
+    //   "/": { path: "/" },
+    //   "/a": {
+    //     path: "/:a",
+    //     params: {
+    //       a: "a",
+    //     },
+    //   },
+    //   "/a/b": {
+    //     path: "/:a/:b",
+    //     params: {
+    //       a: "a",
+    //       b: "b",
+    //     },
+    //   },
+    //   "/a/x/b": {
+    //     path: "/:a/:x/:b",
+    //     params: {
+    //       a: "a",
+    //       b: "b",
+    //       x: "x",
+    //     },
+    //   },
+    //   "/a/y/x/b": {
+    //     path: "/:a/:y/:x/:b",
+    //     params: {
+    //       a: "a",
+    //       b: "b",
+    //       x: "x",
+    //       y: "y",
+    //     },
+    //   },
+    // });
   });
 
   describe("should be able to perform wildcard lookups", function () {
