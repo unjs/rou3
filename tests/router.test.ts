@@ -104,6 +104,37 @@ describe("Router lookup", function () {
         },
       },
     });
+
+    testRouter(
+      [
+        "/",
+        "/:packageAndRefOrSha",
+        "/:owner/:repo/",
+        "/:owner/:repo/:packageAndRefOrSha",
+        "/:owner/:repo/:npmOrg/:packageAndRefOrSha",
+      ],
+      {
+        "/tinylibs/tinybench/tiny@232": {
+          // TODO: https://github.com/unjs/radix3/pull/103
+          skip: true,
+          path: "/:owner/:repo/:packageAndRefOrSha",
+          params: {
+            owner: "tinylibs",
+            repo: "tinybench",
+            packageAndRefOrSha: "tiny@232",
+          },
+        },
+        "/tinylibs/tinybench/@tinylibs/tiny@232": {
+          path: "/:owner/:repo/:npmOrg/:packageAndRefOrSha",
+          params: {
+            owner: "tinylibs",
+            repo: "tinybench",
+            npmOrg: "@tinylibs",
+            packageAndRefOrSha: "tiny@232",
+          },
+        },
+      },
+    );
   });
 
   describe("should be able to perform wildcard lookups", function () {
