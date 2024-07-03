@@ -1,8 +1,7 @@
 export const NODE_TYPES = {
-  NORMAL: 0 as const,
-  WILDCARD: 1 as const,
-  PLACEHOLDER: 2 as const,
-  MIXED: 3 as const,
+  STATIC: 0 as const,
+  PARAM: 1 as const,
+  WILDCARD: 3 as const,
 };
 
 type _NODE_TYPES = typeof NODE_TYPES;
@@ -18,14 +17,15 @@ export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<
 > & { params?: Record<string, any> };
 
 export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
-  type: NODE_TYPE;
-  parent: RadixNode<T> | null;
-  children: Map<string, RadixNode<T>>;
-  data: RadixNodeData | null;
-  paramName: string | null;
-  paramMatcher?: string | RegExp;
-  wildcardChildNode: RadixNode<T> | null;
-  placeholderChildNode: RadixNode<T> | null;
+  key: string;
+
+  staticChildren?: Map<string, RadixNode<T>>;
+  paramChild?: RadixNode<T>;
+  wildcardChild?: RadixNode<T>;
+
+  index?: number;
+  data?: T;
+  paramNames?: Array<{ index: number; name: string | RegExp }>;
 }
 
 export interface RadixRouterOptions {
@@ -35,7 +35,7 @@ export interface RadixRouterOptions {
 
 export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
   options: RadixRouterOptions;
-  rootNode: RadixNode<T>;
+  root: RadixNode<T>;
   staticRoutesMap: Record<string, RadixNode>;
 }
 
@@ -48,7 +48,7 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    *
    * @returns The data that was originally inserted into the tree
    */
-  lookup(path: string): MatchedRoute<T> | null;
+  lookup(path: string): MatchedRoute<T> | undefined;
 
   /**
    * Perform an insert into the radix tree

@@ -1,17 +1,35 @@
 import { describe, it, expect } from "vitest";
-import { createRouter, NODE_TYPES } from "../src";
-import { skip } from "node:test";
+import { createRouter, RadixRouter } from "../src";
+import { formatTree } from "./_utils";
 
-export function createRoutes(paths) {
+type TestRoute = {
+  path: string;
+  params?: Record<string, string>;
+  skip?: boolean;
+};
+
+type TestRoutes = Record<string, TestRoute | undefined>;
+
+export function createTestRoutes(paths: string[]): TestRoutes {
   return Object.fromEntries(paths.map((path) => [path, { path }]));
 }
 
-function testRouter(paths, tests?) {
-  const routes = createRoutes(paths);
+function testRouter(
+  paths: string[],
+  before?: (ctx: { routes: TestRoutes; router: RadixRouter }) => void,
+  tests?: TestRoutes,
+) {
+  const routes = createTestRoutes(paths);
   const router = createRouter({ routes });
 
   if (!tests) {
     tests = routes;
+  }
+
+  if (before) {
+    it("before", () => {
+      before({ routes, router });
+    });
   }
 
   for (const path in tests) {
@@ -25,13 +43,21 @@ function testRouter(paths, tests?) {
 }
 
 describe("Router lookup", function () {
-  describe("static routes", function () {
-    testRouter([
-      "/",
-      "/route",
-      "/another-router",
-      "/this/is/yet/another/route",
-    ]);
+  describe("static routes", () => {
+    testRouter(
+      ["/", "/route", "/another-router", "/this/is/yet/another/route"],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(`
+        "<root> ┈> [/]
+            ├── /route ┈> [/route]
+            ├── /another-router ┈> [/another-router]
+            ├── /this
+            │       ├── /is
+            │       │       ├── /yet
+            │       │       │       ├── /another
+            │       │       │       │       ├── /route ┈> [/this/is/yet/another/route]"
+      `),
+    );
   });
 
   describe("retrieve placeholders", function () {
@@ -41,6 +67,19 @@ describe("Router lookup", function () {
         "carbon/:element/test/:testing",
         "this/:route/has/:cool/stuff",
       ],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(`
+          "<root>
+              ├── /carbon
+              │       ├── /* ┈> [carbon/:element]
+              │       │       ├── /test
+              │       │       │       ├── /* ┈> [carbon/:element/test/:testing]
+              ├── /this
+              │       ├── /*
+              │       │       ├── /has
+              │       │       │       ├── /*
+              │       │       │       │       ├── /stuff ┈> [this/:route/has/:cool/stuff]"
+        `),
       {
         "carbon/test1": {
           path: "carbon/:element",
@@ -48,8 +87,8 @@ describe("Router lookup", function () {
             element: "test1",
           },
         },
-        "/carbon": null,
-        "carbon/": null,
+        "/carbon": undefined,
+        "carbon/": undefined,
         "carbon/test2/test/test23": {
           path: "carbon/:element/test/:testing",
           params: {
@@ -67,43 +106,52 @@ describe("Router lookup", function () {
       },
     );
 
-    testRouter(["/", "/:a", "/:a/:y/:x/:b", "/:a/:x/:b", "/:a/:b"], {
-      "/": { path: "/" },
-      "/a": {
-        path: "/:a",
-        params: {
-          a: "a",
+    testRouter(
+      ["/", "/:a", "/:a/:y/:x/:b", "/:a/:x/:b", "/:a/:b"],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(
+          `
+          "<root> ┈> [/]
+              ├── /* ┈> [/:a]
+              │       ├── /* ┈> [/:a/:b]
+              │       │       ├── /* ┈> [/:a/:x/:b]
+              │       │       │       ├── /* ┈> [/:a/:y/:x/:b]"
+        `,
+        ),
+      {
+        "/": { path: "/" },
+        "/a": {
+          path: "/:a",
+          params: {
+            a: "a",
+          },
+        },
+        "/a/b": {
+          path: "/:a/:b",
+          params: {
+            a: "a",
+            b: "b",
+          },
+        },
+        "/a/x/b": {
+          path: "/:a/:x/:b",
+          params: {
+            a: "a",
+            b: "b",
+            x: "x",
+          },
+        },
+        "/a/y/x/b": {
+          path: "/:a/:y/:x/:b",
+          params: {
+            a: "a",
+            b: "b",
+            x: "x",
+            y: "y",
+          },
         },
       },
-      "/a/b": {
-        path: "/:a/:b",
-        params: {
-          a: "a",
-          b: "b",
-        },
-      },
-      "/a/x/b": {
-        path: "/:a/:x/:b",
-        // TODO: https://github.com/unjs/radix3/pull/96
-        skip: true,
-        params: {
-          a: "a",
-          b: "b",
-          x: "x",
-        },
-      },
-      "/a/y/x/b": {
-        path: "/:a/:y/:x/:b",
-        // TODO: https://github.com/unjs/radix3/pull/96
-        skip: true,
-        params: {
-          a: "a",
-          b: "b",
-          x: "x",
-          y: "y",
-        },
-      },
-    });
+    );
 
     testRouter(
       [
@@ -113,10 +161,18 @@ describe("Router lookup", function () {
         "/:owner/:repo/:packageAndRefOrSha",
         "/:owner/:repo/:npmOrg/:packageAndRefOrSha",
       ],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(
+          `
+          "<root> ┈> [/]
+              ├── /* ┈> [/:packageAndRefOrSha]
+              │       ├── /* ┈> [/:owner/:repo/]
+              │       │       ├── /* ┈> [/:owner/:repo/:packageAndRefOrSha]
+              │       │       │       ├── /* ┈> [/:owner/:repo/:npmOrg/:packageAndRefOrSha]"
+        `,
+        ),
       {
         "/tinylibs/tinybench/tiny@232": {
-          // TODO: https://github.com/unjs/radix3/pull/103
-          skip: true,
           path: "/:owner/:repo/:packageAndRefOrSha",
           params: {
             owner: "tinylibs",
@@ -137,9 +193,21 @@ describe("Router lookup", function () {
     );
   });
 
-  describe("should be able to perform wildcard lookups", function () {
+  describe("should be able to perform wildcard lookups", () => {
     testRouter(
       ["polymer/**:id", "polymer/another/route", "route/:p1/something/**:rest"],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(`
+          "<root>
+              ├── /polymer
+              │       ├── /another
+              │       │       ├── /route ┈> [polymer/another/route]
+              │       ├── /** ┈> [polymer/**:id]
+              ├── /route
+              │       ├── /*
+              │       │       ├── /something
+              │       │       │       ├── /** ┈> [route/:p1/something/**:rest]"
+        `),
       {
         "polymer/another/route": { path: "polymer/another/route" },
         "polymer/anon": { path: "polymer/**:id", params: { id: "anon" } },
@@ -156,152 +224,128 @@ describe("Router lookup", function () {
   });
 
   describe("unnamed placeholders", function () {
-    testRouter(["polymer/**", "polymer/route/*"], {
-      "polymer/foo/bar": { path: "polymer/**", params: { _: "foo/bar" } },
-      "polymer/route/anon": { path: "polymer/route/*", params: { _0: "anon" } },
-      "polymer/constructor": {
-        path: "polymer/**",
-        params: { _: "constructor" },
+    testRouter(
+      ["polymer/**", "polymer/route/*"],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(`
+          "<root>
+              ├── /polymer
+              │       ├── /route
+              │       │       ├── /* ┈> [polymer/route/*]
+              │       ├── /** ┈> [polymer/**]"
+        `),
+      {
+        "polymer/foo/bar": { path: "polymer/**", params: { _: "foo/bar" } },
+        "polymer/route/anon": {
+          path: "polymer/route/*",
+          params: { _0: "anon" },
+        },
+        "polymer/constructor": {
+          path: "polymer/**",
+          params: { _: "constructor" },
+        },
       },
-    });
+    );
   });
 
   describe("mixed params in same segment", function () {
     const mixedPath = "/files/:category/:id,name=:name.txt";
-    testRouter([mixedPath], {
-      "/files/test/123,name=foobar.txt": {
-        path: mixedPath,
-        params: { category: "test", id: "123", name: "foobar" },
+    testRouter(
+      [mixedPath],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(`
+          "<root>
+              ├── /files
+              │       ├── /*
+              │       │       ├── /* ┈> [/files/:category/:id,name=:name.txt]"
+        `),
+      {
+        "/files/test/123,name=foobar.txt": {
+          path: mixedPath,
+          params: { category: "test", id: "123", name: "foobar" },
+        },
       },
-    });
+    );
   });
 
   describe("should be able to match routes with trailing slash", function () {
-    testRouter(["route/without/trailing/slash", "route/with/trailing/slash/"], {
-      "route/without/trailing/slash": { path: "route/without/trailing/slash" },
-      "route/with/trailing/slash/": { path: "route/with/trailing/slash/" },
-      "route/without/trailing/slash/": { path: "route/without/trailing/slash" },
-      "route/with/trailing/slash": { path: "route/with/trailing/slash/" },
-    });
+    testRouter(
+      ["route/without/trailing/slash", "route/with/trailing/slash/"],
+      (ctx) =>
+        expect(formatTree(ctx.router.ctx.root)).toMatchInlineSnapshot(`
+        "<root>
+            ├── /route
+            │       ├── /without
+            │       │       ├── /trailing
+            │       │       │       ├── /slash ┈> [route/without/trailing/slash]
+            │       ├── /with
+            │       │       ├── /trailing
+            │       │       │       ├── /slash ┈> [route/with/trailing/slash/]"
+      `),
+      {
+        "route/without/trailing/slash": {
+          path: "route/without/trailing/slash",
+        },
+        "route/with/trailing/slash/": { path: "route/with/trailing/slash/" },
+        "route/without/trailing/slash/": {
+          path: "route/without/trailing/slash",
+        },
+        "route/with/trailing/slash": { path: "route/with/trailing/slash/" },
+      },
+    );
   });
 });
 
-describe("Router insert", function () {
-  it("should be able to insert nodes correctly into the tree", function () {
-    const router = createRouter();
-    router.insert("hello", {});
-    router.insert("cool", {});
-    router.insert("hi", {});
-    router.insert("helium", {});
-    router.insert("/choo", {});
-    router.insert("//choo", {});
-
-    const rootNode = router.ctx.rootNode;
-    const helloNode = rootNode.children.get("hello");
-    const coolNode = rootNode.children.get("cool");
-    const hiNode = rootNode.children.get("hi");
-    const heliumNode = rootNode.children.get("helium");
-    const slashNode = rootNode.children.get("");
-
-    expect(helloNode).to.exist;
-    expect(coolNode).to.exist;
-    expect(hiNode).to.exist;
-    expect(heliumNode).to.exist;
-    expect(slashNode).to.exist;
-
-    const slashChooNode = slashNode!.children.get("choo");
-    const slashSlashChooNode = slashNode!.children
-      .get("")!
-      .children.get("choo");
-
-    expect(slashChooNode).to.exist;
-    expect(slashSlashChooNode).to.exist;
-  });
-
-  it("should insert static routes into the static route map", function () {
-    const router = createRouter();
-    const route = "/api/v2/route";
-    router.insert(route, {});
-
-    expect(router.ctx.staticRoutesMap[route]).to.exist;
-  });
-  it("should not insert variable routes into the static route map", function () {
-    const router = createRouter();
-    const routeA = "/api/v2/**";
-    const routeB = "/api/v3/:placeholder";
-    router.insert(routeA, {});
-    router.insert(routeB, {});
-
-    expect(router.ctx.staticRoutesMap[routeA]).to.not.exist;
-    expect(router.ctx.staticRoutesMap[routeB]).to.not.exist;
-  });
-
-  it("should insert placeholder and wildcard nodes correctly into the tree", function () {
-    const router = createRouter();
-    router.insert("hello/:placeholder/tree", {});
-    router.insert("choot/choo/**", {});
-
-    const helloNode = router.ctx.rootNode.children.get("hello");
-    const helloPlaceholderNode = helloNode!.children.get(":placeholder");
-    expect(helloPlaceholderNode!.type).to.equal(NODE_TYPES.PLACEHOLDER);
-
-    const chootNode = router.ctx.rootNode.children.get("choot");
-    const chootChooNode = chootNode!.children.get("choo");
-    const chootChooWildcardNode = chootChooNode!.children.get("**");
-    expect(chootChooWildcardNode!.type).to.equal(NODE_TYPES.WILDCARD);
-  });
-
-  it("should be able to initialize routes via the router constructor", function () {
+describe("Router insert", () => {
+  it("should be able to insert nodes correctly into the tree", () => {
     const router = createRouter({
-      routes: {
-        "/api/v1": { value: 1 },
-        "/api/v2": { value: 2 },
-        "/api/v3": { value: 3 },
-      },
+      routes: createTestRoutes([
+        "hello",
+        "cool",
+        "hi",
+        "helium",
+        "/choo",
+        "//choo",
+        "coooool",
+        "chrome",
+        "choot",
+        "choot/:choo",
+        "ui/**",
+        "ui/components/**",
+        "/api/v1",
+        "/api/v2",
+        "/api/v3",
+      ]),
     });
+    router.insert("/api/v3", { path: "/api/v3", overridden: true });
 
-    const rootSlashNode = router.ctx.rootNode.children.get("");
-    const apiNode = rootSlashNode!.children.get("api");
-    const v1Node = apiNode!.children.get("v1");
-    const v2Node = apiNode!.children.get("v2");
-    const v3Node = apiNode!.children.get("v3");
-
-    expect(v1Node).to.exist;
-    expect(v2Node).to.exist;
-    expect(v3Node).to.exist;
-    expect(v1Node!.data!.value).to.equal(1);
-    expect(v2Node!.data!.value).to.equal(2);
-    expect(v3Node!.data!.value).to.equal(3);
-  });
-
-  it("should allow routes to be overwritten by performing another insert", function () {
-    const router = createRouter({
-      routes: { "/api/v1": { data: 1 } },
-    });
-
-    let apiRouteData = router.lookup("/api/v1");
-    expect(apiRouteData!.data).to.equal(1);
-
-    router.insert("/api/v1", {
-      path: "/api/v1",
-      data: 2,
-      anotherField: 3,
-    });
-
-    apiRouteData = router.lookup("/api/v1");
-    expect(apiRouteData).deep.equal({
-      data: 2,
-      path: "/api/v1",
-      anotherField: 3,
-    });
-    expect(apiRouteData!.anotherField).to.equal(3);
+    expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
+      "<root>
+          ├── /hello ┈> [hello]
+          ├── /cool ┈> [cool]
+          ├── /hi ┈> [hi]
+          ├── /helium ┈> [helium]
+          ├── /choo ┈> [//choo]
+          ├── /coooool ┈> [coooool]
+          ├── /chrome ┈> [chrome]
+          ├── /choot ┈> [choot]
+          │       ├── /* ┈> [choot/:choo]
+          ├── /ui
+          │       ├── /components
+          │       │       ├── /** ┈> [ui/components/**]
+          │       ├── /** ┈> [ui/**]
+          ├── /api
+          │       ├── /v1 ┈> [/api/v1]
+          │       ├── /v2 ┈> [/api/v2]
+          │       ├── /v3 ┈> [/api/v3]"
+    `);
   });
 });
 
 describe("Router remove", function () {
   it("should be able to remove nodes", function () {
     const router = createRouter({
-      routes: createRoutes([
+      routes: createTestRoutes([
         "hello",
         "cool",
         "hi",
@@ -316,7 +360,7 @@ describe("Router remove", function () {
     });
 
     router.remove("choot");
-    expect(router.lookup("choot")).to.deep.equal(null);
+    expect(router.lookup("choot")).to.deep.equal(undefined);
 
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
       path: "ui/components/**",
@@ -332,11 +376,11 @@ describe("Router remove", function () {
 
   it("removes data but does not delete a node if it has children", function () {
     const router = createRouter({
-      routes: createRoutes(["a/b", "a/b/:param1"]),
+      routes: createTestRoutes(["a/b", "a/b/:param1"]),
     });
 
     router.remove("a/b");
-    expect(router.lookup("a/b")).to.deep.equal(null);
+    expect(router.lookup("a/b")).to.deep.equal(undefined);
     expect(router.lookup("a/b/c")).to.deep.equal({
       params: { param1: "c" },
       path: "a/b/:param1",
@@ -345,7 +389,10 @@ describe("Router remove", function () {
 
   it("should be able to remove placeholder routes", function () {
     const router = createRouter({
-      routes: createRoutes(["placeholder/:choo", "placeholder/:choo/:choo2"]),
+      routes: createTestRoutes([
+        "placeholder/:choo",
+        "placeholder/:choo/:choo2",
+      ]),
     });
 
     expect(router.lookup("placeholder/route")).to.deep.equal({
@@ -356,8 +403,8 @@ describe("Router remove", function () {
     });
 
     // TODO
-    // router.remove('placeholder/:choo')
-    // expect(router.lookup('placeholder/route')).to.deep.equal(null)
+    // router.remove("placeholder/:choo");
+    // expect(router.lookup("placeholder/route")).to.deep.equal(undefined);
 
     expect(router.lookup("placeholder/route/route2")).to.deep.equal({
       path: "placeholder/:choo/:choo2",
@@ -370,7 +417,7 @@ describe("Router remove", function () {
 
   it("should be able to remove wildcard routes", function () {
     const router = createRouter({
-      routes: createRoutes(["ui/**", "ui/components/**"]),
+      routes: createTestRoutes(["ui/**", "ui/components/**"]),
     });
 
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
@@ -386,7 +433,7 @@ describe("Router remove", function () {
 
   it("should return a result signifying that the remove operation was successful or not", function () {
     const router = createRouter({
-      routes: createRoutes(["/some/route"]),
+      routes: createTestRoutes(["/some/route"]),
     });
 
     let removeResult = router.remove("/some/route");
