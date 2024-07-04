@@ -340,9 +340,9 @@ describe("Router insert", () => {
       "/api/v2",
       "/api/v3",
     ]);
-    addRoute(router, "/api/v3", {
-      data: { path: "/api/v3" },
-      overridden: true,
+
+    addRoute(router, "/api/v3", "", {
+      path: "/api/v3(overridden)",
     });
 
     expect(formatTree(router.root)).toMatchInlineSnapshot(`
@@ -363,7 +363,7 @@ describe("Router insert", () => {
           ├── /api
           │       ├── /v1 ┈> [/api/v1]
           │       ├── /v2 ┈> [/api/v2]
-          │       ├── /v3 ┈> [{"data":{"path":"/api/v3"},"overridden":true}]"
+          │       ├── /v3 ┈> [/api/v3(overridden)]"
     `);
   });
 });

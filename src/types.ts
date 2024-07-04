@@ -18,6 +18,8 @@ type _NODE_TYPES = typeof NODE_TYPES;
 
 export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 
+export type Params = Array<[Index: number, name: string | RegExp]>;
+
 export interface Node<T = unknown> {
   key: string;
 
@@ -26,9 +28,7 @@ export interface Node<T = unknown> {
   wildcard?: Node<T>;
 
   index?: number;
-  data?: T;
-  mData?: Record<string, T>;
-  paramNames?: Array<{ index: number; name: string | RegExp }>;
+  methods?: Record<string, [Data: T, Params?: Params] | undefined>;
 }
 
 export type MatchedRoute<T = unknown> = {

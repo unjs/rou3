@@ -20,13 +20,14 @@ class Rou3 extends BaseRouter {
   init() {
     this.router = rou3.createRouter()
     for (const route of this.routes) {
-      rou3.addRoute(this.router, route.path, { [route.method]: noop })
+      rou3.addRoute(this.router, route.path, route.method, noop)
     }
   }
   match(request) {
-    const match = rou3.findRoute(this.router, request.path, { ignoreParams: !this.withParams })
+    const match = rou3.findRoute(this.router, request.path, request.method, { ignoreParams: !this.withParams })
+    if (!match) return undefined // 404
     return {
-      handler: match.data[request.method],
+      handler: match.data,
       params: this.withParams ? match.params : undefined
     }
   }
@@ -41,6 +42,7 @@ class Radix3 extends BaseRouter {
   }
   match(request) {
     const match = this.router.lookup(request.path)
+    if (!match || !match[request.method]) return undefined // 404
     return {
       handler: match[request.method],
       params: this.withParams ? match.params : undefined
@@ -59,8 +61,8 @@ class Medley extends BaseRouter {
     }
   }
   match(request) {
-    // eslint-disable-next-line unicorn/no-array-callback-reference
     const match = this.router.find(request.path)
+    if (!match.store[request.method]) return undefined // 404
     return {
       handler: match.store[request.method],
       params: this.withParams ? match.params : undefined
@@ -80,6 +82,7 @@ class HonoRegExp extends BaseRouter {
   match(request) {
     // [[handler, paramIndexMap][], paramArray]
     const match = this.router.match(request.method, request.path)
+    if (!match || match[0]?.length === 0) return undefined // 404
     let params
     if (this.withParams && match[1]) {
       // TODO: Where does hono do it ?!
@@ -109,6 +112,7 @@ class HonoTrie extends BaseRouter {
   match(request) {
     // [[handler, paramIndexMap][], paramArray]
     const match = this.router.match(request.method, request.path)
+    if (!match || match[0]?.length === 0) return undefined // 404
     return {
       handler: match[0][0][0],
       params: this.withParams ? match[0][0][1] : undefined
@@ -126,8 +130,8 @@ class KoaTree extends BaseRouter {
     }
   }
   match(request) {
-    // eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
     const match = this.router.find(request.method, request.path)
+    if (!match || !match.handle) return undefined // 404
     let params
     if (this.withParams && match.params) {
       params = Object.create(null)

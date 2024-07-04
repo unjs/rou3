@@ -1,34 +1,39 @@
-import type { RouterContext, MatchedRoute, Node, RouteData } from "../types";
-import { _getParams, normalizeTrailingSlash, splitPath } from "./_utils";
+import type { RouterContext, MatchedRoute, Node, Params } from "../types";
+import { normalizeTrailingSlash, splitPath } from "./_utils";
 
 /**
  * Find a route by path.
  */
-export function findRoute<T extends RouteData = RouteData>(
+export function findRoute<T = unknown>(
   ctx: RouterContext<T>,
-  _path: string,
+  path: string,
+  method: string = "",
   opts?: { ignoreParams?: boolean },
 ): MatchedRoute<T> | undefined {
-  const path = normalizeTrailingSlash(ctx, _path);
+  const _path = normalizeTrailingSlash(ctx, path);
 
-  const staticNode = ctx.static[path];
-  if (staticNode && staticNode.data !== undefined) {
-    return { data: staticNode.data };
+  // Static
+  const staticNode = ctx.static[_path];
+  if (staticNode && staticNode.methods) {
+    const staticMatch = staticNode.methods[method] || staticNode.methods[""];
+    if (staticMatch !== undefined) {
+      return { data: staticMatch[0] };
+    }
   }
 
-  const segments = splitPath(path);
-
-  const node = _find(ctx, ctx.root, segments, 0) as Node<T> | undefined;
-  if (!node || node.data === undefined) {
+  // Lookup tree
+  const segments = splitPath(_path);
+  const match = _lookupTree(ctx, ctx.root, method, segments, 0);
+  if (match === undefined) {
     return;
   }
 
-  const data = node.data;
-  if (opts?.ignoreParams || (!node.paramNames && node.key !== "**")) {
+  const [data, paramNames] = match;
+  if (opts?.ignoreParams || !paramNames) {
     return { data };
   }
 
-  const params = _getParams(segments, node);
+  const params = _getParams(segments, paramNames);
 
   return {
     data,
@@ -36,15 +41,19 @@ export function findRoute<T extends RouteData = RouteData>(
   };
 }
 
-function _find(
+function _lookupTree<T>(
   ctx: RouterContext,
-  node: Node,
+  node: Node<T>,
+  method: string,
   segments: string[],
   index: number,
-): Node | undefined {
+): [Data: T, Params?: Params] | undefined {
   // End of path
   if (index === segments.length) {
-    return node;
+    if (!node.methods) {
+      return undefined;
+    }
+    return node.methods[method] || node.methods[""];
   }
 
   const segment = segments[index];
@@ -52,25 +61,47 @@ function _find(
   // 1. Static
   const staticChild = node.static?.[segment];
   if (staticChild) {
-    const matchedNode = _find(ctx, staticChild, segments, index + 1);
-    if (matchedNode) {
-      return matchedNode;
+    const match = _lookupTree(ctx, staticChild, method, segments, index + 1);
+    if (match) {
+      return match;
     }
   }
 
   // 2. Param
   if (node.param) {
-    const nextNode = _find(ctx, node.param, segments, index + 1);
-    if (nextNode) {
-      return nextNode;
+    const match = _lookupTree(ctx, node.param, method, segments, index + 1);
+    if (match) {
+      return match;
     }
   }
 
   // 3. Wildcard
-  if (node.wildcard) {
-    return node.wildcard;
+  if (node.wildcard && node.wildcard.methods) {
+    return node.wildcard.methods[method];
   }
 
   // No match
   return;
+}
+
+function _getParams(
+  segments: string[],
+  paramsNames: Params,
+): MatchedRoute["params"] {
+  const params = Object.create(null);
+  for (const [index, name] of paramsNames) {
+    const segment =
+      index < 0 ? segments.slice(-1 * index).join("/") : segments[index];
+    if (typeof name === "string") {
+      params[name] = segment;
+    } else {
+      const match = segment.match(name);
+      if (match) {
+        for (const key in match.groups) {
+          params[key] = match.groups[key];
+        }
+      }
+    }
+  }
+  return params;
 }

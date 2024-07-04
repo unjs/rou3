@@ -1,15 +1,17 @@
-import type { Node, RouteData } from "../src/types";
+import type { Node, RouterContext } from "../src/types";
 import { createRouter as _createRouter, addRoute } from "../src";
 
-export function createRouter(routes: string[] | Record<string, RouteData>) {
-  const router = _createRouter();
+export function createRouter<
+  T extends Record<string, string> = Record<string, string>,
+>(routes: string[] | Record<string, T>): RouterContext<T> {
+  const router = _createRouter<T>();
   if (Array.isArray(routes)) {
     for (const route of routes) {
-      addRoute(router, route, { path: route });
+      addRoute(router, route, "", { path: route } as unknown as T);
     }
   } else {
     for (const [route, data] of Object.entries(routes)) {
-      addRoute(router, route, data);
+      addRoute(router, route, "", data);
     }
   }
   return router;
@@ -23,7 +25,7 @@ export function formatTree(
 ) {
   result.push(
     // prettier-ignore
-    `${prefix}${depth === 0 ? "" : "├── "}${node.key ? `/${node.key}` : (depth === 0 ? "<root>" : "<?>")}${node.data === undefined ? "" : ` ┈> [${node.data.path || JSON.stringify(node.data)}]`}`,
+    `${prefix}${depth === 0 ? "" : "├── "}${node.key ? `/${node.key}` : (depth === 0 ? "<root>" : "<?>")}${_formatMethods(node)}`,
   );
 
   const childrenArray = [
@@ -43,4 +45,17 @@ export function formatTree(
   }
 
   return depth === 0 ? result.join("\n") : result;
+}
+
+function _formatMethods(node: Node) {
+  if (!node.methods) {
+    return "";
+  }
+  return ` ┈> [${Object.entries(node.methods)
+    // @ts-expect-error
+    .map(([method, [data, _params]]) => {
+      const val = (data as any)?.path || JSON.stringify(data);
+      return method ? `[${method}]: ${val}` : val;
+    })
+    .join(", ")}]`;
 }

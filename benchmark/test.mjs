@@ -15,6 +15,10 @@ for (const name in routers) {
       issues.push(`${reqLabel}: No route matched`)
       continue
     }
+    if (router.match({ ...request, method: "OPTIONS" })) {
+      issues.push(`${reqLabel}: Wrongly matched OPTIONS method`)
+      continue
+    }
     if (typeof match.handler !== 'function') {
       issues.push(`${reqLabel}: No handler returned`)
       continue
