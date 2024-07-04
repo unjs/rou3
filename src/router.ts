@@ -27,8 +27,10 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
 
   return {
     ctx,
-    lookup: (path: string) =>
-      lookup(ctx, normalizeTrailingSlash(path)) as MatchedRoute<T> | undefined,
+    lookup: (path: string, opts) =>
+      lookup(ctx, normalizeTrailingSlash(path), opts?.ignoreParams) as
+        | MatchedRoute<T>
+        | undefined,
     matchAll: (path: string) =>
       _matchAll(ctx, ctx.root, _splitPath(path), 0) as RadixNodeData<T>[],
     insert: (path: string, data: any) =>
@@ -113,6 +115,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
 function lookup(
   ctx: RadixRouterContext,
   path: string,
+  ignoreParams?: boolean,
 ): MatchedRoute | undefined {
   const staticMatch = ctx.staticRoutesMap.get(path);
   if (staticMatch && staticMatch.data !== undefined) {
@@ -125,7 +128,7 @@ function lookup(
     return;
   }
   const data = matchedNode.data;
-  if (!matchedNode.paramNames && matchedNode.key !== "**") {
+  if (ignoreParams || (!matchedNode.paramNames && matchedNode.key !== "**")) {
     return { data };
   }
   const params = _getParams(segments, matchedNode);

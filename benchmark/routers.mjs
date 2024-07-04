@@ -24,7 +24,7 @@ class Radix3 extends BaseRouter {
     }
   }
   match(request) {
-    const match = this.router.lookup(request.path)
+    const match = this.router.lookup(request.path, { ignoreParams: !this.withParams })
     return {
       handler: match.data[request.method],
       params: this.withParams ? match.params : undefined

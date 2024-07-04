@@ -46,7 +46,10 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    *
    * @returns The data that was originally inserted into the tree
    */
-  lookup(path: string): MatchedRoute<T> | undefined;
+  lookup(
+    path: string,
+    opts?: { ignoreParams?: boolean },
+  ): MatchedRoute<T> | undefined;
 
   /**
    * Match all routes that match the given path.
