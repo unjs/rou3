@@ -47,7 +47,7 @@ const routes = Object.fromEntries(
 );
 
 const requests = [
-  // { path: "/hi" },
+  { path: "/hi" },
   { path: "/choot/123" }
 ]
 

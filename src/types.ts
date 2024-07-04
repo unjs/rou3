@@ -10,7 +10,7 @@ export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 export type RadixNodeData<T = Record<string, unknown>> = T;
 
 export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = {
-  data: T;
+  data?: T;
   params?: Record<string, string>;
 };
 
@@ -34,7 +34,7 @@ export interface RadixRouterOptions {
 export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
   options: RadixRouterOptions;
   root: RadixNode<T>;
-  staticRoutesMap: Record<string, RadixNode>;
+  staticRoutesMap: Map<string, RadixNode>;
 }
 
 export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {

@@ -13,7 +13,7 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   const ctx: RadixRouterContext<T> = {
     options,
     root: { key: "" },
-    staticRoutesMap: {},
+    staticRoutesMap: new Map(),
   };
 
   const normalizeTrailingSlash = (p: string) =>
@@ -100,7 +100,11 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
   node.index = segments.length - 1;
   node.data = data;
   if (nodeParams.length > 0) {
+    // Dynamic route
     node.paramNames = nodeParams;
+  } else {
+    // Static route
+    ctx.staticRoutesMap.set(path, node);
   }
 }
 
@@ -110,6 +114,11 @@ function lookup(
   ctx: RadixRouterContext,
   path: string,
 ): MatchedRoute | undefined {
+  const staticMatch = ctx.staticRoutesMap.get(path);
+  if (staticMatch) {
+    return { data: staticMatch.data };
+  }
+
   const segments = _splitPath(path);
   const matchedNode = _lookup(ctx, ctx.root, segments, 0);
   if (!matchedNode || matchedNode.data === undefined) {
