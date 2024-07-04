@@ -1,10 +1,9 @@
- 
+
 import Benchmark from "benchmark"; // https://www.npmjs.com/package/benchmark'
 import {
   printEnv,
   benchSets,
   printStats,
-  router,
   logSection,
 } from "./utils.mjs";
 
@@ -17,7 +16,7 @@ async function main() {
     const stats = {};
     suite.add("lookup", () => {
       for (const req of bench.requests) {
-        const match = router.lookup(req.path);
+        const match = bench.router.lookup(req.path);
         if (!match) {
           stats[match] = (stats[match] || 0) + 1;
         }

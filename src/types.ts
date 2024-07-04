@@ -7,14 +7,12 @@ export const NODE_TYPES = {
 type _NODE_TYPES = typeof NODE_TYPES;
 export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 
-type _RadixNodeDataObject = { params?: never; [key: string]: any };
-export type RadixNodeData<
-  T extends _RadixNodeDataObject = _RadixNodeDataObject,
-> = T;
-export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = Omit<
-  T,
-  "params"
-> & { params?: Record<string, any> };
+export type RadixNodeData<T = Record<string, unknown>> = T;
+
+export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = {
+  data: T;
+  params?: Record<string, string>;
+};
 
 export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   key: string;

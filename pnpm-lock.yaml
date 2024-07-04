@@ -38,6 +38,9 @@ importers:
       prettier:
         specifier: ^3.3.2
         version: 3.3.2
+      radix3-v1:
+        specifier: npm:radix3@1.1.2
+        version: radix3@1.1.2
       standard-version:
         specifier: ^9.5.0
         version: 9.5.0

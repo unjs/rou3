@@ -3,14 +3,14 @@ import { createRouter, RadixRouter } from "../src";
 import { formatTree } from "./_utils";
 
 type TestRoute = {
-  path: string;
+  data: { path: string };
   params?: Record<string, string>;
   skip?: boolean;
 };
 
 type TestRoutes = Record<string, TestRoute | undefined>;
 
-export function createTestRoutes(paths: string[]): TestRoutes {
+export function createTestRoutes(paths: string[]): Record<string, any> {
   return Object.fromEntries(paths.map((path) => [path, { path }]));
 }
 
@@ -23,7 +23,14 @@ function testRouter(
   const router = createRouter({ routes });
 
   if (!tests) {
-    tests = routes;
+    tests = Object.fromEntries(
+      paths.map((path) => [
+        path,
+        {
+          data: { path },
+        },
+      ]),
+    );
   }
 
   if (before) {
@@ -36,7 +43,7 @@ function testRouter(
     it.skipIf(tests[path]?.skip)(
       `lookup ${path} should be ${JSON.stringify(tests[path])}`,
       () => {
-        expect(router.lookup(path)).to.deep.equal(tests[path]);
+        expect(router.lookup(path)).to.toMatchObject(tests[path]!);
       },
     );
   }
@@ -82,7 +89,7 @@ describe("Router lookup", function () {
         `),
       {
         "carbon/test1": {
-          path: "carbon/:element",
+          data: { path: "carbon/:element" },
           params: {
             element: "test1",
           },
@@ -90,14 +97,14 @@ describe("Router lookup", function () {
         "/carbon": undefined,
         "carbon/": undefined,
         "carbon/test2/test/test23": {
-          path: "carbon/:element/test/:testing",
+          data: { path: "carbon/:element/test/:testing" },
           params: {
             element: "test2",
             testing: "test23",
           },
         },
         "this/test/has/more/stuff": {
-          path: "this/:route/has/:cool/stuff",
+          data: { path: "this/:route/has/:cool/stuff" },
           params: {
             route: "test",
             cool: "more",
@@ -119,22 +126,22 @@ describe("Router lookup", function () {
         `,
         ),
       {
-        "/": { path: "/" },
+        "/": { data: { path: "/" } },
         "/a": {
-          path: "/:a",
+          data: { path: "/:a" },
           params: {
             a: "a",
           },
         },
         "/a/b": {
-          path: "/:a/:b",
+          data: { path: "/:a/:b" },
           params: {
             a: "a",
             b: "b",
           },
         },
         "/a/x/b": {
-          path: "/:a/:x/:b",
+          data: { path: "/:a/:x/:b" },
           params: {
             a: "a",
             b: "b",
@@ -142,7 +149,7 @@ describe("Router lookup", function () {
           },
         },
         "/a/y/x/b": {
-          path: "/:a/:y/:x/:b",
+          data: { path: "/:a/:y/:x/:b" },
           params: {
             a: "a",
             b: "b",
@@ -173,7 +180,7 @@ describe("Router lookup", function () {
         ),
       {
         "/tinylibs/tinybench/tiny@232": {
-          path: "/:owner/:repo/:packageAndRefOrSha",
+          data: { path: "/:owner/:repo/:packageAndRefOrSha" },
           params: {
             owner: "tinylibs",
             repo: "tinybench",
@@ -181,7 +188,7 @@ describe("Router lookup", function () {
           },
         },
         "/tinylibs/tinybench/@tinylibs/tiny@232": {
-          path: "/:owner/:repo/:npmOrg/:packageAndRefOrSha",
+          data: { path: "/:owner/:repo/:npmOrg/:packageAndRefOrSha" },
           params: {
             owner: "tinylibs",
             repo: "tinybench",
@@ -209,14 +216,17 @@ describe("Router lookup", function () {
               │       │       │       ├── /** ┈> [route/:p1/something/**:rest]"
         `),
       {
-        "polymer/another/route": { path: "polymer/another/route" },
-        "polymer/anon": { path: "polymer/**:id", params: { id: "anon" } },
+        "polymer/another/route": { data: { path: "polymer/another/route" } },
+        "polymer/anon": {
+          data: { path: "polymer/**:id" },
+          params: { id: "anon" },
+        },
         "polymer/foo/bar/baz": {
-          path: "polymer/**:id",
+          data: { path: "polymer/**:id" },
           params: { id: "foo/bar/baz" },
         },
         "route/param1/something/c/d": {
-          path: "route/:p1/something/**:rest",
+          data: { path: "route/:p1/something/**:rest" },
           params: { p1: "param1", rest: "c/d" },
         },
       },
@@ -235,13 +245,16 @@ describe("Router lookup", function () {
               │       ├── /** ┈> [polymer/**]"
         `),
       {
-        "polymer/foo/bar": { path: "polymer/**", params: { _: "foo/bar" } },
+        "polymer/foo/bar": {
+          data: { path: "polymer/**" },
+          params: { _: "foo/bar" },
+        },
         "polymer/route/anon": {
-          path: "polymer/route/*",
+          data: { path: "polymer/route/*" },
           params: { _0: "anon" },
         },
         "polymer/constructor": {
-          path: "polymer/**",
+          data: { path: "polymer/**" },
           params: { _: "constructor" },
         },
       },
@@ -261,7 +274,7 @@ describe("Router lookup", function () {
         `),
       {
         "/files/test/123,name=foobar.txt": {
-          path: mixedPath,
+          data: { path: mixedPath },
           params: { category: "test", id: "123", name: "foobar" },
         },
       },
@@ -284,13 +297,17 @@ describe("Router lookup", function () {
       `),
       {
         "route/without/trailing/slash": {
-          path: "route/without/trailing/slash",
+          data: { path: "route/without/trailing/slash" },
         },
-        "route/with/trailing/slash/": { path: "route/with/trailing/slash/" },
+        "route/with/trailing/slash/": {
+          data: { path: "route/with/trailing/slash/" },
+        },
         "route/without/trailing/slash/": {
-          path: "route/without/trailing/slash",
+          data: { path: "route/without/trailing/slash" },
         },
-        "route/with/trailing/slash": { path: "route/with/trailing/slash/" },
+        "route/with/trailing/slash": {
+          data: { path: "route/with/trailing/slash/" },
+        },
       },
     );
   });
@@ -317,7 +334,7 @@ describe("Router insert", () => {
         "/api/v3",
       ]),
     });
-    router.insert("/api/v3", { path: "/api/v3", overridden: true });
+    router.insert("/api/v3", { data: { path: "/api/v3" }, overridden: true });
 
     expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
       "<root>
@@ -337,7 +354,7 @@ describe("Router insert", () => {
           ├── /api
           │       ├── /v1 ┈> [/api/v1]
           │       ├── /v2 ┈> [/api/v2]
-          │       ├── /v3 ┈> [/api/v3]"
+          │       ├── /v3 ┈> [{"data":{"path":"/api/v3"},"overridden":true}]"
     `);
   });
 });
@@ -363,13 +380,13 @@ describe("Router remove", function () {
     expect(router.lookup("choot")).to.deep.equal(undefined);
 
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
-      path: "ui/components/**",
+      data: { path: "ui/components/**" },
       params: { _: "snackbars" },
     });
 
     router.remove("ui/components/**");
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
-      path: "ui/**",
+      data: { path: "ui/**" },
       params: { _: "components/snackbars" },
     });
   });
@@ -383,7 +400,7 @@ describe("Router remove", function () {
     expect(router.lookup("a/b")).to.deep.equal(undefined);
     expect(router.lookup("a/b/c")).to.deep.equal({
       params: { param1: "c" },
-      path: "a/b/:param1",
+      data: { path: "a/b/:param1" },
     });
   });
 
@@ -396,7 +413,7 @@ describe("Router remove", function () {
     });
 
     expect(router.lookup("placeholder/route")).to.deep.equal({
-      path: "placeholder/:choo",
+      data: { path: "placeholder/:choo" },
       params: {
         choo: "route",
       },
@@ -407,7 +424,7 @@ describe("Router remove", function () {
     // expect(router.lookup("placeholder/route")).to.deep.equal(undefined);
 
     expect(router.lookup("placeholder/route/route2")).to.deep.equal({
-      path: "placeholder/:choo/:choo2",
+      data: { path: "placeholder/:choo/:choo2" },
       params: {
         choo: "route",
         choo2: "route2",
@@ -421,12 +438,12 @@ describe("Router remove", function () {
     });
 
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
-      path: "ui/components/**",
+      data: { path: "ui/components/**" },
       params: { _: "snackbars" },
     });
     router.remove("ui/components/**");
     expect(router.lookup("ui/components/snackbars")).to.deep.equal({
-      path: "ui/**",
+      data: { path: "ui/**" },
       params: { _: "components/snackbars" },
     });
   });

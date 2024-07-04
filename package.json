@@ -46,7 +46,8 @@
     "standard-version": "^9.5.0",
     "typescript": "^5.5.3",
     "unbuild": "^2.0.0",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.0",
+    "radix3-v1": "npm:radix3@1.1.2"
   },
   "packageManager": "pnpm@9.4.0"
 }

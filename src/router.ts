@@ -112,21 +112,18 @@ function lookup(
 ): MatchedRoute | undefined {
   const segments = _splitPath(path);
   const matchedNode = _lookup(ctx, ctx.root, segments, 0);
-  if (!matchedNode) {
+  if (!matchedNode || matchedNode.data === undefined) {
     return;
   }
   const data = matchedNode.data;
   if (!matchedNode.paramNames && matchedNode.key !== "**") {
-    return data;
+    return { data };
   }
   const params = _getParams(segments, matchedNode);
-  if (matchedNode.key === "**") {
-    const paramName =
-      (matchedNode.paramNames?.[matchedNode.paramNames.length - 1]
-        .name as string) || "_";
-    params[paramName] = segments.slice(matchedNode.index).join("/");
-  }
-  return { ...data, params };
+  return {
+    data,
+    params,
+  };
 }
 
 function _lookup(
@@ -218,6 +215,8 @@ function _remove(node: RadixNode, segments: string[], index: number): boolean {
       return false;
     }
     node.data = undefined;
+    node.index = undefined;
+    node.paramNames = undefined;
     return !(
       node.staticChildren?.size ||
       node.paramChild ||
@@ -285,27 +284,31 @@ function _getParamMatcher(segment: string): string | RegExp {
     /:(\w+)/g,
     (_, id) => `(?<${id}>\\w+)`,
   );
-  console.log(segment);
   return new RegExp(`^${sectionRegexString}$`);
 }
 
 function _getParams(
   segments: string[],
   node: RadixNode,
-): Record<string, string> {
-  const res = Object.create(null);
+): MatchedRoute["params"] {
+  const params = Object.create(null);
   for (const param of node.paramNames || []) {
     const segment = segments[param.index];
     if (typeof param.name === "string") {
-      res[param.name] = segment;
+      params[param.name] = segment;
     } else {
       const match = segment.match(param.name);
       if (match) {
         for (const key in match.groups) {
-          res[key] = match.groups[key];
+          params[key] = match.groups[key];
         }
       }
     }
   }
-  return res;
+  if (node.key === "**") {
+    const paramName =
+      (node.paramNames?.[node.paramNames.length - 1].name as string) || "_";
+    params[paramName] = segments.slice(node.index).join("/");
+  }
+  return params;
 }
