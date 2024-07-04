@@ -1,14 +1,10 @@
-import type { RouterContext, Node, RouteData } from "../types";
+import type { RouterContext, Node } from "../types";
 import { getParamMatcher, normalizeTrailingSlash, splitPath } from "./_utils";
 
 /**
  * Add a route to the router context.
  */
-export function addRoute<T extends RouteData = RouteData>(
-  ctx: RouterContext<T>,
-  _path: string,
-  data: T,
-) {
+export function addRoute<T>(ctx: RouterContext<T>, _path: string, data: T) {
   const path = normalizeTrailingSlash(ctx, _path);
   const segments = splitPath(path);
 

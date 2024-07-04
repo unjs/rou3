@@ -1,4 +1,4 @@
-import type { RouterContext, Node, RouteData } from "../types";
+import type { RouterContext, Node } from "../types";
 import {
   _getParams,
   _isEmptyNode,
@@ -9,10 +9,7 @@ import {
 /**
  * Remove a route from the router context.
  */
-export function removeRoute<T extends RouteData = RouteData>(
-  ctx: RouterContext<T>,
-  _path: string,
-) {
+export function removeRoute<T>(ctx: RouterContext<T>, _path: string) {
   const path = normalizeTrailingSlash(ctx, _path);
 
   const segments = splitPath(path);

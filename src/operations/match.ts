@@ -1,24 +1,21 @@
-import type { RouterContext, Node, RouteData } from "../types";
+import type { RouterContext, Node } from "../types";
 import { _getParams, normalizeTrailingSlash, splitPath } from "./_utils";
 
 /**
  * Find all route patterns that match the given path.
  */
-export function matchAllRoutes<T extends RouteData = RouteData>(
-  ctx: RouterContext<T>,
-  _path: string,
-): RouteData<T>[] {
+export function matchAllRoutes<T>(ctx: RouterContext<T>, _path: string): T[] {
   const path = normalizeTrailingSlash(ctx, _path);
-  return _matchAll(ctx, ctx.root, splitPath(path), 0) as RouteData<T>[];
+  return _matchAll(ctx, ctx.root, splitPath(path), 0) as T[];
 }
 
-function _matchAll(
-  ctx: RouterContext,
-  node: Node,
+function _matchAll<T>(
+  ctx: RouterContext<T>,
+  node: Node<T>,
   segments: string[],
   index: number,
-): RouteData[] {
-  const matchedNodes: RouteData[] = [];
+): T[] {
+  const matchedNodes: T[] = [];
 
   const segment = segments[index];
 

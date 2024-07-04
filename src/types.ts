@@ -1,10 +1,8 @@
-export type RouteData<T = Record<string, unknown>> = T;
-
 export interface RouterOptions {
   strictTrailingSlash?: boolean;
 }
 
-export interface RouterContext<T extends RouteData = RouteData> {
+export interface RouterContext<T = unknown> {
   options: RouterOptions;
   root: Node<T>;
   static: Record<string, Node<T> | undefined>;
@@ -20,7 +18,7 @@ type _NODE_TYPES = typeof NODE_TYPES;
 
 export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 
-export interface Node<T extends RouteData = RouteData> {
+export interface Node<T = unknown> {
   key: string;
 
   static?: Record<string, Node<T>>;
@@ -29,10 +27,11 @@ export interface Node<T extends RouteData = RouteData> {
 
   index?: number;
   data?: T;
+  mData?: Record<string, T>;
   paramNames?: Array<{ index: number; name: string | RegExp }>;
 }
 
-export type MatchedRoute<T extends RouteData = RouteData> = {
-  data?: T;
+export type MatchedRoute<T = unknown> = {
+  data?: T | undefined;
   params?: Record<string, string>;
 };
