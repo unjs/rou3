@@ -36,10 +36,10 @@ function _remove(
 
   // Param
   if (segment === "*") {
-    if (node.paramChild) {
-      _remove(node.paramChild, segments, index + 1);
-      if (_isEmptyNode(node.paramChild)) {
-        node.paramChild = undefined;
+    if (node.param) {
+      _remove(node.param, segments, index + 1);
+      if (_isEmptyNode(node.param)) {
+        node.param = undefined;
       }
     }
     return;
@@ -47,23 +47,23 @@ function _remove(
 
   // Wildcard
   if (segment === "**") {
-    if (node.wildcardChild) {
-      _remove(node.wildcardChild, segments, index + 1);
-      if (_isEmptyNode(node.wildcardChild)) {
-        node.wildcardChild = undefined;
+    if (node.wildcard) {
+      _remove(node.wildcard, segments, index + 1);
+      if (_isEmptyNode(node.wildcard)) {
+        node.wildcard = undefined;
       }
     }
     return;
   }
 
   // Static
-  const childNode = node.staticChildren?.[segment];
+  const childNode = node.static?.[segment];
   if (childNode) {
     _remove(childNode, segments, index + 1);
     if (_isEmptyNode(childNode)) {
-      delete node.staticChildren![segment];
-      if (Object.keys(node.staticChildren!).length === 0) {
-        node.staticChildren = undefined;
+      delete node.static![segment];
+      if (Object.keys(node.static!).length === 0) {
+        node.static = undefined;
       }
     }
   }

@@ -23,9 +23,9 @@ export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 export interface Node<T extends RouteData = RouteData> {
   key: string;
 
-  staticChildren?: Record<string, Node<T>>;
-  paramChild?: Node<T>;
-  wildcardChild?: Node<T>;
+  static?: Record<string, Node<T>>;
+  param?: Node<T>;
+  wildcard?: Node<T>;
 
   index?: number;
   data?: T;

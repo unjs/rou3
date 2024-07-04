@@ -50,7 +50,7 @@ function _find(
   const segment = segments[index];
 
   // 1. Static
-  const staticChild = node.staticChildren?.[segment];
+  const staticChild = node.static?.[segment];
   if (staticChild) {
     const matchedNode = _find(ctx, staticChild, segments, index + 1);
     if (matchedNode) {
@@ -59,16 +59,16 @@ function _find(
   }
 
   // 2. Param
-  if (node.paramChild) {
-    const nextNode = _find(ctx, node.paramChild, segments, index + 1);
+  if (node.param) {
+    const nextNode = _find(ctx, node.param, segments, index + 1);
     if (nextNode) {
       return nextNode;
     }
   }
 
   // 3. Wildcard
-  if (node.wildcardChild) {
-    return node.wildcardChild;
+  if (node.wildcard) {
+    return node.wildcard;
   }
 
   // No match

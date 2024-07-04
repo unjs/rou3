@@ -20,9 +20,9 @@ export function getParamMatcher(segment: string): string | RegExp {
 export function _isEmptyNode(node: Node) {
   return (
     node.data === undefined &&
-    node.staticChildren === undefined &&
-    node.paramChild === undefined &&
-    node.wildcardChild === undefined
+    node.static === undefined &&
+    node.param === undefined &&
+    node.wildcard === undefined
   );
 }
 

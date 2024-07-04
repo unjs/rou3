@@ -23,10 +23,10 @@ export function addRoute<T extends RouteData = RouteData>(
 
     // Wildcard
     if (segment.startsWith("**")) {
-      if (!node.wildcardChild) {
-        node.wildcardChild = { key: "**" };
+      if (!node.wildcard) {
+        node.wildcard = { key: "**" };
       }
-      node = node.wildcardChild;
+      node = node.wildcard;
       nodeParams.push({
         index: i,
         name: segment.split(":")[1] || "_",
@@ -36,10 +36,10 @@ export function addRoute<T extends RouteData = RouteData>(
 
     // Param
     if (segment === "*" || segment.includes(":")) {
-      if (!node.paramChild) {
-        node.paramChild = { key: "*" };
+      if (!node.param) {
+        node.param = { key: "*" };
       }
-      node = node.paramChild;
+      node = node.param;
       nodeParams.push({
         index: i,
         name:
@@ -51,15 +51,15 @@ export function addRoute<T extends RouteData = RouteData>(
     }
 
     // Static
-    const child = node.staticChildren?.[segment];
+    const child = node.static?.[segment];
     if (child) {
       node = child;
     } else {
       const staticNode = { key: segment };
-      if (!node.staticChildren) {
-        node.staticChildren = Object.create(null);
+      if (!node.static) {
+        node.static = Object.create(null);
       }
-      node.staticChildren![segment] = staticNode;
+      node.static![segment] = staticNode;
       node = staticNode;
     }
   }

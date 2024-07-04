@@ -28,21 +28,19 @@ function _matchAll(
   }
 
   // 2. Static
-  const staticChild = node.staticChildren?.[segment];
+  const staticChild = node.static?.[segment];
   if (staticChild) {
     matchedNodes.unshift(..._matchAll(ctx, staticChild, segments, index + 1));
   }
 
   // 3. Param
-  if (node.paramChild) {
-    matchedNodes.unshift(
-      ..._matchAll(ctx, node.paramChild, segments, index + 1),
-    );
+  if (node.param) {
+    matchedNodes.unshift(..._matchAll(ctx, node.param, segments, index + 1));
   }
 
   // 4. Wildcard
-  if (node.wildcardChild?.data) {
-    matchedNodes.unshift(node.wildcardChild.data);
+  if (node.wildcard?.data) {
+    matchedNodes.unshift(node.wildcard.data);
   }
 
   // No match

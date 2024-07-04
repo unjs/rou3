@@ -27,9 +27,9 @@ export function formatTree(
   );
 
   const childrenArray = [
-    ...Object.values(node.staticChildren || []),
-    node.paramChild,
-    node.wildcardChild,
+    ...Object.values(node.static || []),
+    node.param,
+    node.wildcard,
   ].filter(Boolean) as Node[];
   for (const [index, child] of childrenArray.entries()) {
     const lastChild = index === childrenArray.length - 1;
