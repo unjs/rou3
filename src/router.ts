@@ -13,7 +13,7 @@ export function createRouter<T extends RadixNodeData = RadixNodeData>(
   const ctx: RadixRouterContext<T> = {
     options,
     root: { key: "" },
-    staticRoutesMap: new Map(),
+    staticRoutesMap: Object.create(null),
   };
 
   const normalizeTrailingSlash = (p: string) =>
@@ -85,15 +85,15 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
     }
 
     // Static
-    const child = node.staticChildren?.get(segment);
+    const child = node.staticChildren?.[segment];
     if (child) {
       node = child;
     } else {
       const staticNode = { key: segment };
       if (!node.staticChildren) {
-        node.staticChildren = new Map();
+        node.staticChildren = Object.create(null);
       }
-      node.staticChildren.set(segment, staticNode);
+      node.staticChildren![segment] = staticNode;
       node = staticNode;
     }
   }
@@ -106,7 +106,7 @@ function insert(ctx: RadixRouterContext, path: string, data: any) {
     node.paramNames = nodeParams;
   } else {
     // Static route
-    ctx.staticRoutesMap.set(path, node);
+    ctx.staticRoutesMap[path] = node;
   }
 }
 
@@ -117,7 +117,7 @@ function lookup(
   path: string,
   ignoreParams?: boolean,
 ): MatchedRoute | undefined {
-  const staticMatch = ctx.staticRoutesMap.get(path);
+  const staticMatch = ctx.staticRoutesMap[path];
   if (staticMatch && staticMatch.data !== undefined) {
     return { data: staticMatch.data };
   }
@@ -152,7 +152,7 @@ function _lookup(
   const segment = segments[index];
 
   // 1. Static
-  const staticChild = node.staticChildren?.get(segment);
+  const staticChild = node.staticChildren?.[segment];
   if (staticChild) {
     const matchedNode = _lookup(ctx, staticChild, segments, index + 1);
     if (matchedNode) {
@@ -193,7 +193,7 @@ function _matchAll(
   }
 
   // 2. Static
-  const staticChild = node.staticChildren?.get(segment);
+  const staticChild = node.staticChildren?.[segment];
   if (staticChild) {
     matchedNodes.unshift(..._matchAll(ctx, staticChild, segments, index + 1));
   }
@@ -218,66 +218,57 @@ function _matchAll(
 
 function remove(ctx: RadixRouterContext, path: string) {
   const segments = _splitPath(path);
+  ctx.staticRoutesMap[path] = undefined;
   return _remove(ctx.root, segments, 0);
 }
 
-function _remove(node: RadixNode, segments: string[], index: number): boolean {
+function _remove(
+  node: RadixNode,
+  segments: string[],
+  index: number,
+): void /* should delete */ {
   if (index === segments.length) {
-    if (node.data === undefined) {
-      return false;
-    }
     node.data = undefined;
     node.index = undefined;
     node.paramNames = undefined;
-    return !(
-      node.staticChildren?.size ||
-      node.paramChild ||
-      node.wildcardChild
-    );
+    return;
   }
 
   const segment = segments[index];
 
   // Param
   if (segment === "*") {
-    if (!node.paramChild) {
-      return false;
+    if (node.paramChild) {
+      _remove(node.paramChild, segments, index + 1);
+      if (_isEmptyNode(node.paramChild)) {
+        node.paramChild = undefined;
+      }
     }
-    const shouldDelete = _remove(node.paramChild, segments, index + 1);
-    if (shouldDelete) {
-      node.paramChild = undefined;
-      return (
-        node.staticChildren?.size === 0 && node.wildcardChild === undefined
-      );
-    }
-    return false;
+    return;
   }
 
   // Wildcard
   if (segment === "**") {
-    if (!node.wildcardChild) {
-      return false;
+    if (node.wildcardChild) {
+      _remove(node.wildcardChild, segments, index + 1);
+      if (_isEmptyNode(node.wildcardChild)) {
+        node.wildcardChild = undefined;
+      }
     }
-    const shouldDelete = _remove(node.wildcardChild, segments, index + 1);
-    if (shouldDelete) {
-      node.wildcardChild = undefined;
-      return node.staticChildren?.size === 0 && node.paramChild === undefined;
-    }
-    return false;
+    return;
   }
 
   // Static
-  const childNode = node.staticChildren?.get(segment);
-  if (!childNode) {
-    return false;
+  const childNode = node.staticChildren?.[segment];
+  if (childNode) {
+    _remove(childNode, segments, index + 1);
+    if (_isEmptyNode(childNode)) {
+      delete node.staticChildren![segment];
+      if (Object.keys(node.staticChildren!).length === 0) {
+        node.staticChildren = undefined;
+      }
+    }
   }
-  const shouldDelete = _remove(childNode, segments, index + 1);
-  if (shouldDelete) {
-    node.staticChildren?.delete(segment);
-    return node.staticChildren?.size === 0 && node.data === undefined;
-  }
-
-  return false;
 }
 
 // --- shared utils ---
@@ -297,6 +288,15 @@ function _getParamMatcher(segment: string): string | RegExp {
     (_, id) => `(?<${id}>\\w+)`,
   );
   return new RegExp(`^${sectionRegexString}$`);
+}
+
+function _isEmptyNode(node: RadixNode) {
+  return (
+    node.data === undefined &&
+    node.staticChildren === undefined &&
+    node.paramChild === undefined &&
+    node.wildcardChild === undefined
+  );
 }
 
 function _getParams(

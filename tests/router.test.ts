@@ -447,19 +447,4 @@ describe("Router remove", function () {
       params: { _: "components/snackbars" },
     });
   });
-
-  it("should return a result signifying that the remove operation was successful or not", function () {
-    const router = createRouter({
-      routes: createTestRoutes(["/some/route"]),
-    });
-
-    let removeResult = router.remove("/some/route");
-    expect(removeResult).to.equal(true);
-
-    removeResult = router.remove("/some/route");
-    expect(removeResult).to.equal(false);
-
-    removeResult = router.remove("/some/route/that/never/existed");
-    expect(removeResult).to.equal(false);
-  });
 });

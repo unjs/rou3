@@ -17,7 +17,7 @@ export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = {
 export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
   key: string;
 
-  staticChildren?: Map<string, RadixNode<T>>;
+  staticChildren?: Record<string, RadixNode<T>>;
   paramChild?: RadixNode<T>;
   wildcardChild?: RadixNode<T>;
 
@@ -34,7 +34,7 @@ export interface RadixRouterOptions {
 export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
   options: RadixRouterOptions;
   root: RadixNode<T>;
-  staticRoutesMap: Map<string, RadixNode>;
+  staticRoutesMap: Record<string, RadixNode | undefined>;
 }
 
 export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
@@ -71,9 +71,8 @@ export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
    * Perform a remove on the tree
    * @param { string } data.path - the route to match
    *
-   * @returns A boolean signifying if the remove was successful or not
    */
-  remove(path: string): boolean;
+  remove(path: string): void;
 }
 
 export interface MatcherExport {

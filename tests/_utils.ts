@@ -12,7 +12,7 @@ export function formatTree(
   );
 
   const childrenArray = [
-    ...(node.staticChildren?.values() || []),
+    ...Object.values(node.staticChildren || []),
     node.paramChild,
     node.wildcardChild,
   ].filter(Boolean) as RadixNode[];
