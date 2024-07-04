@@ -1,5 +1,5 @@
-import * as radix3 from '../dist/index.mjs'
-import * as radix3V1 from 'radix3-v1'
+import * as rou3 from '../dist/index.mjs'
+import * as radix3 from 'radix3'
 import MedlyRouter from '@medley/router'
 import { RegExpRouter as HonoRegExpRouter } from 'hono/router/reg-exp-router'
 import { TrieRouter as HonoTrieRouter } from 'hono/router/trie-router'
@@ -14,17 +14,17 @@ class BaseRouter {
   }
 }
 
-// https://github.com/unjs/radix3
+// https://github.com/unjs/rou3
 
-class Radix3 extends BaseRouter {
+class Rou3 extends BaseRouter {
   init() {
-    this.router = radix3.createRouter()
+    this.router = rou3.createRouter()
     for (const route of this.routes) {
-      radix3.addRoute(this.router, route.path, { [route.method]: noop })
+      rou3.addRoute(this.router, route.path, { [route.method]: noop })
     }
   }
   match(request) {
-    const match = radix3.findRoute(this.router, request.path, { ignoreParams: !this.withParams })
+    const match = rou3.findRoute(this.router, request.path, { ignoreParams: !this.withParams })
     return {
       handler: match.data[request.method],
       params: this.withParams ? match.params : undefined
@@ -32,9 +32,9 @@ class Radix3 extends BaseRouter {
   }
 }
 
-class Radix3V1 extends BaseRouter {
+class Radix3 extends BaseRouter {
   init() {
-    this.router = radix3V1.createRouter()
+    this.router = radix3.createRouter()
     for (const route of this.routes) {
       this.router.insert(route.path, { [route.method]: noop })
     }
@@ -143,8 +143,8 @@ class KoaTree extends BaseRouter {
 }
 
 export const routers = {
+  'rout3': Rou3,
   radix3: Radix3,
-  'radix3-v1': Radix3V1,
   medley: Medley,
   'hono-regexp': HonoRegExp,
   'hono-trie': HonoTrie,

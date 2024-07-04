@@ -1,16 +1,16 @@
-# 🌳 radix3
+# 🌳 rou3
 
 <!-- automd:badges -->
 
-[![npm version](https://img.shields.io/npm/v/radix3)](https://npmjs.com/package/radix3)
-[![npm downloads](https://img.shields.io/npm/dm/radix3)](https://npmjs.com/package/radix3)
+[![npm version](https://img.shields.io/npm/v/rou3)](https://npmjs.com/package/rou3)
+[![npm downloads](https://img.shields.io/npm/dm/rou3)](https://npmjs.com/package/rou3)
 
 <!-- /automd -->
 
 Lightweight and fast router for JavaScript.
 
 > [!NOTE]
-> You are on the main branch looking at v2 docs. See [v1 branch](https://github.com/unjs/radix3/tree/v1) for current release.
+> Radix3 migrated to Rou3! See [#108](https://github.com/unjs/radix3/issues/108) for notes and [radix3 branch](https://github.com/unjs/rou3/tree/radix3) for legacy codebase.
 
 ## Usage
 
@@ -20,19 +20,19 @@ Lightweight and fast router for JavaScript.
 
 ```sh
 # ✨ Auto-detect
-npx nypm install radix3
+npx nypm install rou3
 
 # npm
-npm install radix3
+npm install rou3
 
 # yarn
-yarn add radix3
+yarn add rou3
 
 # pnpm
-pnpm install radix3
+pnpm install rou3
 
 # bun
-bun install radix3
+bun install rou3
 ```
 
 <!-- /automd -->
@@ -50,7 +50,7 @@ import {
   findRoute,
   removeRoute,
   matchAllRoutes,
-} from "radix3";
+} from "rou3";
 ```
 
 **CommonJS** (Legacy Node.js)
@@ -62,7 +62,7 @@ const {
   findRoute,
   removeRoute,
   matchAllRoutes,
-} = require("radix3");
+} = require("rou3");
 ```
 
 **CDN** (Deno, Bun and Browsers)
@@ -74,7 +74,7 @@ import {
   findRoute,
   removeRoute,
   matchAllRoutes,
-} from "https://esm.sh/radix3";
+} from "https://esm.sh/rou3";
 ```
 
 <!-- /automd -->
@@ -82,7 +82,7 @@ import {
 **Create a router instance and insert routes:**
 
 ```js
-import { createRouter, addRoute } from "radix3";
+import { createRouter, addRoute } from "rou3";
 
 const router = createRouter(/* options */);
 
@@ -128,22 +128,21 @@ See [benchmark](./benchmark).
 
 ## License
 
-Based on original work of [`charlieduong94/radix-router`](https://github.com/charlieduong94/radix-router)
-by [Charlie Duong](https://github.com/charlieduong94) (MIT)
+<!-- automd:contributors license=MIT author="pi0" -->
 
-[MIT](./LICENSE) - Made with ❤️
+Published under the [MIT](https://github.com/unjs/h3/blob/main/LICENSE) license.
+Made by [@pi0](https://github.com/pi0) and [community](https://github.com/unjs/h3/graphs/contributors) 💛
+<br><br>
+<a href="https://github.com/unjs/h3/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=unjs/h3" />
+</a>
 
-<!-- Badges -->
+<!-- /automd -->
 
-[npm-version-src]: https://img.shields.io/npm/v/radix3?style=flat&colorA=18181B&colorB=F0DB4F
-[npm-version-href]: https://npmjs.com/package/radix3
-[npm-downloads-src]: https://img.shields.io/npm/dm/radix3?style=flat&colorA=18181B&colorB=F0DB4F
-[npm-downloads-href]: https://npmjs.com/package/radix3
-[codecov-src]: https://img.shields.io/codecov/c/gh/unjs/radix3/main?style=flat&colorA=18181B&colorB=F0DB4F
-[codecov-href]: https://codecov.io/gh/unjs/radix3
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/radix3?style=flat&colorA=18181B&colorB=F0DB4F
-[bundle-href]: https://bundlephobia.com/result?p=radix3
-[license-src]: https://img.shields.io/github/license/unjs/radix3.svg?style=flat&colorA=18181B&colorB=F0DB4F
-[license-href]: https://github.com/unjs/radix3/blob/main/LICENSE
-[jsdocs-src]: https://img.shields.io/badge/jsDocs.io-reference-18181B?style=flat&colorA=18181B&colorB=F0DB4F
-[jsdocs-href]: https://www.jsdocs.io/package/radix3
+<!-- automd:with-automd -->
+
+---
+
+_🤖 auto updated with [automd](https://automd.unjs.io)_
+
+<!-- /automd -->
