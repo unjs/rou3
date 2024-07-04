@@ -34,20 +34,26 @@
   },
   "devDependencies": {
     "0x": "^5.7.0",
+    "@medley/router": "^0.2.1",
     "@vitest/coverage-v8": "^1.6.0",
     "autocannon": "^7.15.0",
     "benchmark": "^2.1.4",
     "changelogen": "^0.5.5",
     "eslint": "^9.6.0",
     "eslint-config-unjs": "^0.3.2",
+    "find-my-way": "^8.2.0",
+    "hono": "^4.4.11",
     "jiti": "^1.21.6",
+    "koa-tree-router": "^0.12.1",
     "listhen": "^1.7.2",
+    "mitata": "^0.1.11",
     "prettier": "^3.3.2",
+    "radix3-v1": "npm:radix3@1.1.2",
     "standard-version": "^9.5.0",
+    "trek-router": "^1.2.0",
     "typescript": "^5.5.3",
     "unbuild": "^2.0.0",
-    "vitest": "^1.6.0",
-    "radix3-v1": "npm:radix3@1.1.2"
+    "vitest": "^1.6.0"
   },
   "packageManager": "pnpm@9.4.0"
 }
