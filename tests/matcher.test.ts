@@ -1,24 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { createRouter } from "../src";
-import { formatTree } from "./_utils";
+import { createRouter, formatTree } from "./_utils";
+import { matchAllRoutes } from "../src";
 
-export function createRoutes(paths) {
-  return Object.fromEntries(paths.map((path) => [path, { path }]));
-}
-
-it("readme example works", () => {
+describe("readme example", () => {
   const router = createRouter({
-    routes: {
-      "/foo": { m: "foo" },
-      "/foo/**": { m: "foo/**", order: "2" },
-      "/foo/bar": { m: "foo/bar" },
-      "/foo/bar/baz": { m: "foo/bar/baz", order: "4" },
-      "/foo/*/baz": { m: "foo/*/baz", order: "3" },
-      "/**": { m: "/**", order: "1" },
-    },
+    "/foo": { m: "foo" },
+    "/foo/**": { m: "foo/**", order: "2" },
+    "/foo/bar": { m: "foo/bar" },
+    "/foo/bar/baz": { m: "foo/bar/baz", order: "4" },
+    "/foo/*/baz": { m: "foo/*/baz", order: "3" },
+    "/**": { m: "/**", order: "1" },
   });
 
-  expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
+  it("snapshot", () => {
+    expect(formatTree(router.root)).toMatchInlineSnapshot(`
       "<root>
           ├── /foo ┈> [{"m":"foo"}]
           │       ├── /bar ┈> [{"m":"foo/bar"}]
@@ -28,10 +23,11 @@ it("readme example works", () => {
           │       ├── /** ┈> [{"m":"foo/**","order":"2"}]
           ├── /** ┈> [{"m":"/**","order":"1"}]"
     `);
+  });
 
-  const matches = router.matchAll("/foo/bar/baz");
-
-  expect(matches).to.toMatchInlineSnapshot(`
+  it("matches /foo/bar/baz pattern", () => {
+    const matches = matchAllRoutes(router, "/foo/bar/baz");
+    expect(matches).to.toMatchInlineSnapshot(`
       [
         {
           "m": "/**",
@@ -51,10 +47,11 @@ it("readme example works", () => {
         },
       ]
     `);
+  });
 });
 
 describe("route matcher", () => {
-  const routes = createRoutes([
+  const router = createRouter([
     "/",
     "/foo",
     "/foo/*",
@@ -69,10 +66,8 @@ describe("route matcher", () => {
     "/cart",
   ]);
 
-  const router = createRouter({ routes });
-
   it("snapshot", () => {
-    expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
+    expect(formatTree(router.root)).toMatchInlineSnapshot(`
       "<root> ┈> [/]
           ├── /foo ┈> [/foo]
           │       ├── /bar ┈> [/foo/bar]
@@ -90,14 +85,14 @@ describe("route matcher", () => {
   });
 
   it("can match routes", () => {
-    expect(router.matchAll("/")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/",
         },
       ]
     `);
-    expect(router.matchAll("/foo")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/foo")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/foo/**",
@@ -107,7 +102,7 @@ describe("route matcher", () => {
         },
       ]
     `);
-    expect(router.matchAll("/foo/bar")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/foo/bar")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/foo/**",
@@ -120,7 +115,7 @@ describe("route matcher", () => {
         },
       ]
     `);
-    expect(router.matchAll("/foo/baz")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/foo/baz")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/foo/**",
@@ -136,7 +131,7 @@ describe("route matcher", () => {
         },
       ]
     `);
-    expect(router.matchAll("/foo/123/sub")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/foo/123/sub")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/foo/**",
@@ -146,7 +141,7 @@ describe("route matcher", () => {
         },
       ]
     `);
-    expect(router.matchAll("/foo/123")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/foo/123")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/foo/**",
@@ -160,42 +155,47 @@ describe("route matcher", () => {
 
   it("trailing slash", () => {
     // Defined with trailing slash
-    expect(router.matchAll("/with-trailing")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/with-trailing")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/with-trailing/",
         },
       ]
     `);
-    expect(router.matchAll("/with-trailing")).toMatchObject(
-      router.matchAll("/with-trailing/"),
+    expect(matchAllRoutes(router, "/with-trailing")).toMatchObject(
+      matchAllRoutes(router, "/with-trailing/"),
     );
 
     // Defined without trailing slash
-    expect(router.matchAll("/without-trailing")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/without-trailing")).to
+      .toMatchInlineSnapshot(`
       [
         {
           "path": "/without-trailing",
         },
       ]
     `);
-    expect(router.matchAll("/without-trailing")).toMatchObject(
-      router.matchAll("/without-trailing/"),
+    expect(matchAllRoutes(router, "/without-trailing")).toMatchObject(
+      matchAllRoutes(router, "/without-trailing/"),
     );
   });
 
   it("prefix overlap", () => {
-    expect(router.matchAll("/c/123")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/c/123")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/c/**",
         },
       ]
     `);
-    expect(router.matchAll("/c/123")).toMatchObject(router.matchAll("/c/123/"));
-    expect(router.matchAll("/c/123")).toMatchObject(router.matchAll("/c"));
+    expect(matchAllRoutes(router, "/c/123")).toMatchObject(
+      matchAllRoutes(router, "/c/123/"),
+    );
+    expect(matchAllRoutes(router, "/c/123")).toMatchObject(
+      matchAllRoutes(router, "/c"),
+    );
 
-    expect(router.matchAll("/cart")).to.toMatchInlineSnapshot(`
+    expect(matchAllRoutes(router, "/cart")).to.toMatchInlineSnapshot(`
       [
         {
           "path": "/cart",

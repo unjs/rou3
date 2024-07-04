@@ -20,11 +20,11 @@ class Radix3 extends BaseRouter {
   init() {
     this.router = radix3.createRouter()
     for (const route of this.routes) {
-      this.router.insert(route.path, { [route.method]: noop })
+      radix3.addRoute(this.router, route.path, { [route.method]: noop })
     }
   }
   match(request) {
-    const match = this.router.lookup(request.path, { ignoreParams: !this.withParams })
+    const match = radix3.findRoute(this.router, request.path, { ignoreParams: !this.withParams })
     return {
       handler: match.data[request.method],
       params: this.withParams ? match.params : undefined

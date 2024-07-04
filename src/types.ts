@@ -1,3 +1,15 @@
+export type RouteData<T = Record<string, unknown>> = T;
+
+export interface RouterOptions {
+  strictTrailingSlash?: boolean;
+}
+
+export interface RouterContext<T extends RouteData = RouteData> {
+  options: RouterOptions;
+  root: Node<T>;
+  static: Record<string, Node<T> | undefined>;
+}
+
 export const NODE_TYPES = {
   STATIC: 0 as const,
   PARAM: 1 as const,
@@ -5,78 +17,22 @@ export const NODE_TYPES = {
 };
 
 type _NODE_TYPES = typeof NODE_TYPES;
+
 export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 
-export type RadixNodeData<T = Record<string, unknown>> = T;
-
-export type MatchedRoute<T extends RadixNodeData = RadixNodeData> = {
-  data?: T;
-  params?: Record<string, string>;
-};
-
-export interface RadixNode<T extends RadixNodeData = RadixNodeData> {
+export interface Node<T extends RouteData = RouteData> {
   key: string;
 
-  staticChildren?: Record<string, RadixNode<T>>;
-  paramChild?: RadixNode<T>;
-  wildcardChild?: RadixNode<T>;
+  staticChildren?: Record<string, Node<T>>;
+  paramChild?: Node<T>;
+  wildcardChild?: Node<T>;
 
   index?: number;
   data?: T;
   paramNames?: Array<{ index: number; name: string | RegExp }>;
 }
 
-export interface RadixRouterOptions {
-  strictTrailingSlash?: boolean;
-  routes?: Record<string, any>;
-}
-
-export interface RadixRouterContext<T extends RadixNodeData = RadixNodeData> {
-  options: RadixRouterOptions;
-  root: RadixNode<T>;
-  staticRoutesMap: Record<string, RadixNode | undefined>;
-}
-
-export interface RadixRouter<T extends RadixNodeData = RadixNodeData> {
-  ctx: RadixRouterContext<T>;
-
-  /**
-   * Perform lookup of given path in radix tree
-   * @param path - the path to search for
-   *
-   * @returns The data that was originally inserted into the tree
-   */
-  lookup(
-    path: string,
-    opts?: { ignoreParams?: boolean },
-  ): MatchedRoute<T> | undefined;
-
-  /**
-   * Match all routes that match the given path.
-   * @param path - the path to search for
-   *
-   * @returns The data that was originally inserted into the tree
-   */
-  matchAll(path: string): RadixNodeData<T>[];
-
-  /**
-   * Perform an insert into the radix tree
-   * @param path - the prefix to match
-   * @param data - the associated data to path
-   *
-   */
-  insert(path: string, data: T): void;
-
-  /**
-   * Perform a remove on the tree
-   * @param { string } data.path - the route to match
-   *
-   */
-  remove(path: string): void;
-}
-
-export interface MatcherExport {
-  dynamic: Map<string, MatcherExport>;
-  wildcard: Map<string, { pattern: string }>;
-  static: Map<string, { pattern: string }>;
-}
+export type MatchedRoute<T extends RouteData = RouteData> = {
+  data?: T;
+  params?: Record<string, string>;
+};

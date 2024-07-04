@@ -1,28 +1,24 @@
 import { describe, it, expect } from "vitest";
-import { createRouter } from "../src";
-import { formatTree } from "./_utils";
+import { createRouter, formatTree } from "./_utils";
+import { findRoute, removeRoute } from "../src";
 
 describe("Basic router", () => {
-  const router = createRouter({});
+  const router = createRouter([
+    "/test",
+    "/test/:id",
+    "/test/:idYZ/y/z",
+    "/test/:idY/y",
+    "/test/foo",
+    "/test/foo/*",
+    "/test/foo/**",
+    "/test/foo/bar/qux",
+    "/test/foo/baz",
+    "/test/fooo",
+    "/another/path",
+  ]);
 
-  it("add routes", () => {
-    for (const path of [
-      "/test",
-      "/test/:id",
-      "/test/:idYZ/y/z",
-      "/test/:idY/y",
-      "/test/foo",
-      "/test/foo/*",
-      "/test/foo/**",
-      "/test/foo/bar/qux",
-      "/test/foo/baz",
-      "/test/fooo",
-      "/another/path",
-    ]) {
-      router.insert(path, { path });
-    }
-
-    expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
+  it("snapshot", () => {
+    expect(formatTree(router.root)).toMatchInlineSnapshot(`
       "<root>
           ├── /test ┈> [/test]
           │       ├── /foo ┈> [/test/foo]
@@ -42,44 +38,46 @@ describe("Basic router", () => {
 
   it("lookup works", () => {
     // Static
-    expect(router.lookup("/test")).toEqual({ data: { path: "/test" } });
-    expect(router.lookup("/test/foo")).toEqual({ data: { path: "/test/foo" } });
-    expect(router.lookup("/test/fooo")).toEqual({
+    expect(findRoute(router, "/test")).toEqual({ data: { path: "/test" } });
+    expect(findRoute(router, "/test/foo")).toEqual({
+      data: { path: "/test/foo" },
+    });
+    expect(findRoute(router, "/test/fooo")).toEqual({
       data: { path: "/test/fooo" },
     });
-    expect(router.lookup("/another/path")).toEqual({
+    expect(findRoute(router, "/another/path")).toEqual({
       data: { path: "/another/path" },
     });
     // Param
-    expect(router.lookup("/test/123")).toEqual({
+    expect(findRoute(router, "/test/123")).toEqual({
       data: { path: "/test/:id" },
       params: { id: "123" },
     });
-    expect(router.lookup("/test/123/y")).toEqual({
+    expect(findRoute(router, "/test/123/y")).toEqual({
       data: { path: "/test/:idY/y" },
       params: { idY: "123" },
     });
-    expect(router.lookup("/test/123/y/z")).toEqual({
+    expect(findRoute(router, "/test/123/y/z")).toEqual({
       data: { path: "/test/:idYZ/y/z" },
       params: { idYZ: "123" },
     });
-    expect(router.lookup("/test/foo/123")).toEqual({
+    expect(findRoute(router, "/test/foo/123")).toEqual({
       data: { path: "/test/foo/*" },
       params: { _0: "123" },
     });
     // Wildcard
-    expect(router.lookup("/test/foo/123/456")).toEqual({
+    expect(findRoute(router, "/test/foo/123/456")).toEqual({
       data: { path: "/test/foo/**" },
       params: { _: "123/456" },
     });
   });
 
   it("remove works", () => {
-    router.remove("/test");
-    router.remove("/test/*");
-    router.remove("/test/foo/*");
-    router.remove("/test/foo/**");
-    expect(formatTree(router.ctx.root)).toMatchInlineSnapshot(`
+    removeRoute(router, "/test");
+    removeRoute(router, "/test/*");
+    removeRoute(router, "/test/foo/*");
+    removeRoute(router, "/test/foo/**");
+    expect(formatTree(router.root)).toMatchInlineSnapshot(`
       "<root>
           ├── /test
           │       ├── /foo ┈> [/test/foo]
@@ -93,6 +91,6 @@ describe("Basic router", () => {
           ├── /another
           │       ├── /path ┈> [/another/path]"
     `);
-    expect(router.lookup("/test")).toBeUndefined();
+    expect(findRoute(router, "/test")).toBeUndefined();
   });
 });

@@ -1,81 +1,114 @@
 # 🌳 radix3
 
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle][bundle-src]][bundle-href]
-[![Codecov][codecov-src]][codecov-href]
-[![License][license-src]][license-href]
-[![JSDocs][jsdocs-src]][jsdocs-href]
+<!-- automd:badges -->
 
-Lightweight and fast router for JavaScript based on [Radix Tree](https://en.wikipedia.org/wiki/Radix_tree).
+[![npm version](https://img.shields.io/npm/v/radix3)](https://npmjs.com/package/radix3)
+[![npm downloads](https://img.shields.io/npm/dm/radix3)](https://npmjs.com/package/radix3)
+
+<!-- /automd -->
+
+Lightweight and fast router for JavaScript.
+
+> [!NOTE]
+> You are on the main branch looking at v2 docs. See [v1 branch](https://github.com/unjs/radix3/tree/v1) for current release.
 
 ## Usage
 
-**Install package:**
+**Install:**
+
+<!-- automd:pm-install -->
 
 ```sh
+# ✨ Auto-detect
+npx nypm install radix3
+
 # npm
-npm i radix3
+npm install radix3
 
 # yarn
 yarn add radix3
 
 # pnpm
-pnpm i radix3
+pnpm install radix3
+
+# bun
+bun install radix3
 ```
+
+<!-- /automd -->
 
 **Import:**
 
-```js
-// ESM
-import { createRouter } from "radix3";
+<!-- automd:jsimport cdn cjs src="./src/index.ts"-->
 
-// CJS
-const { createRouter } = require("radix3");
+**ESM** (Node.js, Bun)
+
+```js
+import {
+  createRouter,
+  addRoute,
+  findRoute,
+  removeRoute,
+  matchAllRoutes,
+} from "radix3";
 ```
+
+**CommonJS** (Legacy Node.js)
+
+```js
+const {
+  createRouter,
+  addRoute,
+  findRoute,
+  removeRoute,
+  matchAllRoutes,
+} = require("radix3");
+```
+
+**CDN** (Deno, Bun and Browsers)
+
+```js
+import {
+  createRouter,
+  addRoute,
+  findRoute,
+  removeRoute,
+  matchAllRoutes,
+} from "https://esm.sh/radix3";
+```
+
+<!-- /automd -->
 
 **Create a router instance and insert routes:**
 
 ```js
+import { createRouter, addRoute } from "radix3";
+
 const router = createRouter(/* options */);
 
-router.insert("/path", { payload: "this path" });
-router.insert("/path/:name", { payload: "named route" });
-router.insert("/path/foo/**", { payload: "wildcard route" });
-router.insert("/path/foo/**:name", { payload: "named wildcard route" });
+addRoute(router, "/path", { payload: "this path" });
+addRoute(router, "/path/:name", { payload: "named route" });
+addRoute(router, "/path/foo/**", { payload: "wildcard route" });
+addRoute(router, "/path/foo/**:name", { payload: "named wildcard route" });
 ```
 
 **Match route to access matched data:**
 
 ```js
-router.lookup("/path");
-// { payload: 'this path' }
+// Returns { payload: 'this path' }
+findRoute(router, "/path");
 
-router.lookup("/path/fooval");
-// { payload: 'named route', params: { name: 'fooval' } }
+// Returns { payload: 'named route', params: { name: 'fooval' } }
+findRoute(router, "/path/fooval");
 
-router.lookup("/path/foo/bar/baz");
-// { payload: 'wildcard route' }
+// Returns { payload: 'wildcard route' }
+findRoute(router, "/path/foo/bar/baz");
 
-router.lookup("/");
-// null (no route matched for/)
+// Returns undefined (no route matched for/)
+findRoute(router, "/");
 ```
 
 ## Methods
-
-### `router.insert(path, data)`
-
-`path` can be static or using `:placeholder` or `**` for wildcard paths.
-
-The `data` object will be returned on matching params. It should be an object like `{ handler }` and not containing reserved keyword `params`.
-
-### `router.lookup(path)`
-
-Returns matched data for `path` with optional `params` key if mached route using placeholders.
-
-### `router.remove(path)`
-
-Remove route matching `path`.
 
 ## Options
 
@@ -84,65 +117,10 @@ You can initialize router instance with options:
 ```ts
 const router = createRouter({
   strictTrailingSlash: true,
-  routes: {
-    "/foo": {},
-  },
 });
 ```
 
-- `routes`: An object specifying initial routes to add
 - `strictTrailingSlash`: By default router ignored trailing slash for matching and adding routes. When set to `true`, matching with trailing slash is different.
-
-### Route Matcher
-
-Creates a multi matcher from router tree that can match **all routes** matching path:
-
-```ts
-import { createRouter, toRouteMatcher } from "radix3";
-
-const router = createRouter({
-  routes: {
-    "/foo": { m: "foo" }, // Matches /foo only
-    "/foo/**": { m: "foo/**" }, // Matches /foo/<any>
-    "/foo/bar": { m: "foo/bar" }, // Matches /foo/bar only
-    "/foo/bar/baz": { m: "foo/bar/baz" }, // Matches /foo/bar/baz only
-    "/foo/*/baz": { m: "foo/*/baz" }, // Matches /foo/<any>/baz
-  },
-});
-
-const matcher = toRouteMatcher(router);
-
-const matches = matcher.matchAll("/foo/bar/baz");
-
-// [
-//   {
-//     "m": "foo/**",
-//   },
-//   {
-//     "m": "foo/*/baz",
-//   },
-//   {
-//     "m": "foo/bar/baz",
-//   },
-// ]
-```
-
-### Route Matcher Export
-
-It is also possible to export and then rehydrate a matcher from pre-compiled rules.
-
-```ts
-import { exportMatcher, createMatcherFromExport } from "radix3";
-
-// Assuming you already have a matcher
-// you can export this to a JSON-type object
-const json = exportMatcher(matcher);
-
-// and then rehydrate this later
-const newMatcher = createMatcherFromExport(json);
-
-const matches = newMatcher.matchAll("/foo/bar/baz");
-```
 
 ## Performance
 

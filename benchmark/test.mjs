@@ -24,10 +24,13 @@ for (const name in routers) {
       continue
     }
   }
-  console.log(
-    issues.length > 0 ?
-      `\r❌ Some tests failed for ${name}: \n  - ${issues.join('\n  - ')}` :
-      `\r✅ All tests passed for ${name}!`)
+
+  if (issues.length > 0) {
+    testsFailed = true
+    console.error(`\r❌ Some tests failed for ${name}: \n  - ${issues.join('\n  - ')}`)
+  } else {
+    console.log(`\r✅ All tests passed for ${name}!`)
+  }
 }
 if (testsFailed) {
   console.error('❌ Some routers failed validation')
