@@ -143,7 +143,7 @@ class KoaTree extends BaseRouter {
 }
 
 export const routers = {
-  'rout3': Rou3,
+  'rou3': Rou3,
   radix3: Radix3,
   medley: Medley,
   'hono-regexp': HonoRegExp,
