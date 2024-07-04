@@ -115,7 +115,7 @@ function lookup(
   path: string,
 ): MatchedRoute | undefined {
   const staticMatch = ctx.staticRoutesMap.get(path);
-  if (staticMatch) {
+  if (staticMatch && staticMatch.data !== undefined) {
     return { data: staticMatch.data };
   }
 
