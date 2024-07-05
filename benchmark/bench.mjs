@@ -1,21 +1,22 @@
-import { bench, group, run } from 'mitata'
-import "./test.mjs"
-import { routers } from './routers.mjs'
-import { requests, routes } from './input.mjs'
+import { bench, run } from "mitata";
+import "./test.mjs";
+import { Rou3 } from "./routers/rou3.mjs";
+import { requests } from "./input/requests.mjs";
+import { routes } from "./input/routes.mjs";
 
-const withParams = !process.argv.includes('--no-params')
+const router = new Rou3(routes);
+router.init();
 
-// Benchmark all routers
-group(`All requests (match params: ${withParams})`, () => {
-  for (const name in routers) {
-    const router = new routers[name](routes, withParams)
-    router.init()
-    bench(name, () => {
-      for (const request of requests) {
-        router.match(request)
-      }
-    })
+bench("all", () => {
+  for (const request of requests) {
+    router.match(request);
   }
-})
+});
 
-run({})
+for (const request of requests) {
+  bench(request.name, () => {
+    router.match(request);
+  });
+}
+
+await run({});
