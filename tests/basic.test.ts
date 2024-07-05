@@ -15,6 +15,7 @@ describe("Basic router", () => {
     "/test/foo/baz",
     "/test/fooo",
     "/another/path",
+    "/wildcard/**",
   ]);
 
   it("snapshot", () => {
@@ -32,7 +33,9 @@ describe("Basic router", () => {
           │       │       ├── /y ┈> [/test/:idY/y]
           │       │       │       ├── /z ┈> [/test/:idYZ/y/z]
           ├── /another
-          │       ├── /path ┈> [/another/path]"
+          │       ├── /path ┈> [/another/path]
+          ├── /wildcard
+          │       ├── /** ┈> [/wildcard/**]"
     `);
   });
 
@@ -70,6 +73,18 @@ describe("Basic router", () => {
       data: { path: "/test/foo/**" },
       params: { _: "123/456" },
     });
+    expect(findRoute(router, "/wildcard/foo")).toEqual({
+      data: { path: "/wildcard/**" },
+      params: { _: "foo" },
+    });
+    expect(findRoute(router, "/wildcard/foo/bar")).toEqual({
+      data: { path: "/wildcard/**" },
+      params: { _: "foo/bar" },
+    });
+    expect(findRoute(router, "/wildcard")).toEqual({
+      data: { path: "/wildcard/**" },
+      params: { _: "" },
+    });
   });
 
   it("remove works", () => {
@@ -89,7 +104,9 @@ describe("Basic router", () => {
           │       │       ├── /y ┈> [/test/:idY/y]
           │       │       │       ├── /z ┈> [/test/:idYZ/y/z]
           ├── /another
-          │       ├── /path ┈> [/another/path]"
+          │       ├── /path ┈> [/another/path]
+          ├── /wildcard
+          │       ├── /** ┈> [/wildcard/**]"
     `);
     expect(findRoute(router, "/test")).toBeUndefined();
   });

@@ -1,4 +1,4 @@
-import type { RouterContext, RouteData } from "../src/types";
+import type { RouterContext } from "../src/types";
 import { describe, it, expect } from "vitest";
 import { createRouter, formatTree } from "./_utils";
 import { addRoute, findRoute, removeRoute } from "../src";
@@ -16,7 +16,7 @@ export function createTestRoutes(paths: string[]): Record<string, any> {
 }
 
 function testRouter(
-  routes: string[] | Record<string, RouteData>,
+  routes: string[] | Record<string, any>,
   before?: (router: RouterContext) => void,
   tests?: TestRoutes,
 ) {
@@ -102,8 +102,8 @@ describe("Router lookup", function () {
             element: "test1",
           },
         },
-        "/carbon": undefined,
-        "carbon/": undefined,
+        "/carbon": { data: { path: "carbon/:element" } },
+        "carbon/": { data: { path: "carbon/:element" } },
         "carbon/test2/test/test23": {
           data: { path: "carbon/:element/test/:testing" },
           params: {
@@ -236,6 +236,51 @@ describe("Router lookup", function () {
         "route/param1/something/c/d": {
           data: { path: "route/:p1/something/**:rest" },
           params: { p1: "param1", rest: "c/d" },
+        },
+      },
+    );
+  });
+
+  describe("fallback to dynamic", () => {
+    testRouter(
+      ["/wildcard/**", "/test/**", "/test", "/dynamic/*"],
+      (router) =>
+        expect(formatTree(router.root)).toMatchInlineSnapshot(`
+          "<root>
+              ├── /wildcard
+              │       ├── /** ┈> [/wildcard/**]
+              ├── /test ┈> [/test]
+              │       ├── /** ┈> [/test/**]
+              ├── /dynamic
+              │       ├── /* ┈> [/dynamic/*]"
+        `),
+      {
+        "/wildcard": {
+          data: { path: "/wildcard/**" },
+        },
+        "/wildcard/": {
+          data: { path: "/wildcard/**" },
+        },
+        "/wildcard/abc": {
+          data: { path: "/wildcard/**" },
+          params: { _: "abc" },
+        },
+        "/wildcard/abc/def": {
+          data: { path: "/wildcard/**" },
+          params: { _: "abc/def" },
+        },
+        "/dynamic": {
+          data: { path: "/dynamic/*" },
+        },
+        "/test": {
+          data: { path: "/test" },
+        },
+        "/test/": {
+          data: { path: "/test" },
+        },
+        "/test/abc": {
+          data: { path: "/test/**" },
+          params: { _: "abc" },
         },
       },
     );
@@ -384,6 +429,11 @@ describe("Router remove", function () {
     ]);
 
     removeRoute(router, "choot");
+    expect(findRoute(router, "choot")).to.deep.equal({
+      data: { path: "choot/:choo" },
+      params: { choo: undefined },
+    });
+    removeRoute(router, "choot/*");
     expect(findRoute(router, "choot")).to.deep.equal(undefined);
 
     expect(findRoute(router, "ui/components/snackbars")).to.deep.equal({
@@ -402,7 +452,10 @@ describe("Router remove", function () {
     const router = createRouter(["a/b", "a/b/:param1"]);
 
     removeRoute(router, "a/b");
-    expect(findRoute(router, "a/b")).to.deep.equal(undefined);
+    expect(findRoute(router, "a/b")).to.deep.equal({
+      data: { path: "a/b/:param1" },
+      params: { param1: undefined },
+    });
     expect(findRoute(router, "a/b/c")).to.deep.equal({
       params: { param1: "c" },
       data: { path: "a/b/:param1" },

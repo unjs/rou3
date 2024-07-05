@@ -50,20 +50,32 @@ function _lookupTree<T>(
 ): [Data: T, Params?: Params] | undefined {
   // End of path
   if (index === segments.length) {
-    if (!node.methods) {
-      return undefined;
+    if (node.methods) {
+      const match = node.methods[method] || node.methods[""];
+      if (match) {
+        return match;
+      }
     }
-    return node.methods[method] || node.methods[""];
+    // Fallback to dynamic for last child (/test and /test/ matches /test/*)
+    if (node.param && node.param.methods) {
+      return node.param.methods[method] || node.param.methods[""];
+    }
+    if (node.wildcard && node.wildcard.methods) {
+      return node.wildcard.methods[method] || node.wildcard.methods[""];
+    }
+    return undefined;
   }
 
   const segment = segments[index];
 
   // 1. Static
-  const staticChild = node.static?.[segment];
-  if (staticChild) {
-    const match = _lookupTree(ctx, staticChild, method, segments, index + 1);
-    if (match) {
-      return match;
+  if (node.static) {
+    const staticChild = node.static[segment];
+    if (staticChild) {
+      const match = _lookupTree(ctx, staticChild, method, segments, index + 1);
+      if (match) {
+        return match;
+      }
     }
   }
 
@@ -77,7 +89,7 @@ function _lookupTree<T>(
 
   // 3. Wildcard
   if (node.wildcard && node.wildcard.methods) {
-    return node.wildcard.methods[method];
+    return node.wildcard.methods[method] || node.wildcard.methods[""];
   }
 
   // No match
