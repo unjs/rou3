@@ -9,24 +9,27 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "bench": "node ./benchmark/direct.mjs",
-    "bench:http": "node ./benchmark/http.mjs",
-    "bench:profile": "0x -o -D benchmark/.profile -- node ./benchmark/direct.mjs",
     "build": "unbuild",
     "dev": "vitest",
-    "lint": "eslint . && prettier -c src tests",
-    "lint:fix": "eslint --fix . && prettier -w src tests",
+    "lint": "eslint . && prettier -c src tests benchmark",
+    "lint:fix": "eslint --fix . && prettier -w src tests benchmark",
     "playground": "pnpm jiti ./playground.ts",
     "release": "pnpm test && pnpm build && changelogen --release && git push --follow-tags && npm publish",
     "test": "pnpm lint && pnpm test:types && vitest run",
@@ -36,8 +39,6 @@
     "0x": "^5.7.0",
     "@medley/router": "^0.2.1",
     "@vitest/coverage-v8": "^1.6.0",
-    "autocannon": "^7.15.0",
-    "benchmark": "^2.1.4",
     "changelogen": "^0.5.5",
     "eslint": "^9.6.0",
     "eslint-config-unjs": "^0.3.2",
@@ -49,14 +50,9 @@
     "mitata": "^0.1.11",
     "prettier": "^3.3.2",
     "radix3": "^1.1.2",
-    "standard-version": "^9.5.0",
-    "trek-router": "^1.2.0",
     "typescript": "^5.5.3",
-    "unbuild": "^2.0.0",
+    "unbuild": "^3.0.0-rc.6",
     "vitest": "^1.6.0"
   },
-  "packageManager": "pnpm@9.4.0",
-  "dependencies": {
-    "automd": "^0.3.7"
-  }
+  "packageManager": "pnpm@9.4.0"
 }
