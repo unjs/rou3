@@ -460,6 +460,8 @@ describe("Router remove", function () {
       params: { param1: "c" },
       data: { path: "a/b/:param1" },
     });
+    removeRoute(router, "a/b/*");
+    expect(findRoute(router, "a/b")).to.deep.equal(undefined);
   });
 
   it("should be able to remove placeholder routes", function () {
