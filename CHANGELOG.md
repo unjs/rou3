@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v0.1.0
+
+[compare changes](https://github.com/unjs/rou3/compare/v1.1.2...v0.1.0)
+
+### 🚀 Enhancements
+
+- ⚠️  Support mixed params in same path segment ([#52](https://github.com/unjs/rou3/pull/52))
+
+### 🔥 Performance
+
+- **add:** Use string check for multi param ([a41fd7b](https://github.com/unjs/rou3/commit/a41fd7b))
+- Remove strict trailing slash ([#111](https://github.com/unjs/rou3/pull/111))
+
+### 🩹 Fixes
+
+- Use `Map.size` to calculate the number of children ([#73](https://github.com/unjs/rou3/pull/73))
+- ⚠️  Fallback to dynamic matcher if last segment didn't match ([#110](https://github.com/unjs/rou3/pull/110))
+
+### 💅 Refactors
+
+- ⚠️  Rewrite library ([#107](https://github.com/unjs/rou3/pull/107))
+
+### 🏡 Chore
+
+- Rebase with v1 ([641ff03](https://github.com/unjs/rou3/commit/641ff03))
+- Update ci ([f9039f0](https://github.com/unjs/rou3/commit/f9039f0))
+- Apply automated updates ([9e19e22](https://github.com/unjs/rou3/commit/9e19e22))
+- Update deps ([6d263d5](https://github.com/unjs/rou3/commit/6d263d5))
+- Update eslint to v9 ([296132b](https://github.com/unjs/rou3/commit/296132b))
+- Update pkg ([21db3d7](https://github.com/unjs/rou3/commit/21db3d7))
+- Apply automd ([4555c62](https://github.com/unjs/rou3/commit/4555c62))
+- Update benchmarks ([9a96709](https://github.com/unjs/rou3/commit/9a96709))
+- Update benchmarks ([ec945ab](https://github.com/unjs/rou3/commit/ec945ab))
+- Update bench scripts ([51b3ffc](https://github.com/unjs/rou3/commit/51b3ffc))
+- Update bench ([d46484e](https://github.com/unjs/rou3/commit/d46484e))
+- Update bench ([830e4bc](https://github.com/unjs/rou3/commit/830e4bc))
+- Apply automated updates ([f30eba1](https://github.com/unjs/rou3/commit/f30eba1))
+- Remove unused code ([f03bdb0](https://github.com/unjs/rou3/commit/f03bdb0))
+- Update bench ([487c8e0](https://github.com/unjs/rou3/commit/487c8e0))
+
+### ✅ Tests
+
+- Mark test for #96 with skip ([#96](https://github.com/unjs/rou3/issues/96))
+- Add tests from #103 ([#103](https://github.com/unjs/rou3/issues/103))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Support mixed params in same path segment ([#52](https://github.com/unjs/rou3/pull/52))
+- ⚠️  Fallback to dynamic matcher if last segment didn't match ([#110](https://github.com/unjs/rou3/pull/110))
+- ⚠️  Rewrite library ([#107](https://github.com/unjs/rou3/pull/107))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Andrew Walsh ([@AndrewWalsh](http://github.com/AndrewWalsh))
+
 ## v1.1.2
 
 [compare changes](https://github.com/unjs/radix3/compare/v1.1.1...v1.1.2)
