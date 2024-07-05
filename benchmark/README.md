@@ -108,16 +108,16 @@ bun benchmark/compare.mjs
 - Processor: `Apple M2`
 - Runtime: `node v20.15.0 (arm64-darwin)`
 
-name                 | request matching     | pattern matching     | router init          | bundle size         
--------------------- | -------------------- | -------------------- | -------------------- | --------------------
-rou3                 | 🥈 2nd (674)         | 🥈 2nd (545)         | 🥉 3rd (3276)        | 🥈 2nd (2011)       
-medley               | 🥇 1st (668)         |    3th (662)         | 🥈 2nd (2842)        |    5th (6628)       
-hono-regexp          | 🥉 3rd (811)         | 🥇 1st (432)         |    3th (3991)        |    4th (5321)       
-koa-tree             |    3th (828)         | 🥉 3rd (609)         | 🥇 1st (1901)        |    6th (8159)       
-hono-pattern         |    4th (1588)        |    4th (1650)        |    6th (7847)        | 🥇 1st (1049)       
-radix3               |    5th (2034)        |    5th (1756)        |    4th (5072)        | 🥉 3rd (2294)       
-hono-trie            |    6th (2414)        |    6th (2390)        |    5th (7245)        |    3th (3527)       
-hono-smart           |                      |                      |                      |    7th (8877)
+| name         | request matching | pattern matching | router init   | bundle size   |
+| ------------ | ---------------- | ---------------- | ------------- | ------------- |
+| rou3         | 🥈 2nd (674)     | 🥈 2nd (545)     | 🥉 3rd (3276) | 🥈 2nd (2011) |
+| medley       | 🥇 1st (668)     | 3th (662)        | 🥈 2nd (2842) | 5th (6628)    |
+| hono-regexp  | 🥉 3rd (811)     | 🥇 1st (432)     | 3th (3991)    | 4th (5321)    |
+| koa-tree     | 3th (828)        | 🥉 3rd (609)     | 🥇 1st (1901) | 6th (8159)    |
+| hono-pattern | 4th (1588)       | 4th (1650)       | 6th (7847)    | 🥇 1st (1049) |
+| radix3       | 5th (2034)       | 5th (1756)       | 4th (5072)    | 🥉 3rd (2294) |
+| hono-trie    | 6th (2414)       | 6th (2390)       | 5th (7245)    | 3th (3527)    |
+| hono-smart   |                  |                  |               | 7th (8877)    |
 
 <!-- /automd -->
 
@@ -128,15 +128,15 @@ hono-smart           |                      |                      |            
 - Processor: `Apple M2`
 - Runtime: `bun 1.1.17 (arm64-darwin)`
 
-name                 | request matching     | pattern matching     | router init          | bundle size         
--------------------- | -------------------- | -------------------- | -------------------- | --------------------
-rou3                 | 🥇 1st (334)         | 🥇 1st (290)         | 🥇 1st (2213)        | 🥈 2nd (2011)       
-hono-regexp          | 🥈 2nd (463)         | 🥈 2nd (401)         | 🥈 2nd (2547)        |    4th (5321)       
-medley               | 🥉 3rd (523)         | 🥉 3rd (521)         |    3th (3638)        |    5th (6628)       
-koa-tree             |    4th (957)         |    4th (828)         | 🥉 3rd (2934)        |    6th (8159)       
-radix3               |    3th (565)         |    3th (561)         |    6th (6154)        | 🥉 3rd (2294)       
-hono-pattern         |    5th (1704)        |    5th (1704)        |    5th (5800)        | 🥇 1st (1049)       
-hono-trie            |    6th (1859)        |    6th (1844)        |    4th (4053)        |    3th (3527)       
-hono-smart           |                      |                      |                      |    7th (8877)
+| name         | request matching | pattern matching | router init   | bundle size   |
+| ------------ | ---------------- | ---------------- | ------------- | ------------- |
+| rou3         | 🥇 1st (334)     | 🥇 1st (290)     | 🥇 1st (2213) | 🥈 2nd (2011) |
+| hono-regexp  | 🥈 2nd (463)     | 🥈 2nd (401)     | 🥈 2nd (2547) | 4th (5321)    |
+| medley       | 🥉 3rd (523)     | 🥉 3rd (521)     | 3th (3638)    | 5th (6628)    |
+| koa-tree     | 4th (957)        | 4th (828)        | 🥉 3rd (2934) | 6th (8159)    |
+| radix3       | 3th (565)        | 3th (561)        | 6th (6154)    | 🥉 3rd (2294) |
+| hono-pattern | 5th (1704)       | 5th (1704)       | 5th (5800)    | 🥇 1st (1049) |
+| hono-trie    | 6th (1859)       | 6th (1844)       | 4th (4053)    | 3th (3527)    |
+| hono-smart   |                  |                  |               | 7th (8877)    |
 
 <!-- /automd -->
