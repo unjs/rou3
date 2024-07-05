@@ -58,7 +58,10 @@ function _lookupTree<T>(
     }
     // Fallback to dynamic for last child (/test and /test/ matches /test/*)
     if (node.param && node.param.methods) {
-      return node.param.methods[method] || node.param.methods[""];
+      const match = node.param.methods[method] || node.param.methods[""];
+      if (match) {
+        return match;
+      }
     }
     if (node.wildcard && node.wildcard.methods) {
       return node.wildcard.methods[method] || node.wildcard.methods[""];
