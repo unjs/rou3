@@ -1,5 +1,6 @@
 export { createRouter } from "./context";
-export type { RouterContext, RouterOptions } from "./types";
+
+export type { RouterContext } from "./types";
 
 export { addRoute } from "./operations/add";
 export { findRoute } from "./operations/find";

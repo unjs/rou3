@@ -1,20 +1,7 @@
-export interface RouterOptions {}
-
 export interface RouterContext<T = unknown> {
-  options: RouterOptions;
   root: Node<T>;
   static: Record<string, Node<T> | undefined>;
 }
-
-export const NODE_TYPES = {
-  STATIC: 0 as const,
-  PARAM: 1 as const,
-  WILDCARD: 3 as const,
-};
-
-type _NODE_TYPES = typeof NODE_TYPES;
-
-export type NODE_TYPE = _NODE_TYPES[keyof _NODE_TYPES];
 
 export type Params = Array<[Index: number, name: string | RegExp]>;
 

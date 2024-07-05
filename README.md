@@ -110,21 +110,7 @@ findRoute(router, "/path/foo/bar/baz", "GET");
 findRoute(router, "/", "GET");
 ```
 
-## Methods
-
-## Options
-
-You can initialize router instance with options:
-
-```ts
-const router = createRouter({
-  strictTrailingSlash: true,
-});
-```
-
-- `strictTrailingSlash`: By default router ignored trailing slash for matching and adding routes. When set to `true`, matching with trailing slash is different.
-
-## Performance
+## Benchmarks
 
 See [benchmark](./benchmark).
 
