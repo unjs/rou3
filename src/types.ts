@@ -1,6 +1,4 @@
-export interface RouterOptions {
-  strictTrailingSlash?: boolean;
-}
+export interface RouterOptions {}
 
 export interface RouterContext<T = unknown> {
   options: RouterOptions;
