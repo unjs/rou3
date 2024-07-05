@@ -1,5 +1,5 @@
 import type { RouterContext, Params } from "../types";
-import { normalizeTrailingSlash, splitPath } from "./_utils";
+import { splitPath } from "./_utils";
 
 /**
  * Add a route to the router context.
@@ -10,8 +10,7 @@ export function addRoute<T>(
   method: string = "",
   data?: T,
 ) {
-  const _path = normalizeTrailingSlash(ctx, path);
-  const segments = splitPath(_path);
+  const segments = splitPath(path);
 
   let node = ctx.root;
 
@@ -71,7 +70,7 @@ export function addRoute<T>(
 
   // Static
   if (!hasParams) {
-    ctx.static[_path] = node;
+    ctx.static[path] = node;
   }
 }
 

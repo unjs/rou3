@@ -1,5 +1,5 @@
 import type { RouterContext, MatchedRoute, Node, Params } from "../types";
-import { normalizeTrailingSlash, splitPath } from "./_utils";
+import { splitPath } from "./_utils";
 
 /**
  * Find a route by path.
@@ -10,10 +10,12 @@ export function findRoute<T = unknown>(
   method: string = "",
   opts?: { ignoreParams?: boolean },
 ): MatchedRoute<T> | undefined {
-  const _path = normalizeTrailingSlash(ctx, path);
+  if (path[path.length - 1] === "/") {
+    path = path.slice(0, -1);
+  }
 
   // Static
-  const staticNode = ctx.static[_path];
+  const staticNode = ctx.static[path];
   if (staticNode && staticNode.methods) {
     const staticMatch = staticNode.methods[method] || staticNode.methods[""];
     if (staticMatch !== undefined) {
@@ -22,7 +24,7 @@ export function findRoute<T = unknown>(
   }
 
   // Lookup tree
-  const segments = splitPath(_path);
+  const segments = splitPath(path);
   const match = _lookupTree(ctx, ctx.root, method, segments, 0);
   if (match === undefined) {
     return;

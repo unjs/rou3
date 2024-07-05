@@ -1,5 +1,5 @@
 import type { RouterContext, Node } from "../types";
-import { normalizeTrailingSlash, splitPath } from "./_utils";
+import { splitPath } from "./_utils";
 
 /**
  * Find all route patterns that match the given path.
@@ -9,8 +9,7 @@ export function matchAllRoutes<T>(
   path: string,
   method?: string,
 ): T[] {
-  const _path = normalizeTrailingSlash(ctx, path);
-  return _matchAll(ctx, ctx.root, method || "", splitPath(_path), 0) as T[];
+  return _matchAll(ctx, ctx.root, method || "", splitPath(path), 0) as T[];
 }
 
 function _matchAll<T>(
