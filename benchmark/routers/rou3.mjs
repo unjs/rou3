@@ -1,17 +1,17 @@
-import * as rou3 from "../../dist/index.mjs";
+import { createRouter, addRoute, findRoute } from "../../dist/index.mjs";
 import { BaseRouter, noop } from "./_common.mjs";
 
 // https://github.com/unjs/rou3
 
 export class Rou3 extends BaseRouter {
   init() {
-    this.router = rou3.createRouter();
+    this.router = createRouter();
     for (const route of this.routes) {
-      rou3.addRoute(this.router, route.path, route.method, noop);
+      addRoute(this.router, route.path, route.method, noop);
     }
   }
   match(request) {
-    const match = rou3.findRoute(this.router, request.path, request.method, {
+    const match = findRoute(this.router, request.path, request.method, {
       ignoreParams: !this.withParams,
     });
     if (!match) return undefined; // 404

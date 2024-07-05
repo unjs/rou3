@@ -7,6 +7,10 @@ import { routes } from "./input/routes.mjs";
 const router = new Rou3(routes);
 router.init();
 
+bench("init", () => {
+  new Rou3(routes).init();
+});
+
 bench("all", () => {
   for (const request of requests) {
     router.match(request);
