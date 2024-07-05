@@ -28,6 +28,7 @@
   "scripts": {
     "build": "unbuild",
     "dev": "vitest",
+    "update-bench": "pnpm build && pnpm automd --dir benchmark && bun --bun automd --dir benchmark",
     "lint": "eslint . && prettier -c src tests benchmark",
     "lint:fix": "automd && eslint --fix . && prettier -w src tests benchmark",
     "playground": "pnpm jiti ./playground.ts",
@@ -39,7 +40,7 @@
     "0x": "^5.7.0",
     "@medley/router": "^0.2.1",
     "@vitest/coverage-v8": "^1.6.0",
-    "automd": "^0.3.7",
+    "automd": "^0.3.8",
     "changelogen": "^0.5.5",
     "esbuild": "^0.23.0",
     "eslint": "^9.6.0",

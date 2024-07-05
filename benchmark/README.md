@@ -101,4 +101,42 @@ bun benchmark/compare.mjs
 
 ## Results
 
-Run locally.
+### Node.js
+
+<!-- automd:bench node -->
+
+- Processor: `Apple M2`
+- Runtime: `node v20.15.0 (arm64-darwin)`
+
+| name         | request matching | pattern matching | router init   | bundle size   |
+| ------------ | ---------------- | ---------------- | ------------- | ------------- |
+| hono-regexp  | 🥈 2nd (955)     | 🥇 1st (487)     | 3th (4427)    | 4th (5321)    |
+| medley       | 🥇 1st (748)     | 3th (761)        | 🥈 2nd (3311) | 5th (6628)    |
+| koa-tree     | 🥉 3rd (963)     | 🥉 3rd (699)     | 🥇 1st (2261) | 6th (8159)    |
+| rou3         | 3th (968)        | 🥈 2nd (621)     | 🥉 3rd (4387) | 🥈 2nd (2052) |
+| hono-pattern | 4th (1845)       | 4th (1920)       | 6th (10385)   | 🥇 1st (1049) |
+| radix3       | 6th (2764)       | 5th (2071)       | 4th (5096)    | 🥉 3rd (2294) |
+| hono-trie    | 5th (2760)       | 6th (2745)       | 5th (7375)    | 3th (3527)    |
+| hono-smart   |                  |                  |               | 7th (8877)    |
+
+<!-- /automd -->
+
+## Bun
+
+<!-- automd:bench bun -->
+
+- Processor: `Apple M2`
+- Runtime: `bun 1.1.17 (arm64-darwin)`
+
+| name         | request matching | pattern matching | router init   | bundle size   |
+| ------------ | ---------------- | ---------------- | ------------- | ------------- |
+| hono-regexp  | 🥈 2nd (518)     | 🥈 2nd (458)     | 🥇 1st (3066) | 4th (5321)    |
+| rou3         | 🥇 1st (425)     | 🥇 1st (361)     | 5th (8169)    | 🥈 2nd (2052) |
+| medley       | 🥉 3rd (597)     | 🥉 3rd (598)     | 3th (5454)    | 5th (6628)    |
+| koa-tree     | 4th (1160)       | 4th (1002)       | 🥈 2nd (3657) | 6th (8159)    |
+| radix3       | 3th (661)        | 3th (652)        | 6th (8374)    | 🥉 3rd (2294) |
+| hono-pattern | 5th (1947)       | 5th (1930)       | 4th (6610)    | 🥇 1st (1049) |
+| hono-trie    | 6th (2090)       | 6th (2082)       | 🥉 3rd (4429) | 3th (3527)    |
+| hono-smart   |                  |                  |               | 7th (8877)    |
+
+<!-- /automd -->

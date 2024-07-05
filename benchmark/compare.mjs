@@ -70,7 +70,7 @@ for (const [name, size] of Object.entries(bundleSizes)) {
 
 // Print combined results
 // prettier-ignore
-const rankIcons = [ "🥇 1st", "🥈 2nd", "🥉 3rd", "👌 4th", "😕 5th",  "😞 6th", "😓 7th" ];
+const rankIcons = [ "🥇 1st", "🥈 2nd", "🥉 3rd"];
 const results = Object.values(_results);
 for (const label of Object.values(groups)) {
   const sorted = results.sort((a, b) => a[label]?.avg - b[label]?.avg);
@@ -91,10 +91,15 @@ for (const result of results) {
 results.sort((a, b) => a._rank - b._rank);
 
 const columns = ["name", ...Object.values(groups)];
-console.log(columns.map((c) => c.padEnd(20, " ")).join(" | "));
-console.log(columns.map((_c) => "-".repeat(20)).join(" | "));
+export const output = [
+  `- Processor: \`${report.cpu}\``,
+  `- Runtime: \`${report.runtime}\``,
+  "",
+];
+output.push(columns.map((c) => c.padEnd(20, " ")).join(" | "));
+output.push(columns.map((_c) => "-".repeat(20)).join(" | "));
 for (const result of results) {
-  console.log(
+  output.push(
     columns
       .map((c) =>
         // prettier-ignore
@@ -102,4 +107,8 @@ for (const result of results) {
       )
       .join(" | "),
   );
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  console.log(output.join("\n"));
 }
