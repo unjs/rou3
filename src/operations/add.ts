@@ -76,14 +76,10 @@ export function addRoute<T>(
 }
 
 function _getParamMatcher(segment: string): string | RegExp {
-  const PARAMS_RE = /:\w+|[^:]+/g;
-  const params = [...segment.matchAll(PARAMS_RE)];
-  if (params.length === 1) {
-    return params[0][0].slice(1);
+  if (!segment.includes(":", 1)) {
+    // Single param
+    return segment.slice(1);
   }
-  const sectionRegexString = segment.replace(
-    /:(\w+)/g,
-    (_, id) => `(?<${id}>\\w+)`,
-  );
-  return new RegExp(`^${sectionRegexString}$`);
+  const regex = segment.replace(/:(\w+)/g, (_, id) => `(?<${id}>\\w+)`);
+  return new RegExp(`^${regex}$`);
 }
