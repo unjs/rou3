@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - main
-      - v1
-      - v2
   pull_request:
     branches:
       - main
-      - v1
-      - v2
 
 jobs:
   ci:
@@ -29,3 +25,5 @@ jobs:
       - run: pnpm build
       - run: pnpm vitest --coverage
       - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

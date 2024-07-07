@@ -1,9 +1,10 @@
 # 🌳 rou3
 
-<!-- automd:badges -->
+<!-- automd:badges codecov -->
 
 [![npm version](https://img.shields.io/npm/v/rou3)](https://npmjs.com/package/rou3)
 [![npm downloads](https://img.shields.io/npm/dm/rou3)](https://npmjs.com/package/rou3)
+[![codecov](https://img.shields.io/codecov/c/gh/unjs/rou3)](https://codecov.io/gh/unjs/rou3)
 
 <!-- /automd -->
 
