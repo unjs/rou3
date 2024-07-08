@@ -33,6 +33,12 @@ function _matchAll<T>(
   // Param
   if (node.param) {
     _matchAll(ctx, node.param, method, segments, index + 1, matches);
+    if (index === segments.length && node.param.methods) {
+      const match = node.param.methods[method] || node.param.methods[""];
+      if (match) {
+        matches.push(match[0 /* data */]);
+      }
+    }
   }
 
   // Node self data (only if we reached the end of the path)

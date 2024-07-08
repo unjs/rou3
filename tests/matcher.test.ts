@@ -88,6 +88,7 @@ describe("matcher: complex", () => {
     expect(_matchAllRoutes(router, "GET", "/foo")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
+        "/foo/*",
         "/foo",
       ]
     `);
@@ -170,5 +171,55 @@ describe("matcher: complex", () => {
       ]
     `,
     );
+  });
+});
+
+describe("matcher: order", () => {
+  const router = createRouter([
+    "/hello",
+    "/hello/world",
+    "/hello/*",
+    "/hello/**",
+  ]);
+
+  it("snapshot", () => {
+    expect(formatTree(router.root)).toMatchInlineSnapshot(`
+      "<root>
+          ├── /hello ┈> [GET] /hello
+          │       ├── /world ┈> [GET] /hello/world
+          │       ├── /* ┈> [GET] /hello/*
+          │       ├── /** ┈> [GET] /hello/**"
+    `);
+  });
+
+  it("/hello", () => {
+    const matches = _matchAllRoutes(router, "GET", "/hello");
+    expect(matches).to.toMatchInlineSnapshot(`
+      [
+        "/hello/**",
+        "/hello/*",
+        "/hello",
+      ]
+    `);
+  });
+
+  it("/hello/world", () => {
+    const matches = _matchAllRoutes(router, "GET", "/hello/world");
+    expect(matches).to.toMatchInlineSnapshot(`
+      [
+        "/hello/**",
+        "/hello/*",
+        "/hello/world",
+      ]
+    `);
+  });
+
+  it("/hello/world/foobar", () => {
+    const matches = _matchAllRoutes(router, "GET", "/hello/world/foobar");
+    expect(matches).to.toMatchInlineSnapshot(`
+      [
+        "/hello/**",
+      ]
+    `);
   });
 });
