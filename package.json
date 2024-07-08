@@ -46,7 +46,7 @@
     "eslint": "^9.6.0",
     "eslint-config-unjs": "^0.3.2",
     "find-my-way": "^8.2.0",
-    "hono": "^4.4.11",
+    "hono": "^4.4.12",
     "jiti": "^1.21.6",
     "koa-tree-router": "^0.12.1",
     "listhen": "^1.7.2",
@@ -57,5 +57,5 @@
     "unbuild": "^3.0.0-rc.6",
     "vitest": "^1.6.0"
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@9.5.0"
 }

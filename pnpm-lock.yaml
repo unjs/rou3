@@ -36,8 +36,8 @@ importers:
         specifier: ^8.2.0
         version: 8.2.0
       hono:
-        specifier: ^4.4.11
-        version: 4.4.11
+        specifier: ^4.4.12
+        version: 4.4.12
       jiti:
         specifier: ^1.21.6
         version: 1.21.6
@@ -1896,8 +1896,8 @@ packages:
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
 
-  hono@4.4.11:
-    resolution: {integrity: sha512-R5RADpjoRsR3/VsnFovpsYNLPnC1f+FgdfsePk3qIgjb4D41Sg7uW5QCj41kzEOwXCjBg0sVvOZMvUNZ0DKB7g==}
+  hono@4.4.12:
+    resolution: {integrity: sha512-Lx4Vwbws0IqFfXIVYychxUW0A4EE+7dn/jsjVeM34OXSA2Xs45MkDDP14Mzznp7LlDemUNHQG2uv2N5jQld0hA==}
     engines: {node: '>=16.0.0'}
 
   hookable@5.5.3:
@@ -5620,7 +5620,7 @@ snapshots:
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
 
-  hono@4.4.11: {}
+  hono@4.4.12: {}
 
   hookable@5.5.3: {}
 
