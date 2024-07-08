@@ -18,42 +18,36 @@ function _matchAll<T>(
   method: string,
   segments: string[],
   index: number,
+  matches: T[] = [],
 ): T[] {
-  const matchedNodes: T[] = [];
-
   const segment = segments[index];
 
-  // 1. Node self data
-  if (index === segments.length && node.methods) {
-    const match = node.methods[method] || node.methods[""];
-    if (match) {
-      matchedNodes.unshift(match[0 /* data */]);
-    }
-  }
-
-  // 2. Static
-  const staticChild = node.static?.[segment];
-  if (staticChild) {
-    matchedNodes.unshift(
-      ..._matchAll(ctx, staticChild, method, segments, index + 1),
-    );
-  }
-
-  // 3. Param
-  if (node.param) {
-    matchedNodes.unshift(
-      ..._matchAll(ctx, node.param, method, segments, index + 1),
-    );
-  }
-
-  // 4. Wildcard
+  // Wildcard
   if (node.wildcard && node.wildcard.methods) {
     const match = node.wildcard.methods[method] || node.wildcard.methods[""];
     if (match) {
-      matchedNodes.unshift(match[0 /* data */]);
+      matches.push(match[0 /* data */]);
     }
   }
 
-  // No match
-  return matchedNodes;
+  // Param
+  if (node.param) {
+    _matchAll(ctx, node.param, method, segments, index + 1, matches);
+  }
+
+  // Node self data (only if we reached the end of the path)
+  if (index === segments.length && node.methods) {
+    const match = node.methods[method] || node.methods[""];
+    if (match) {
+      matches.push(match[0 /* data */]);
+    }
+  }
+
+  // Static
+  const staticChild = node.static?.[segment];
+  if (staticChild) {
+    _matchAll(ctx, staticChild, method, segments, index + 1, matches);
+  }
+
+  return matches;
 }
