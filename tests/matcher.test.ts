@@ -68,24 +68,33 @@ describe("route matcher", () => {
   it("can match routes", () => {
     expect(matchAllRoutes(router, "", "/")).to.toMatchInlineSnapshot(`[]`);
     expect(matchAllRoutes(router, "", "/foo")).to.toMatchInlineSnapshot(`[]`);
-    expect(matchAllRoutes(router, "", "/foo/bar")).to.toMatchInlineSnapshot(`[]`);
-    expect(matchAllRoutes(router, "", "/foo/baz")).to.toMatchInlineSnapshot(`[]`);
-    expect(matchAllRoutes(router, "", "/foo/123/sub")).to
-      .toMatchInlineSnapshot(`[]`);
-    expect(matchAllRoutes(router, "", "/foo/123")).to.toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/foo/bar")).to.toMatchInlineSnapshot(
+      `[]`,
+    );
+    expect(matchAllRoutes(router, "", "/foo/baz")).to.toMatchInlineSnapshot(
+      `[]`,
+    );
+    expect(matchAllRoutes(router, "", "/foo/123/sub")).to.toMatchInlineSnapshot(
+      `[]`,
+    );
+    expect(matchAllRoutes(router, "", "/foo/123")).to.toMatchInlineSnapshot(
+      `[]`,
+    );
   });
 
   it("trailing slash", () => {
     // Defined with trailing slash
-    expect(matchAllRoutes(router, "", "/with-trailing")).to
-      .toMatchInlineSnapshot(`[]`);
+    expect(
+      matchAllRoutes(router, "", "/with-trailing"),
+    ).to.toMatchInlineSnapshot(`[]`);
     expect(matchAllRoutes(router, "", "/with-trailing")).toMatchObject(
       matchAllRoutes(router, "", "/with-trailing/"),
     );
 
     // Defined without trailing slash
-    expect(matchAllRoutes(router, "", "/without-trailing")).to
-      .toMatchInlineSnapshot(`[]`);
+    expect(
+      matchAllRoutes(router, "", "/without-trailing"),
+    ).to.toMatchInlineSnapshot(`[]`);
     expect(matchAllRoutes(router, "", "/without-trailing")).toMatchObject(
       matchAllRoutes(router, "", "/without-trailing/"),
     );
