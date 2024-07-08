@@ -6,8 +6,8 @@ import { splitPath } from "./_utils";
  */
 export function findRoute<T = unknown>(
   ctx: RouterContext<T>,
-  path: string,
   method: string = "",
+  path: string,
   opts?: { ignoreParams?: boolean },
 ): MatchedRoute<T> | undefined {
   if (path[path.length - 1] === "/") {

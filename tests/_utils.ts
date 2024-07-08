@@ -7,11 +7,11 @@ export function createRouter<
   const router = _createRouter<T>();
   if (Array.isArray(routes)) {
     for (const route of routes) {
-      addRoute(router, route, "", { path: route } as unknown as T);
+      addRoute(router, "GET", route, { path: route } as unknown as T);
     }
   } else {
     for (const [route, data] of Object.entries(routes)) {
-      addRoute(router, route, "", data);
+      addRoute(router, "GET", route, data);
     }
   }
   return router;
@@ -51,11 +51,11 @@ function _formatMethods(node: Node) {
   if (!node.methods) {
     return "";
   }
-  return ` ┈> [${Object.entries(node.methods)
+  return ` ┈> ${Object.entries(node.methods)
     // @ts-expect-error
     .map(([method, [data, _params]]) => {
       const val = (data as any)?.path || JSON.stringify(data);
-      return method ? `[${method}]: ${val}` : val;
+      return `[${method || "*"}] ${val}`;
     })
-    .join(", ")}]`;
+    .join(", ")}`;
 }

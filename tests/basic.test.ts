@@ -21,93 +21,95 @@ describe("Basic router", () => {
   it("snapshot", () => {
     expect(formatTree(router.root)).toMatchInlineSnapshot(`
       "<root>
-          ├── /test ┈> [/test]
-          │       ├── /foo ┈> [/test/foo]
+          ├── /test ┈> [GET] /test
+          │       ├── /foo ┈> [GET] /test/foo
           │       │       ├── /bar
-          │       │       │       ├── /qux ┈> [/test/foo/bar/qux]
-          │       │       ├── /baz ┈> [/test/foo/baz]
-          │       │       ├── /* ┈> [/test/foo/*]
-          │       │       ├── /** ┈> [/test/foo/**]
-          │       ├── /fooo ┈> [/test/fooo]
-          │       ├── /* ┈> [/test/:id]
-          │       │       ├── /y ┈> [/test/:idY/y]
-          │       │       │       ├── /z ┈> [/test/:idYZ/y/z]
+          │       │       │       ├── /qux ┈> [GET] /test/foo/bar/qux
+          │       │       ├── /baz ┈> [GET] /test/foo/baz
+          │       │       ├── /* ┈> [GET] /test/foo/*
+          │       │       ├── /** ┈> [GET] /test/foo/**
+          │       ├── /fooo ┈> [GET] /test/fooo
+          │       ├── /* ┈> [GET] /test/:id
+          │       │       ├── /y ┈> [GET] /test/:idY/y
+          │       │       │       ├── /z ┈> [GET] /test/:idYZ/y/z
           ├── /another
-          │       ├── /path ┈> [/another/path]
+          │       ├── /path ┈> [GET] /another/path
           ├── /wildcard
-          │       ├── /** ┈> [/wildcard/**]"
+          │       ├── /** ┈> [GET] /wildcard/**"
     `);
   });
 
   it("lookup works", () => {
     // Static
-    expect(findRoute(router, "/test")).toEqual({ data: { path: "/test" } });
-    expect(findRoute(router, "/test/foo")).toEqual({
+    expect(findRoute(router, "GET", "/test")).toEqual({
+      data: { path: "/test" },
+    });
+    expect(findRoute(router, "GET", "/test/foo")).toEqual({
       data: { path: "/test/foo" },
     });
-    expect(findRoute(router, "/test/fooo")).toEqual({
+    expect(findRoute(router, "GET", "/test/fooo")).toEqual({
       data: { path: "/test/fooo" },
     });
-    expect(findRoute(router, "/another/path")).toEqual({
+    expect(findRoute(router, "GET", "/another/path")).toEqual({
       data: { path: "/another/path" },
     });
     // Param
-    expect(findRoute(router, "/test/123")).toEqual({
+    expect(findRoute(router, "GET", "/test/123")).toEqual({
       data: { path: "/test/:id" },
       params: { id: "123" },
     });
-    expect(findRoute(router, "/test/123/y")).toEqual({
+    expect(findRoute(router, "GET", "/test/123/y")).toEqual({
       data: { path: "/test/:idY/y" },
       params: { idY: "123" },
     });
-    expect(findRoute(router, "/test/123/y/z")).toEqual({
+    expect(findRoute(router, "GET", "/test/123/y/z")).toEqual({
       data: { path: "/test/:idYZ/y/z" },
       params: { idYZ: "123" },
     });
-    expect(findRoute(router, "/test/foo/123")).toEqual({
+    expect(findRoute(router, "GET", "/test/foo/123")).toEqual({
       data: { path: "/test/foo/*" },
       params: { _0: "123" },
     });
     // Wildcard
-    expect(findRoute(router, "/test/foo/123/456")).toEqual({
+    expect(findRoute(router, "GET", "/test/foo/123/456")).toEqual({
       data: { path: "/test/foo/**" },
       params: { _: "123/456" },
     });
-    expect(findRoute(router, "/wildcard/foo")).toEqual({
+    expect(findRoute(router, "GET", "/wildcard/foo")).toEqual({
       data: { path: "/wildcard/**" },
       params: { _: "foo" },
     });
-    expect(findRoute(router, "/wildcard/foo/bar")).toEqual({
+    expect(findRoute(router, "GET", "/wildcard/foo/bar")).toEqual({
       data: { path: "/wildcard/**" },
       params: { _: "foo/bar" },
     });
-    expect(findRoute(router, "/wildcard")).toEqual({
+    expect(findRoute(router, "GET", "/wildcard")).toEqual({
       data: { path: "/wildcard/**" },
       params: { _: "" },
     });
   });
 
   it("remove works", () => {
-    removeRoute(router, "/test");
-    removeRoute(router, "/test/*");
-    removeRoute(router, "/test/foo/*");
-    removeRoute(router, "/test/foo/**");
+    removeRoute(router, "GET", "/test");
+    removeRoute(router, "GET", "/test/*");
+    removeRoute(router, "GET", "/test/foo/*");
+    removeRoute(router, "GET", "/test/foo/**");
     expect(formatTree(router.root)).toMatchInlineSnapshot(`
       "<root>
           ├── /test
-          │       ├── /foo ┈> [/test/foo]
+          │       ├── /foo ┈> [GET] /test/foo
           │       │       ├── /bar
-          │       │       │       ├── /qux ┈> [/test/foo/bar/qux]
-          │       │       ├── /baz ┈> [/test/foo/baz]
-          │       ├── /fooo ┈> [/test/fooo]
+          │       │       │       ├── /qux ┈> [GET] /test/foo/bar/qux
+          │       │       ├── /baz ┈> [GET] /test/foo/baz
+          │       ├── /fooo ┈> [GET] /test/fooo
           │       ├── /*
-          │       │       ├── /y ┈> [/test/:idY/y]
-          │       │       │       ├── /z ┈> [/test/:idYZ/y/z]
+          │       │       ├── /y ┈> [GET] /test/:idY/y
+          │       │       │       ├── /z ┈> [GET] /test/:idYZ/y/z
           ├── /another
-          │       ├── /path ┈> [/another/path]
+          │       ├── /path ┈> [GET] /another/path
           ├── /wildcard
-          │       ├── /** ┈> [/wildcard/**]"
+          │       ├── /** ┈> [GET] /wildcard/**"
     `);
-    expect(findRoute(router, "/test")).toBeUndefined();
+    expect(findRoute(router, "GET", "/test")).toBeUndefined();
   });
 });

@@ -87,10 +87,10 @@ import { createRouter, addRoute } from "rou3";
 
 const router = createRouter(/* options */);
 
-addRoute(router, "/path", "GET", { payload: "this path" });
-addRoute(router, "/path/:name", "GET", { payload: "named route" });
-addRoute(router, "/path/foo/**", "GET", { payload: "wildcard route" });
-addRoute(router, "/path/foo/**:name", "GET", {
+addRoute(router, "GET", "/path", { payload: "this path" });
+addRoute(router, "POST", "/path/:name", { payload: "named route" });
+addRoute(router, "GET", "/path/foo/**", { payload: "wildcard route" });
+addRoute(router, "GET", "/path/foo/**:name", {
   payload: "named wildcard route",
 });
 ```
@@ -99,16 +99,16 @@ addRoute(router, "/path/foo/**:name", "GET", {
 
 ```js
 // Returns { payload: 'this path' }
-findRoute(router, "/path", "GET");
+findRoute(router, "GET", "/path");
 
 // Returns { payload: 'named route', params: { name: 'fooval' } }
-findRoute(router, "/path/fooval", "GET");
+findRoute(router, "POST", "/path/fooval");
 
 // Returns { payload: 'wildcard route' }
-findRoute(router, "/path/foo/bar/baz", "GET");
+findRoute(router, "GET", "/path/foo/bar/baz");
 
 // Returns undefined (no route matched for/)
-findRoute(router, "/", "GET");
+findRoute(router, "GET", "/");
 ```
 
 ## Benchmarks

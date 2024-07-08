@@ -6,10 +6,10 @@ import { splitPath } from "./_utils";
  */
 export function matchAllRoutes<T>(
   ctx: RouterContext<T>,
+  method: string = "",
   path: string,
-  method?: string,
 ): T[] {
-  return _matchAll(ctx, ctx.root, method || "", splitPath(path), 0) as T[];
+  return _matchAll(ctx, ctx.root, method, splitPath(path), 0) as T[];
 }
 
 function _matchAll<T>(

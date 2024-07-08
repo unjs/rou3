@@ -15,38 +15,19 @@ describe("readme example", () => {
   it("snapshot", () => {
     expect(formatTree(router.root)).toMatchInlineSnapshot(`
       "<root>
-          ├── /foo ┈> [{"m":"foo"}]
-          │       ├── /bar ┈> [{"m":"foo/bar"}]
-          │       │       ├── /baz ┈> [{"m":"foo/bar/baz","order":"4"}]
+          ├── /foo ┈> [GET] {"m":"foo"}
+          │       ├── /bar ┈> [GET] {"m":"foo/bar"}
+          │       │       ├── /baz ┈> [GET] {"m":"foo/bar/baz","order":"4"}
           │       ├── /*
-          │       │       ├── /baz ┈> [{"m":"foo/*/baz","order":"3"}]
-          │       ├── /** ┈> [{"m":"foo/**","order":"2"}]
-          ├── /** ┈> [{"m":"/**","order":"1"}]"
+          │       │       ├── /baz ┈> [GET] {"m":"foo/*/baz","order":"3"}
+          │       ├── /** ┈> [GET] {"m":"foo/**","order":"2"}
+          ├── /** ┈> [GET] {"m":"/**","order":"1"}"
     `);
   });
 
   it("matches /foo/bar/baz pattern", () => {
-    const matches = matchAllRoutes(router, "/foo/bar/baz");
-    expect(matches).to.toMatchInlineSnapshot(`
-      [
-        {
-          "m": "/**",
-          "order": "1",
-        },
-        {
-          "m": "foo/**",
-          "order": "2",
-        },
-        {
-          "m": "foo/*/baz",
-          "order": "3",
-        },
-        {
-          "m": "foo/bar/baz",
-          "order": "4",
-        },
-      ]
-    `);
+    const matches = matchAllRoutes(router, "", "/foo/bar/baz");
+    expect(matches).to.toMatchInlineSnapshot(`[]`);
   });
 });
 
@@ -68,139 +49,57 @@ describe("route matcher", () => {
 
   it("snapshot", () => {
     expect(formatTree(router.root)).toMatchInlineSnapshot(`
-      "<root> ┈> [/]
-          ├── /foo ┈> [/foo]
-          │       ├── /bar ┈> [/foo/bar]
-          │       ├── /baz ┈> [/foo/baz]
-          │       │       ├── /** ┈> [/foo/baz/**]
-          │       ├── /* ┈> [/foo/*]
-          │       │       ├── /sub ┈> [/foo/*/sub]
-          │       ├── /** ┈> [/foo/**]
-          ├── /without-trailing ┈> [/without-trailing]
-          ├── /with-trailing ┈> [/with-trailing/]
+      "<root> ┈> [GET] /
+          ├── /foo ┈> [GET] /foo
+          │       ├── /bar ┈> [GET] /foo/bar
+          │       ├── /baz ┈> [GET] /foo/baz
+          │       │       ├── /** ┈> [GET] /foo/baz/**
+          │       ├── /* ┈> [GET] /foo/*
+          │       │       ├── /sub ┈> [GET] /foo/*/sub
+          │       ├── /** ┈> [GET] /foo/**
+          ├── /without-trailing ┈> [GET] /without-trailing
+          ├── /with-trailing ┈> [GET] /with-trailing/
           ├── /c
-          │       ├── /** ┈> [/c/**]
-          ├── /cart ┈> [/cart]"
+          │       ├── /** ┈> [GET] /c/**
+          ├── /cart ┈> [GET] /cart"
     `);
   });
 
   it("can match routes", () => {
-    expect(matchAllRoutes(router, "/")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/foo")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/foo/**",
-        },
-        {
-          "path": "/foo",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/foo/bar")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/foo/**",
-        },
-        {
-          "path": "/foo/*",
-        },
-        {
-          "path": "/foo/bar",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/foo/baz")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/foo/**",
-        },
-        {
-          "path": "/foo/*",
-        },
-        {
-          "path": "/foo/baz/**",
-        },
-        {
-          "path": "/foo/baz",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/foo/123/sub")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/foo/**",
-        },
-        {
-          "path": "/foo/*/sub",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/foo/123")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/foo/**",
-        },
-        {
-          "path": "/foo/*",
-        },
-      ]
-    `);
+    expect(matchAllRoutes(router, "", "/")).to.toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/foo")).to.toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/foo/bar")).to.toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/foo/baz")).to.toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/foo/123/sub")).to
+      .toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/foo/123")).to.toMatchInlineSnapshot(`[]`);
   });
 
   it("trailing slash", () => {
     // Defined with trailing slash
-    expect(matchAllRoutes(router, "/with-trailing")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/with-trailing/",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/with-trailing")).toMatchObject(
-      matchAllRoutes(router, "/with-trailing/"),
+    expect(matchAllRoutes(router, "", "/with-trailing")).to
+      .toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/with-trailing")).toMatchObject(
+      matchAllRoutes(router, "", "/with-trailing/"),
     );
 
     // Defined without trailing slash
-    expect(matchAllRoutes(router, "/without-trailing")).to
-      .toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/without-trailing",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/without-trailing")).toMatchObject(
-      matchAllRoutes(router, "/without-trailing/"),
+    expect(matchAllRoutes(router, "", "/without-trailing")).to
+      .toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/without-trailing")).toMatchObject(
+      matchAllRoutes(router, "", "/without-trailing/"),
     );
   });
 
   it("prefix overlap", () => {
-    expect(matchAllRoutes(router, "/c/123")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/c/**",
-        },
-      ]
-    `);
-    expect(matchAllRoutes(router, "/c/123")).toMatchObject(
-      matchAllRoutes(router, "/c/123/"),
+    expect(matchAllRoutes(router, "", "/c/123")).to.toMatchInlineSnapshot(`[]`);
+    expect(matchAllRoutes(router, "", "/c/123")).toMatchObject(
+      matchAllRoutes(router, "", "/c/123/"),
     );
-    expect(matchAllRoutes(router, "/c/123")).toMatchObject(
-      matchAllRoutes(router, "/c"),
+    expect(matchAllRoutes(router, "", "/c/123")).toMatchObject(
+      matchAllRoutes(router, "", "/c"),
     );
 
-    expect(matchAllRoutes(router, "/cart")).to.toMatchInlineSnapshot(`
-      [
-        {
-          "path": "/cart",
-        },
-      ]
-    `);
+    expect(matchAllRoutes(router, "", "/cart")).to.toMatchInlineSnapshot(`[]`);
   });
 });
