@@ -6,8 +6,8 @@ import { splitPath } from "./_utils";
  */
 export function addRoute<T>(
   ctx: RouterContext<T>,
-  path: string,
   method: string = "",
+  path: string,
   data?: T,
 ) {
   const segments = splitPath(path);

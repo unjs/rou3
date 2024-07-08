@@ -6,8 +6,8 @@ import { splitPath } from "./_utils";
  */
 export function removeRoute<T>(
   ctx: RouterContext<T>,
+  method: string,
   path: string,
-  method?: string,
 ) {
   const segments = splitPath(path);
   return _remove(ctx.root, method || "", segments, 0);
