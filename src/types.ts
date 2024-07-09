@@ -13,8 +13,7 @@ export interface Node<T = unknown> {
   param?: Node<T>;
   wildcard?: Node<T>;
 
-  index?: number;
-  methods?: Record<string, MethodData<T> | undefined>;
+  methods?: Record<string, MethodData<T>[] | undefined>;
 }
 
 export type MatchedRoute<T = unknown> = {

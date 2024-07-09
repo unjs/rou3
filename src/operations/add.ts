@@ -65,11 +65,13 @@ export function addRoute<T>(
   if (!node.methods) {
     node.methods = Object.create(null);
   }
-  node.methods![method] = {
+  if (!node.methods![method]) {
+    node.methods![method] = [];
+  }
+  node.methods![method].push({
     data: data || (null as T),
     paramsMap: hasParams ? paramsMap : undefined,
-  };
-  node.index = segments.length - 1;
+  });
 
   // Static
   if (!hasParams) {
