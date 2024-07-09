@@ -27,7 +27,7 @@ export function createRouter(rou3: typeof rou3Src, withAll: boolean = false) {
   }
   if (withAll) {
     return (method: string, path: string) => {
-      return rou3.findAllRoutes(router, method, path, { params: true }).pop();
+      return rou3.findAllRoutes(router, method, path).pop();
     };
   }
   return (method: string, path: string) => {

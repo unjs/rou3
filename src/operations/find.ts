@@ -31,16 +31,12 @@ export function findRoute<T = unknown>(
     return;
   }
 
-  if (opts?.params || !match.paramsMap) {
-    return {
-      data: match.data,
-      params: undefined,
-    };
-  }
-
   return {
     data: match.data,
-    params: getMatchParams(segments, match.paramsMap),
+    params:
+      match.paramsMap && opts?.params !== false
+        ? getMatchParams(segments, match.paramsMap)
+        : undefined,
   };
 }
 

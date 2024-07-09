@@ -20,7 +20,7 @@ export function findAllRoutes<T>(
     matches.push({
       data: match.data,
       params:
-        opts?.params && match.paramsMap
+        match.paramsMap && opts?.params !== false
           ? getMatchParams(segments, match.paramsMap)
           : undefined,
     });
