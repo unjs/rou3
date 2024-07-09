@@ -57,8 +57,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2
       rou3-release:
-        specifier: npm:rou3@0.3.0
-        version: rou3@0.3.0
+        specifier: npm:rou3@0.4.0
+        version: rou3@0.4.0
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -2971,8 +2971,8 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
-  rou3@0.3.0:
-    resolution: {integrity: sha512-LuczPaoIFq73kb9CrL77KhPjVtRYdFRUimzHwnd7yCyKlNx0Teul/LIAZbeE9QlT6re4V8CuzWBmWOC+hBDdxA==}
+  rou3@0.4.0:
+    resolution: {integrity: sha512-ETiLqy6XJXJ+254BLwdBCbb4diS0gfiTxUuYym+/TuMVsdS/EOPs07vIkXSRFVnOraFDEKGtRLniJSx441qr2Q==}
 
   run-applescript@5.0.0:
     resolution: {integrity: sha512-XcT5rBksx1QdIhlFOCtgZkB99ZEouFZ1E2Kc2LHqNW13U3/74YGdkQRmThTwxy4QIyookibDKYZOPqX//6BlAg==}
@@ -6656,7 +6656,7 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.18.0
       fsevents: 2.3.3
 
-  rou3@0.3.0: {}
+  rou3@0.4.0: {}
 
   run-applescript@5.0.0:
     dependencies:
