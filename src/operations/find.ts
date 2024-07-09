@@ -32,19 +32,6 @@ export function findRoute<T = unknown>(
     return;
   }
 
-  if (match.length === 1) {
-    const m = match[0];
-    return [
-      {
-        data: m.data,
-        params:
-          m.paramsMap && opts?.params !== false
-            ? getMatchParams(segments, m.paramsMap)
-            : undefined,
-      },
-    ];
-  }
-
   const _matches = [];
   for (const m of match) {
     _matches.push({
