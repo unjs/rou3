@@ -26,19 +26,20 @@ export function findRoute<T = unknown>(
   // Lookup tree
   const segments = splitPath(path);
 
-  const match = _lookupTree<T>(ctx, ctx.root, method, segments, 0);
+  const matches = _lookupTree<T>(ctx, ctx.root, method, segments, 0);
 
-  if (match === undefined) {
+  if (matches === undefined) {
     return;
   }
 
-  return match.map((m) => {
+  if (opts?.params === false) {
+    return matches;
+  }
+
+  return matches.map((m) => {
     return {
       data: m.data,
-      params:
-        m.paramsMap && opts?.params !== false
-          ? getMatchParams(segments, m.paramsMap)
-          : undefined,
+      params: m.paramsMap ? getMatchParams(segments, m.paramsMap) : undefined,
     };
   });
 }

@@ -14,18 +14,18 @@ export function findAllRoutes<T>(
     path = path.slice(0, -1);
   }
   const segments = splitPath(path);
-  const _matches = _findAll(ctx, ctx.root, method, segments, 0);
-  const matches: MatchedRoute<T>[] = [];
-  for (const match of _matches) {
-    matches.push({
-      data: match.data,
-      params:
-        match.paramsMap && opts?.params !== false
-          ? getMatchParams(segments, match.paramsMap)
-          : undefined,
-    });
+  const matches = _findAll(ctx, ctx.root, method, segments, 0);
+
+  if (opts?.params === false) {
+    return matches;
   }
-  return matches;
+
+  return matches.map((m) => {
+    return {
+      data: m.data,
+      params: m.paramsMap ? getMatchParams(segments, m.paramsMap) : undefined,
+    };
+  });
 }
 
 function _findAll<T>(
