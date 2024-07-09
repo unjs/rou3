@@ -6,11 +6,11 @@ import zlib from "node:zlib";
 describe("benchmark", () => {
   it("bundle size", async () => {
     const code = /* js */ `
-      import { createRouter, addRoute, findRoute, matchAllRoutes } from "../../dist/index.mjs";
-      const router = createRouter();
-      addRoute(router, "GET", "/hello", { path: "/hello" });
-      findRoute(router, "GET", "/hello");
-      matchAllRoutes(router, "GET", "/hello");
+      import { createRouter, addRoute, findRoute, findAllRoutes } from "../../src";
+      createRouter();
+      addRoute();
+      findRoute();
+      findAllRoutes();
     `;
     const { bytes, gzipSize } = await getBundleSize(code);
     // console.log("bundle size", { bytes, gzipSize });

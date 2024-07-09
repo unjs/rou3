@@ -51,7 +51,7 @@ import {
   addRoute,
   findRoute,
   removeRoute,
-  matchAllRoutes,
+  findAllRoutes,
 } from "rou3";
 ```
 
@@ -63,7 +63,7 @@ const {
   addRoute,
   findRoute,
   removeRoute,
-  matchAllRoutes,
+  findAllRoutes,
 } = require("rou3");
 ```
 
@@ -75,7 +75,7 @@ import {
   addRoute,
   findRoute,
   removeRoute,
-  matchAllRoutes,
+  findAllRoutes,
 } from "https://esm.sh/rou3";
 ```
 

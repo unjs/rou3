@@ -1,4 +1,4 @@
-import type { RouterContext, Params } from "../types";
+import type { RouterContext, ParamsIndexMap } from "../types";
 import { splitPath } from "./_utils";
 
 /**
@@ -16,7 +16,7 @@ export function addRoute<T>(
 
   let _unnamedParamIndex = 0;
 
-  const params: Params = [];
+  const paramsMap: ParamsIndexMap = [];
 
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
@@ -27,7 +27,7 @@ export function addRoute<T>(
         node.wildcard = { key: "**" };
       }
       node = node.wildcard;
-      params.push([-i, segment.split(":")[1] || "_"]);
+      paramsMap.push([-i, segment.split(":")[1] || "_"]);
       break;
     }
 
@@ -37,7 +37,7 @@ export function addRoute<T>(
         node.param = { key: "*" };
       }
       node = node.param;
-      params.push([
+      paramsMap.push([
         i,
         segment === "*"
           ? `_${_unnamedParamIndex++}`
@@ -61,11 +61,14 @@ export function addRoute<T>(
   }
 
   // Assign index, params and data to the node
-  const hasParams = params.length > 0;
+  const hasParams = paramsMap.length > 0;
   if (!node.methods) {
     node.methods = Object.create(null);
   }
-  node.methods![method] = [data || (null as T), hasParams ? params : undefined];
+  node.methods![method] = {
+    data: data || (null as T),
+    paramsMap: hasParams ? paramsMap : undefined,
+  };
   node.index = segments.length - 1;
 
   // Static

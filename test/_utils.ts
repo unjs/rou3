@@ -18,7 +18,7 @@ export function createRouter<
 }
 
 export function formatTree(
-  node: Node,
+  node: Node<{ path?: string }>,
   depth = 0,
   result = [] as string[],
   prefix = "",
@@ -32,7 +32,7 @@ export function formatTree(
     ...Object.values(node.static || []),
     node.param,
     node.wildcard,
-  ].filter(Boolean) as Node[];
+  ].filter(Boolean) as Node<{ path?: string }>[];
   for (const [index, child] of childrenArray.entries()) {
     const lastChild = index === childrenArray.length - 1;
     formatTree(
@@ -47,14 +47,13 @@ export function formatTree(
   return depth === 0 ? result.join("\n") : result;
 }
 
-function _formatMethods(node: Node) {
+function _formatMethods(node: Node<{ path?: string }>) {
   if (!node.methods) {
     return "";
   }
   return ` ┈> ${Object.entries(node.methods)
-    // @ts-expect-error
-    .map(([method, [data, _params]]) => {
-      const val = (data as any)?.path || JSON.stringify(data);
+    .map(([method, d]) => {
+      const val = d?.data?.path || JSON.stringify(d?.data);
       return `[${method || "*"}] ${val}`;
     })
     .join(", ")}`;
