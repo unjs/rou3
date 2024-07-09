@@ -112,10 +112,6 @@ findRoute(router, "GET", "/path/foo/bar/baz");
 findRoute(router, "GET", "/");
 ```
 
-## Benchmarks
-
-See [benchmark](./benchmark).
-
 ## License
 
 <!-- automd:contributors license=MIT author="pi0" -->

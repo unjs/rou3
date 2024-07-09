@@ -28,10 +28,10 @@
   "scripts": {
     "build": "unbuild",
     "dev": "vitest",
-    "update-bench": "pnpm build && pnpm automd --dir benchmark && bun --bun automd --dir benchmark",
-    "lint": "eslint . && prettier -c src tests benchmark",
-    "lint:fix": "automd && eslint --fix . && prettier -w src tests benchmark",
-    "playground": "pnpm jiti ./playground.ts",
+    "bench:node": "node --import jiti/register ./test/bench",
+    "bench:bun": "bun ./test/bench",
+    "lint": "eslint . && prettier -c src test",
+    "lint:fix": "automd && eslint --fix . && prettier -w src test",
     "release": "pnpm test && pnpm build && changelogen --release && git push --follow-tags && npm publish",
     "test": "pnpm lint && pnpm test:types && vitest run --coverage",
     "test:types": "tsc --noEmit"
@@ -39,7 +39,7 @@
   "devDependencies": {
     "0x": "^5.7.0",
     "@medley/router": "^0.2.1",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/coverage-v8": "^2.0.1",
     "automd": "^0.3.8",
     "changelogen": "^0.5.5",
     "esbuild": "^0.23.0",
@@ -47,16 +47,16 @@
     "eslint-config-unjs": "^0.3.2",
     "find-my-way": "^8.2.0",
     "hono": "^4.4.12",
-    "jiti": "^1.21.6",
+    "jiti": "^2.0.0-beta.3",
     "koa-tree-router": "^0.12.1",
     "listhen": "^1.7.2",
     "mitata": "^0.1.11",
     "prettier": "^3.3.2",
     "radix3": "^1.1.2",
+    "rou3-release": "npm:rou3@0.2.0",
     "typescript": "^5.5.3",
     "unbuild": "^3.0.0-rc.6",
-    "vitest": "^1.6.0",
-    "rou3-release": "npm:rou3@0.2.0"
+    "vitest": "^2.0.1"
   },
   "packageManager": "pnpm@9.5.0"
 }
