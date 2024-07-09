@@ -39,7 +39,7 @@
   "devDependencies": {
     "0x": "^5.7.0",
     "@medley/router": "^0.2.1",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/coverage-v8": "^2.0.1",
     "automd": "^0.3.8",
     "changelogen": "^0.5.5",
     "esbuild": "^0.23.0",
@@ -55,7 +55,7 @@
     "radix3": "^1.1.2",
     "typescript": "^5.5.3",
     "unbuild": "^3.0.0-rc.6",
-    "vitest": "^1.6.0",
+    "vitest": "^2.0.1",
     "rou3-release": "npm:rou3@0.2.0"
   },
   "packageManager": "pnpm@9.5.0"
