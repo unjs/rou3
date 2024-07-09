@@ -26,10 +26,8 @@
     "dist"
   ],
   "scripts": {
-    "bench": "pnpm bench:node && pnpm bench:bun",
     "bench:bun": "bun ./test/bench",
     "bench:node": "node --import jiti/register ./test/bench",
-    "bench:nomax": "pnpm bench:node --no-max && pnpm bench:bun --no-max",
     "build": "unbuild",
     "dev": "vitest",
     "lint": "eslint . && prettier -c src test",
