@@ -56,6 +56,9 @@ importers:
       radix3:
         specifier: ^1.1.2
         version: 1.1.2
+      rou3-release:
+        specifier: npm:rou3@0.2.0
+        version: rou3@0.2.0
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -2976,6 +2979,9 @@ packages:
     resolution: {integrity: sha512-QmJz14PX3rzbJCN1SG4Xe/bAAX2a6NpCP8ab2vfu2GiUr8AQcr2nCV/oEO3yneFarB67zk8ShlIyWb2LGTb3Sg==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
+
+  rou3@0.2.0:
+    resolution: {integrity: sha512-pM+Zd++BIMNcfZXOsErMc8ycuYFB6Y5dmanMfyIOXwiDhYx3EDDoLPKEn5oMSl/P9s4Yi0Y2+cqzrTCw83Q7iQ==}
 
   run-applescript@5.0.0:
     resolution: {integrity: sha512-XcT5rBksx1QdIhlFOCtgZkB99ZEouFZ1E2Kc2LHqNW13U3/74YGdkQRmThTwxy4QIyookibDKYZOPqX//6BlAg==}
@@ -6686,6 +6692,8 @@ snapshots:
       '@rollup/rollup-win32-ia32-msvc': 4.18.0
       '@rollup/rollup-win32-x64-msvc': 4.18.0
       fsevents: 2.3.3
+
+  rou3@0.2.0: {}
 
   run-applescript@5.0.0:
     dependencies:

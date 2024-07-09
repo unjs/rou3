@@ -1,4 +1,6 @@
-import * as rou3 from "../../src";
+// import * as rou3Src from "../../src";
+import * as rou3Dist from "../../dist/index.mjs";
+import * as rou3Release from "rou3-release";
 
 // https://github.com/pi0/web-framework-benchmarks
 // (based on hono router benchmarks)
@@ -69,12 +71,14 @@ export const requests = [
 
 export function createBenchApps() {
   return [
-    ["rou3", createRou3Router()],
-    ["fastest", createFastestRouter()],
+    // ["rou3-src", createRou3Router(rou3Src)],
+    ["rou3-dist", createRou3Router(rou3Dist)],
+    ["rou3-release", createRou3Router(rou3Release)],
+    ["maximum", createFastestRouter()],
   ] as const;
 }
 
-export function createRou3Router() {
+export function createRou3Router(rou3: typeof import("rou3")) {
   const router = rou3.createRouter();
   for (const route of routes) {
     rou3.addRoute(
