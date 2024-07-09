@@ -5,10 +5,10 @@ import { requests, routes } from "./input";
 export function createInstances() {
   return [
     ["rou3-src", createRouter(rou3Src)],
-    ["rou3-with-all-src", createRouter(rou3Src, true)],
+    ["rou3-src-find-all", createRouter(rou3Src, true)],
     ["rou3-release", createRouter(rou3Release as unknown as typeof rou3Src)],
     // [
-    //   "rou3-with-all-release",
+    //   "rou3-release-find-all",
     //   createRouter(rou3Release as unknown as typeof rou3Src, true),
     // ],
     ["maximum", createFastestRouter()],
