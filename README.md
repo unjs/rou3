@@ -99,13 +99,13 @@ addRoute(router, "GET", "/path/foo/**:name", {
 **Match route to access matched data:**
 
 ```js
-// Returns { payload: 'this path' }
+// Returns [{ payload: 'this path' }]
 findRoute(router, "GET", "/path");
 
-// Returns { payload: 'named route', params: { name: 'fooval' } }
+// Returns [{ payload: 'named route', params: { name: 'fooval' } }]
 findRoute(router, "POST", "/path/fooval");
 
-// Returns { payload: 'wildcard route' }
+// Returns [{ payload: 'wildcard route' }]
 findRoute(router, "GET", "/path/foo/bar/baz");
 
 // Returns undefined (no route matched for/)
