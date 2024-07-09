@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v0.4.0
+
+[compare changes](https://github.com/unjs/rou3/compare/v0.3.0...v0.4.0)
+
+### 🚀 Enhancements
+
+- ⚠️  Support multiple entries with same route ([#118](https://github.com/unjs/rou3/pull/118))
+
+### 🏡 Chore
+
+- Update bench ([a293f3b](https://github.com/unjs/rou3/commit/a293f3b))
+- Update docs ([484a77e](https://github.com/unjs/rou3/commit/484a77e))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Support multiple entries with same route ([#118](https://github.com/unjs/rou3/pull/118))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v0.3.0
 
 [compare changes](https://github.com/unjs/rou3/compare/v0.1.0...v0.3.0)
