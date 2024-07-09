@@ -1,12 +1,10 @@
-// import * as rou3Src from "../../src";
-import * as rou3Dist from "../../dist/index.mjs";
+import * as rou3Src from "../../src";
 import * as rou3Release from "rou3-release";
 import { requests, routes } from "./input";
 
 export function createInstances() {
   return [
-    // ["rou3-src", createRou3Router(rou3Src)],
-    ["rou3-dist", createRou3Router(rou3Dist)],
+    ["rou3-src", createRou3Router(rou3Src)],
     ["rou3-release", createRou3Router(rou3Release)],
     ["maximum", createFastestRouter()],
   ] as const;
