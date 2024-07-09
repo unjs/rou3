@@ -32,18 +32,15 @@ export function findRoute<T = unknown>(
     return;
   }
 
-  const _matches = [];
-  for (const m of match) {
-    _matches.push({
+  return match.map((m) => {
+    return {
       data: m.data,
       params:
         m.paramsMap && opts?.params !== false
           ? getMatchParams(segments, m.paramsMap)
           : undefined,
-    });
-  }
-
-  return _matches;
+    };
+  });
 }
 
 function _lookupTree<T>(
