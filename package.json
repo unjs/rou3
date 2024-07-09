@@ -30,6 +30,7 @@
     "dev": "vitest",
     "bench:node": "node --import jiti/register ./test/bench",
     "bench:bun": "bun ./test/bench",
+    "bench": "pnpm bench:node --no-max && pnpm bench:bun --no-max",
     "lint": "eslint . && prettier -c src test",
     "lint:fix": "automd && eslint --fix . && prettier -w src test",
     "release": "pnpm test && pnpm build && changelogen --release && git push --follow-tags && npm publish",
