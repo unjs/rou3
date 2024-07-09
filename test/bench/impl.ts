@@ -7,10 +7,10 @@ export function createInstances() {
     ["rou3-src", createRouter(rou3Src)],
     ["rou3-src-find-all", createRouter(rou3Src, true)],
     ["rou3-release", createRouter(rou3Release as unknown as typeof rou3Src)],
-    // [
-    //   "rou3-release-find-all",
-    //   createRouter(rou3Release as unknown as typeof rou3Src, true),
-    // ],
+    [
+      "rou3-release-find-all",
+      createRouter(rou3Release as unknown as typeof rou3Src, true),
+    ],
     process.argv.includes("--max")
       ? ["maximum", createFastestRouter()]
       : undefined,

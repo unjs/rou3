@@ -53,7 +53,7 @@
     "mitata": "^0.1.11",
     "prettier": "^3.3.2",
     "radix3": "^1.1.2",
-    "rou3-release": "npm:rou3@0.2.0",
+    "rou3-release": "npm:rou3@0.3.0",
     "typescript": "^5.5.3",
     "unbuild": "^3.0.0-rc.6",
     "vitest": "^2.0.1"
