@@ -52,8 +52,10 @@ function _formatMethods(node: Node<{ path?: string }>) {
     return "";
   }
   return ` ┈> ${Object.entries(node.methods)
-    .map(([method, d]) => {
-      const val = d?.data?.path || JSON.stringify(d?.data);
+    .map(([method, arr]) => {
+      const val =
+        arr?.map((d) => d?.data?.path || JSON.stringify(d?.data)).join(" + ") ||
+        "";
       return `[${method || "*"}] ${val}`;
     })
     .join(", ")}`;

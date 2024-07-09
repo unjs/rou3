@@ -9,7 +9,7 @@ export function findRoute<T = unknown>(
   method: string = "",
   path: string,
   opts?: { params?: boolean },
-): MatchedRoute<T> | undefined {
+): MatchedRoute<T>[] | undefined {
   if (path[path.length - 1] === "/") {
     path = path.slice(0, -1);
   }
@@ -27,17 +27,36 @@ export function findRoute<T = unknown>(
   const segments = splitPath(path);
 
   const match = _lookupTree<T>(ctx, ctx.root, method, segments, 0);
+
   if (match === undefined) {
     return;
   }
 
-  return {
-    data: match.data,
-    params:
-      match.paramsMap && opts?.params !== false
-        ? getMatchParams(segments, match.paramsMap)
-        : undefined,
-  };
+  if (match.length === 1) {
+    const m = match[0];
+    return [
+      {
+        data: m.data,
+        params:
+          m.paramsMap && opts?.params !== false
+            ? getMatchParams(segments, m.paramsMap)
+            : undefined,
+      },
+    ];
+  }
+
+  const _matches = [];
+  for (const m of match) {
+    _matches.push({
+      data: m.data,
+      params:
+        m.paramsMap && opts?.params !== false
+          ? getMatchParams(segments, m.paramsMap)
+          : undefined,
+    });
+  }
+
+  return _matches;
 }
 
 function _lookupTree<T>(
@@ -46,7 +65,7 @@ function _lookupTree<T>(
   method: string,
   segments: string[],
   index: number,
-): MethodData<T> | undefined {
+): MethodData<T>[] | undefined {
   // 0. End of path
   if (index === segments.length) {
     if (node.methods) {

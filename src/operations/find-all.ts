@@ -42,7 +42,7 @@ function _findAll<T>(
   if (node.wildcard && node.wildcard.methods) {
     const match = node.wildcard.methods[method] || node.wildcard.methods[""];
     if (match) {
-      matches.push(match);
+      matches.push(...match);
     }
   }
 
@@ -52,7 +52,7 @@ function _findAll<T>(
     if (index === segments.length && node.param.methods) {
       const match = node.param.methods[method] || node.param.methods[""];
       if (match) {
-        matches.push(match);
+        matches.push(...match);
       }
     }
   }
@@ -67,7 +67,7 @@ function _findAll<T>(
   if (index === segments.length && node.methods) {
     const match = node.methods[method] || node.methods[""];
     if (match) {
-      matches.push(match);
+      matches.push(...match);
     }
   }
 

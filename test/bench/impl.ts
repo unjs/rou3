@@ -33,7 +33,8 @@ export function createRouter(rou3: typeof rou3Src, withAll: boolean = false) {
     };
   }
   return (method: string, path: string) => {
-    return rou3.findRoute(router, method, path);
+    const r = rou3.findRoute(router, method, path);
+    return r?.[0] || r;
   };
 }
 

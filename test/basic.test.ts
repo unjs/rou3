@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { createRouter, formatTree } from "./_utils";
-import { findRoute, removeRoute } from "../src";
+import { findRoute as _findRoute, removeRoute } from "../src";
+
+const findRoute = (router: any, method: string, path: string) =>
+  _findRoute(router, method, path)?.[0];
 
 describe("Basic router", () => {
   const router = createRouter([

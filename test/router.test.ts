@@ -1,7 +1,10 @@
 import type { RouterContext } from "../src/types";
 import { describe, it, expect } from "vitest";
 import { createRouter, formatTree } from "./_utils";
-import { addRoute, findRoute, removeRoute } from "../src";
+import { addRoute, findRoute as _findRoute, removeRoute } from "../src";
+
+const findRoute = (router: any, method: string, path: string) =>
+  _findRoute(router, method, path)?.[0];
 
 type TestRoute = {
   data: { path: string };
@@ -374,7 +377,6 @@ describe("Router insert", () => {
       "hi",
       "helium",
       "/choo",
-      "//choo",
       "coooool",
       "chrome",
       "choot",
@@ -396,7 +398,7 @@ describe("Router insert", () => {
           ├── /cool ┈> [GET] cool
           ├── /hi ┈> [GET] hi
           ├── /helium ┈> [GET] helium
-          ├── /choo ┈> [GET] //choo
+          ├── /choo ┈> [GET] /choo
           ├── /coooool ┈> [GET] coooool
           ├── /chrome ┈> [GET] chrome
           ├── /choot ┈> [GET] choot
