@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { createRouter, formatTree } from "./_utils";
-import { matchAllRoutes, type RouterContext } from "../src";
+import { findAllRoutes, type RouterContext } from "../src";
 
 // Helper to make snapsots more readable
-const _matchAllRoutes = (
-  ctx: RouterContext,
+const _findAllRoutes = (
+  ctx: RouterContext<{ path?: string }>,
   method: string = "",
   path: string,
-) => matchAllRoutes(ctx, method, path).map((m: any) => m.path);
+) => findAllRoutes(ctx, method, path).map((m) => m.data.path);
 
-describe("matcher: basic", () => {
+describe("fiind-all: basic", () => {
   const router = createRouter([
     "/foo",
     "/foo/**",
@@ -33,7 +33,7 @@ describe("matcher: basic", () => {
   });
 
   it("matches /foo/bar/baz pattern", () => {
-    const matches = _matchAllRoutes(router, "GET", "/foo/bar/baz");
+    const matches = _findAllRoutes(router, "GET", "/foo/bar/baz");
     expect(matches).to.toMatchInlineSnapshot(`
       [
         "/**",
@@ -80,28 +80,26 @@ describe("matcher: complex", () => {
   });
 
   it("can match routes", () => {
-    expect(_matchAllRoutes(router, "GET", "/")).to.toMatchInlineSnapshot(`
+    expect(_findAllRoutes(router, "GET", "/")).to.toMatchInlineSnapshot(`
       [
         "/",
       ]
     `);
-    expect(_matchAllRoutes(router, "GET", "/foo")).to.toMatchInlineSnapshot(`
+    expect(_findAllRoutes(router, "GET", "/foo")).to.toMatchInlineSnapshot(`
       [
         "/foo/**",
         "/foo/*",
         "/foo",
       ]
     `);
-    expect(_matchAllRoutes(router, "GET", "/foo/bar")).to
-      .toMatchInlineSnapshot(`
+    expect(_findAllRoutes(router, "GET", "/foo/bar")).to.toMatchInlineSnapshot(`
         [
           "/foo/**",
           "/foo/*",
           "/foo/bar",
         ]
       `);
-    expect(_matchAllRoutes(router, "GET", "/foo/baz")).to
-      .toMatchInlineSnapshot(`
+    expect(_findAllRoutes(router, "GET", "/foo/baz")).to.toMatchInlineSnapshot(`
         [
           "/foo/**",
           "/foo/*",
@@ -109,15 +107,14 @@ describe("matcher: complex", () => {
           "/foo/baz",
         ]
       `);
-    expect(_matchAllRoutes(router, "GET", "/foo/123/sub")).to
+    expect(_findAllRoutes(router, "GET", "/foo/123/sub")).to
       .toMatchInlineSnapshot(`
         [
           "/foo/**",
           "/foo/*/sub",
         ]
       `);
-    expect(_matchAllRoutes(router, "GET", "/foo/123")).to
-      .toMatchInlineSnapshot(`
+    expect(_findAllRoutes(router, "GET", "/foo/123")).to.toMatchInlineSnapshot(`
         [
           "/foo/**",
           "/foo/*",
@@ -127,44 +124,44 @@ describe("matcher: complex", () => {
 
   it("trailing slash", () => {
     // Defined with trailing slash
-    expect(_matchAllRoutes(router, "GET", "/with-trailing")).to
+    expect(_findAllRoutes(router, "GET", "/with-trailing")).to
       .toMatchInlineSnapshot(`
         [
           "/with-trailing/",
         ]
       `);
-    expect(_matchAllRoutes(router, "GET", "/with-trailing")).toMatchObject(
-      _matchAllRoutes(router, "GET", "/with-trailing/"),
+    expect(_findAllRoutes(router, "GET", "/with-trailing")).toMatchObject(
+      _findAllRoutes(router, "GET", "/with-trailing/"),
     );
 
     // Defined without trailing slash
-    expect(_matchAllRoutes(router, "GET", "/without-trailing")).to
+    expect(_findAllRoutes(router, "GET", "/without-trailing")).to
       .toMatchInlineSnapshot(`
         [
           "/without-trailing",
         ]
       `);
-    expect(_matchAllRoutes(router, "GET", "/without-trailing")).toMatchObject(
-      _matchAllRoutes(router, "GET", "/without-trailing/"),
+    expect(_findAllRoutes(router, "GET", "/without-trailing")).toMatchObject(
+      _findAllRoutes(router, "GET", "/without-trailing/"),
     );
   });
 
   it("prefix overlap", () => {
-    expect(_matchAllRoutes(router, "GET", "/c/123")).to.toMatchInlineSnapshot(
+    expect(_findAllRoutes(router, "GET", "/c/123")).to.toMatchInlineSnapshot(
       `
       [
         "/c/**",
       ]
     `,
     );
-    expect(_matchAllRoutes(router, "GET", "/c/123")).toMatchObject(
-      _matchAllRoutes(router, "GET", "/c/123/"),
+    expect(_findAllRoutes(router, "GET", "/c/123")).toMatchObject(
+      _findAllRoutes(router, "GET", "/c/123/"),
     );
-    expect(_matchAllRoutes(router, "GET", "/c/123")).toMatchObject(
-      _matchAllRoutes(router, "GET", "/c"),
+    expect(_findAllRoutes(router, "GET", "/c/123")).toMatchObject(
+      _findAllRoutes(router, "GET", "/c"),
     );
 
-    expect(_matchAllRoutes(router, "GET", "/cart")).to.toMatchInlineSnapshot(
+    expect(_findAllRoutes(router, "GET", "/cart")).to.toMatchInlineSnapshot(
       `
       [
         "/cart",
@@ -193,7 +190,7 @@ describe("matcher: order", () => {
   });
 
   it("/hello", () => {
-    const matches = _matchAllRoutes(router, "GET", "/hello");
+    const matches = _findAllRoutes(router, "GET", "/hello");
     expect(matches).to.toMatchInlineSnapshot(`
       [
         "/hello/**",
@@ -204,7 +201,7 @@ describe("matcher: order", () => {
   });
 
   it("/hello/world", () => {
-    const matches = _matchAllRoutes(router, "GET", "/hello/world");
+    const matches = _findAllRoutes(router, "GET", "/hello/world");
     expect(matches).to.toMatchInlineSnapshot(`
       [
         "/hello/**",
@@ -215,7 +212,7 @@ describe("matcher: order", () => {
   });
 
   it("/hello/world/foobar", () => {
-    const matches = _matchAllRoutes(router, "GET", "/hello/world/foobar");
+    const matches = _findAllRoutes(router, "GET", "/hello/world/foobar");
     expect(matches).to.toMatchInlineSnapshot(`
       [
         "/hello/**",

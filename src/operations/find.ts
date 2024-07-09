@@ -1,5 +1,5 @@
-import type { RouterContext, MatchedRoute, Node, Params } from "../types";
-import { splitPath } from "./_utils";
+import type { RouterContext, MatchedRoute, Node, MethodData } from "../types";
+import { getMatchParams, splitPath } from "./_utils";
 
 /**
  * Find a route by path.
@@ -8,7 +8,7 @@ export function findRoute<T = unknown>(
   ctx: RouterContext<T>,
   method: string = "",
   path: string,
-  opts?: { ignoreParams?: boolean },
+  opts?: { params?: boolean },
 ): MatchedRoute<T> | undefined {
   if (path[path.length - 1] === "/") {
     path = path.slice(0, -1);
@@ -19,38 +19,39 @@ export function findRoute<T = unknown>(
   if (staticNode && staticNode.methods) {
     const staticMatch = staticNode.methods[method] || staticNode.methods[""];
     if (staticMatch !== undefined) {
-      return { data: staticMatch[0] };
+      return staticMatch;
     }
   }
 
   // Lookup tree
   const segments = splitPath(path);
-  const match = _lookupTree(ctx, ctx.root, method, segments, 0);
+
+  const match = _lookupTree<T>(ctx, ctx.root, method, segments, 0);
   if (match === undefined) {
     return;
   }
 
-  const [data, paramNames] = match;
-  if (opts?.ignoreParams || !paramNames) {
-    return { data };
+  if (opts?.params || !match.paramsMap) {
+    return {
+      data: match.data,
+      params: undefined,
+    };
   }
 
-  const params = _getParams(segments, paramNames);
-
   return {
-    data,
-    params,
+    data: match.data,
+    params: getMatchParams(segments, match.paramsMap),
   };
 }
 
 function _lookupTree<T>(
-  ctx: RouterContext,
+  ctx: RouterContext<T>,
   node: Node<T>,
   method: string,
   segments: string[],
   index: number,
-): [Data: T, Params?: Params] | undefined {
-  // End of path
+): MethodData<T> | undefined {
+  // 0. End of path
   if (index === segments.length) {
     if (node.methods) {
       const match = node.methods[method] || node.methods[""];
@@ -99,26 +100,4 @@ function _lookupTree<T>(
 
   // No match
   return;
-}
-
-function _getParams(
-  segments: string[],
-  paramsNames: Params,
-): MatchedRoute["params"] {
-  const params = Object.create(null);
-  for (const [index, name] of paramsNames) {
-    const segment =
-      index < 0 ? segments.slice(-1 * index).join("/") : segments[index];
-    if (typeof name === "string") {
-      params[name] = segment;
-    } else {
-      const match = segment.match(name);
-      if (match) {
-        for (const key in match.groups) {
-          params[key] = match.groups[key];
-        }
-      }
-    }
-  }
-  return params;
 }

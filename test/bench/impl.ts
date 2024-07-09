@@ -4,13 +4,18 @@ import { requests, routes } from "./input";
 
 export function createInstances() {
   return [
-    ["rou3-src", createRou3Router(rou3Src)],
-    ["rou3-release", createRou3Router(rou3Release)],
+    ["rou3-src", createRouter(rou3Src)],
+    ["rou3-with-all-src", createRouter(rou3Src, true)],
+    ["rou3-release", createRouter(rou3Release as unknown as typeof rou3Src)],
+    // [
+    //   "rou3-with-all-release",
+    //   createRouter(rou3Release as unknown as typeof rou3Src, true),
+    // ],
     ["maximum", createFastestRouter()],
   ] as const;
 }
 
-export function createRou3Router(rou3: typeof rou3Release) {
+export function createRouter(rou3: typeof rou3Src, withAll: boolean = false) {
   const router = rou3.createRouter();
   for (const route of routes) {
     rou3.addRoute(
@@ -19,6 +24,11 @@ export function createRou3Router(rou3: typeof rou3Release) {
       route.path,
       `[${route.method}] ${route.path}`,
     );
+  }
+  if (withAll) {
+    return (method: string, path: string) => {
+      return rou3.findAllRoutes(router, method, path, { params: true }).pop();
+    };
   }
   return (method: string, path: string) => {
     return rou3.findRoute(router, method, path);

@@ -17,10 +17,10 @@ export function createTestRoutes(paths: string[]): Record<string, any> {
 
 function testRouter(
   routes: string[] | Record<string, any>,
-  before?: (router: RouterContext) => void,
+  before?: (router: RouterContext<{ path?: string }>) => void,
   tests?: TestRoutes,
 ) {
-  const router = createRouter(routes);
+  const router = createRouter<{ path?: string }>(routes);
 
   if (!tests) {
     tests = Array.isArray(routes)
