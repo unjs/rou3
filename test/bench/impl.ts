@@ -11,8 +11,10 @@ export function createInstances() {
     //   "rou3-release-find-all",
     //   createRouter(rou3Release as unknown as typeof rou3Src, true),
     // ],
-    ["maximum", createFastestRouter()],
-  ] as const;
+    process.argv.includes("--max")
+      ? ["maximum", createFastestRouter()]
+      : undefined,
+  ].filter(Boolean) as [string, (method: string, path: string) => any][];
 }
 
 export function createRouter(rou3: typeof rou3Src, withAll: boolean = false) {
