@@ -1,6 +1,18 @@
 import type { RouterContext, ParamsIndexMap } from "../types";
 import { splitPath } from "./_utils";
 
+const NodeStaticMap = /* @__PURE__ */ (() => {
+  const C = function () {};
+  C.prototype = Object.create(null);
+  return C;
+})() as unknown as { new (): Record<string, any> };
+
+const NodeMethodsMap = /* @__PURE__ */ (() => {
+  const C = function () {};
+  C.prototype = Object.create(null);
+  return C;
+})() as unknown as { new (): Record<string, any> };
+
 /**
  * Add a route to the router context.
  */
@@ -53,7 +65,7 @@ export function addRoute<T>(
     } else {
       const staticNode = { key: segment };
       if (!node.static) {
-        node.static = Object.create(null);
+        node.static = new NodeStaticMap();
       }
       node.static![segment] = staticNode;
       node = staticNode;
@@ -63,7 +75,7 @@ export function addRoute<T>(
   // Assign index, params and data to the node
   const hasParams = paramsMap.length > 0;
   if (!node.methods) {
-    node.methods = Object.create(null);
+    node.methods = new NodeMethodsMap();
   }
   if (!node.methods![method]) {
     node.methods![method] = [];
