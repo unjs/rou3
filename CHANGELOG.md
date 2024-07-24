@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v0.5.0
+
+[compare changes](https://github.com/unjs/rou3/compare/v0.4.0...v0.5.0)
+
+### 🔥 Performance
+
+- Avoid `Object.create(null)` ([2b7ac09](https://github.com/unjs/rou3/commit/2b7ac09))
+
+### 🩹 Fixes
+
+- ⚠️  Last named segment should be required ([#123](https://github.com/unjs/rou3/pull/123))
+
+### 🏡 Chore
+
+- Ignore bun lockfile ([172f548](https://github.com/unjs/rou3/commit/172f548))
+- Update release ([1c85bb8](https://github.com/unjs/rou3/commit/1c85bb8))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Last named segment should be required ([#123](https://github.com/unjs/rou3/pull/123))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v0.4.0
 
 [compare changes](https://github.com/unjs/rou3/compare/v0.3.0...v0.4.0)
