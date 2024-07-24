@@ -1,10 +1,7 @@
 import type { RouterContext } from "../src/types";
 import { describe, it, expect } from "vitest";
 import { createRouter, formatTree } from "./_utils";
-import { addRoute, findRoute as _findRoute, removeRoute } from "../src";
-
-const findRoute = (router: any, method: string, path: string) =>
-  _findRoute(router, method, path)?.[0];
+import { addRoute, findRoute, removeRoute } from "../src";
 
 type TestRoute = {
   data: { path: string };
