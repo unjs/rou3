@@ -9,7 +9,7 @@ export function findRoute<T = unknown>(
   method: string = "",
   path: string,
   opts?: { params?: boolean },
-): MatchedRoute<T>[] | undefined {
+): MatchedRoute<T> | undefined {
   if (path[path.length - 1] === "/") {
     path = path.slice(0, -1);
   }
@@ -19,29 +19,29 @@ export function findRoute<T = unknown>(
   if (staticNode && staticNode.methods) {
     const staticMatch = staticNode.methods[method] || staticNode.methods[""];
     if (staticMatch !== undefined) {
-      return staticMatch;
+      return staticMatch[0];
     }
   }
 
   // Lookup tree
   const segments = splitPath(path);
 
-  const matches = _lookupTree<T>(ctx, ctx.root, method, segments, 0);
+  const match = _lookupTree<T>(ctx, ctx.root, method, segments, 0)?.[0];
 
-  if (matches === undefined) {
+  if (match === undefined) {
     return;
   }
 
   if (opts?.params === false) {
-    return matches;
+    return match;
   }
 
-  return matches.map((m) => {
-    return {
-      data: m.data,
-      params: m.paramsMap ? getMatchParams(segments, m.paramsMap) : undefined,
-    };
-  });
+  return {
+    data: match.data,
+    params: match.paramsMap
+      ? getMatchParams(segments, match.paramsMap)
+      : undefined,
+  };
 }
 
 function _lookupTree<T>(
