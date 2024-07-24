@@ -1,10 +1,5 @@
+import { EmptyObject } from "./_utils";
 import type { RouterContext } from "./types";
-
-const RouterStaticMap = /* @__PURE__ */ (() => {
-  const C = function () {};
-  C.prototype = Object.create(null);
-  return C;
-})() as unknown as { new (): Record<string, any> };
 
 /**
  * Create a new router context.
@@ -12,7 +7,7 @@ const RouterStaticMap = /* @__PURE__ */ (() => {
 export function createRouter<T = unknown>(): RouterContext<T> {
   const ctx: RouterContext<T> = {
     root: { key: "" },
-    static: new RouterStaticMap(),
+    static: new EmptyObject(),
   };
   return ctx;
 }
