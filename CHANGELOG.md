@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v0.5.1
+
+[compare changes](https://github.com/unjs/rou3/compare/v0.5.0...v0.5.1)
+
+### 💅 Refactors
+
+- Reduce bundle overhead ([0eed2e8](https://github.com/unjs/rou3/commit/0eed2e8))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v0.5.0
 
 [compare changes](https://github.com/unjs/rou3/compare/v0.4.0...v0.5.0)
