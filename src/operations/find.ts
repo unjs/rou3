@@ -63,11 +63,20 @@ function _lookupTree<T>(
     if (node.param && node.param.methods) {
       const match = node.param.methods[method] || node.param.methods[""];
       if (match) {
-        return match;
+        const pMap = match[0].paramsMap;
+        if (pMap?.[pMap?.length - 1]?.[2] /* optional */) {
+          return match;
+        }
       }
     }
     if (node.wildcard && node.wildcard.methods) {
-      return node.wildcard.methods[method] || node.wildcard.methods[""];
+      const match = node.wildcard.methods[method] || node.wildcard.methods[""];
+      if (match) {
+        const pMap = match[0].paramsMap;
+        if (pMap?.[pMap?.length - 1]?.[2] /* optional */) {
+          return match;
+        }
+      }
     }
     return undefined;
   }

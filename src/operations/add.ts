@@ -39,7 +39,11 @@ export function addRoute<T>(
         node.wildcard = { key: "**" };
       }
       node = node.wildcard;
-      paramsMap.push([-i, segment.split(":")[1] || "_"]);
+      paramsMap.push([
+        -i,
+        segment.split(":")[1] || "_",
+        segment.length === 2 /* no id */,
+      ]);
       break;
     }
 
@@ -49,11 +53,13 @@ export function addRoute<T>(
         node.param = { key: "*" };
       }
       node = node.param;
+      const isOptional = segment === "*";
       paramsMap.push([
         i,
-        segment === "*"
+        isOptional
           ? `_${_unnamedParamIndex++}`
           : (_getParamMatcher(segment) as string),
+        isOptional,
       ]);
       continue;
     }
