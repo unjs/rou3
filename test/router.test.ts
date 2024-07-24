@@ -78,6 +78,7 @@ describe("Router lookup", function () {
   describe("retrieve placeholders", function () {
     testRouter(
       [
+        "blog/*",
         "carbon/:element",
         "carbon/:element/test/:testing",
         "this/:route/has/:cool/stuff",
@@ -85,6 +86,8 @@ describe("Router lookup", function () {
       (router) =>
         expect(formatTree(router.root)).toMatchInlineSnapshot(`
           "<root>
+              ├── /blog
+              │       ├── /* ┈> [GET] blog/*
               ├── /carbon
               │       ├── /* ┈> [GET] carbon/:element
               │       │       ├── /test
@@ -102,8 +105,8 @@ describe("Router lookup", function () {
             element: "test1",
           },
         },
-        "/carbon": { data: { path: "carbon/:element" } },
-        "carbon/": { data: { path: "carbon/:element" } },
+        "/carbon": undefined,
+        "carbon/": undefined,
         "carbon/test2/test/test23": {
           data: { path: "carbon/:element/test/:testing" },
           params: {
@@ -118,6 +121,9 @@ describe("Router lookup", function () {
             cool: "more",
           },
         },
+        "/blog": { data: { path: "blog/*" } },
+        "blog/": { data: { path: "blog/*" } },
+        "blog/123": { data: { path: "blog/*" } },
       },
     );
 
@@ -330,6 +336,7 @@ describe("Router lookup", function () {
           data: { path: mixedPath },
           params: { category: "test", id: "123", name: "foobar" },
         },
+        "/files/test": undefined,
       },
     );
   });
@@ -428,10 +435,7 @@ describe("Router remove", function () {
     ]);
 
     removeRoute(router, "GET", "choot");
-    expect(findRoute(router, "GET", "choot")).to.deep.equal({
-      data: { path: "choot/:choo" },
-      params: { choo: undefined },
-    });
+    expect(findRoute(router, "GET", "choot")).to.deep.equal(undefined);
     removeRoute(router, "GET", "choot/*");
     expect(findRoute(router, "GET", "choot")).to.deep.equal(undefined);
 
@@ -448,16 +452,16 @@ describe("Router remove", function () {
   });
 
   it("removes data but does not delete a node if it has children", function () {
-    const router = createRouter(["a/b", "a/b/:param1"]);
+    const router = createRouter(["a/b", "a/b/*"]);
 
     removeRoute(router, "GET", "a/b");
     expect(findRoute(router, "GET", "a/b")).to.deep.equal({
-      data: { path: "a/b/:param1" },
-      params: { param1: undefined },
+      data: { path: "a/b/*" },
+      params: { _0: undefined },
     });
     expect(findRoute(router, "GET", "a/b/c")).to.deep.equal({
-      params: { param1: "c" },
-      data: { path: "a/b/:param1" },
+      params: { _0: "c" },
+      data: { path: "a/b/*" },
     });
     removeRoute(router, "GET", "a/b/*");
     expect(findRoute(router, "GET", "a/b")).to.deep.equal(undefined);

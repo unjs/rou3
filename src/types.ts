@@ -3,7 +3,9 @@ export interface RouterContext<T = unknown> {
   static: Record<string, Node<T> | undefined>;
 }
 
-export type ParamsIndexMap = Array<[Index: number, name: string | RegExp]>;
+export type ParamsIndexMap = Array<
+  [Index: number, name: string | RegExp, optional: boolean]
+>;
 export type MethodData<T = unknown> = { data: T; paramsMap?: ParamsIndexMap };
 
 export interface Node<T = unknown> {

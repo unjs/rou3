@@ -63,7 +63,11 @@ function _lookupTree<T>(
     if (node.param && node.param.methods) {
       const match = node.param.methods[method] || node.param.methods[""];
       if (match) {
-        return match;
+        const map = match[0].paramsMap;
+        const isLastPartOptional = map?.[map?.length - 1]?.[2];
+        if (isLastPartOptional) {
+          return match;
+        }
       }
     }
     if (node.wildcard && node.wildcard.methods) {
