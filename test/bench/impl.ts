@@ -1,16 +1,16 @@
 import * as rou3Src from "../../src";
-import * as rou3Release from "rou3-release";
+// import * as rou3Release from "rou3-release";
 import { requests, routes } from "./input";
 
 export function createInstances() {
   return [
-    ["rou3-src", createRouter(rou3Src)],
-    ["rou3-src-find-all", createRouter(rou3Src, true)],
-    ["rou3-release", createRouter(rou3Release as unknown as typeof rou3Src)],
-    [
-      "rou3-release-find-all",
-      createRouter(rou3Release as unknown as typeof rou3Src, true),
-    ],
+    ["rou3", createRouter(rou3Src)],
+    ["rou3-find-all", createRouter(rou3Src, true)],
+    // ["rou3-release", createRouter(rou3Release as unknown as typeof rou3Src)],
+    // [
+    //   "rou3-release-find-all",
+    //   createRouter(rou3Release as unknown as typeof rou3Src, true),
+    // ],
     process.argv.includes("--max")
       ? ["maximum", createFastestRouter()]
       : undefined,
@@ -33,8 +33,7 @@ export function createRouter(rou3: typeof rou3Src, withAll: boolean = false) {
     };
   }
   return (method: string, path: string) => {
-    const r = rou3.findRoute(router, method, path);
-    return r?.[0] || r;
+    return rou3.findRoute(router, method, path);
   };
 }
 
