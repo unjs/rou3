@@ -9,7 +9,7 @@ const _findAllRoutes = (
   path: string,
 ) => findAllRoutes(ctx, method, path).map((m) => m.data.path);
 
-describe("fiind-all: basic", () => {
+describe("find-all: basic", () => {
   const router = createRouter([
     "/foo",
     "/foo/**",
@@ -216,6 +216,46 @@ describe("matcher: order", () => {
     expect(matches).to.toMatchInlineSnapshot(`
       [
         "/hello/**",
+      ]
+    `);
+  });
+});
+
+describe.only("matcher: named", () => {
+  const router = createRouter(["/foo", "/foo/:bar", "/foo/:bar/:qaz"]);
+
+  it("snapshot", () => {
+    expect(formatTree(router.root)).toMatchInlineSnapshot(`
+      "<root>
+          ├── /foo ┈> [GET] /foo
+          │       ├── /* ┈> [GET] /foo/:bar
+          │       │       ├── /* ┈> [GET] /foo/:bar/:qaz"
+    `);
+  });
+
+  it("matches /foo", () => {
+    const matches = _findAllRoutes(router, "GET", "/foo");
+    expect(matches).to.toMatchInlineSnapshot(`
+      [
+        "/foo",
+      ]
+    `);
+  });
+
+  it("matches /foo/123", () => {
+    const matches = _findAllRoutes(router, "GET", "/foo/123");
+    expect(matches).to.toMatchInlineSnapshot(`
+      [
+        "/foo/:bar",
+      ]
+    `);
+  });
+
+  it("matches /foo/123/456", () => {
+    const matches = _findAllRoutes(router, "GET", "/foo/123/456");
+    expect(matches).to.toMatchInlineSnapshot(`
+      [
+        "/foo/:bar/:qaz",
       ]
     `);
   });

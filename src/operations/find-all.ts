@@ -52,7 +52,10 @@ function _findAll<T>(
     if (index === segments.length && node.param.methods) {
       const match = node.param.methods[method] || node.param.methods[""];
       if (match) {
-        matches.push(...match);
+        const pMap = match[0].paramsMap;
+        if (pMap?.[pMap?.length - 1]?.[2]) {
+          matches.push(...match);
+        }
       }
     }
   }
