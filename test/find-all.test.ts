@@ -221,7 +221,7 @@ describe("matcher: order", () => {
   });
 });
 
-describe.only("matcher: named", () => {
+describe("matcher: named", () => {
   const router = createRouter(["/foo", "/foo/:bar", "/foo/:bar/:qaz"]);
 
   it("snapshot", () => {
