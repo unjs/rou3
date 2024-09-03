@@ -36,8 +36,8 @@ importers:
         specifier: ^8.2.0
         version: 8.2.0
       hono:
-        specifier: ^4.5.9
-        version: 4.5.9
+        specifier: ^4.5.11
+        version: 4.5.11
       jiti:
         specifier: ^2.0.0-beta.3
         version: 2.0.0-beta.3
@@ -48,8 +48,8 @@ importers:
         specifier: ^1.7.2
         version: 1.7.2
       mitata:
-        specifier: ^0.1.11
-        version: 0.1.11
+        specifier: ^0.1.14
+        version: 0.1.14
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -1890,8 +1890,8 @@ packages:
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
 
-  hono@4.5.9:
-    resolution: {integrity: sha512-zz8ktqMDRrZETjxBrv8C5PQRFbrTRCLNVAjD1SNQyOzv4VjmX68Uxw83xQ6oxdAB60HiWnGEatiKA8V3SZLDkQ==}
+  hono@4.5.11:
+    resolution: {integrity: sha512-62FcjLPtjAFwISVBUshryl+vbHOjg8rE4uIK/dxyR8GpLztunZpwFmfEvmJCUI7xoGh/Sr3CGCDPCmYxVw7wUQ==}
     engines: {node: '>=16.0.0'}
 
   hookable@5.5.3:
@@ -2358,8 +2358,8 @@ packages:
     resolution: {integrity: sha512-bAxsR8BVfj60DWXHE3u30oHzfl4G7khkSuPW+qvpd7jFRHm7dLxOjUk1EHACJ/hxLY8phGJ0YhYHZo7jil7Qdg==}
     engines: {node: '>= 8'}
 
-  mitata@0.1.11:
-    resolution: {integrity: sha512-cs6FiWcnRxn7atVumm8wA8R70XCDmMXgVgb/qWUSjr5dwuIBr7zC+22mbGYPlbyFixlIOjuP//A0e72Q1ZoGDw==}
+  mitata@0.1.14:
+    resolution: {integrity: sha512-8kRs0l636eT4jj68PFXOR2D5xl4m56T478g16SzUPOYgkzQU+xaw62guAQxzBPm+SXb15GQi1cCpDxJfkr4CSA==}
 
   mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
@@ -5574,7 +5574,7 @@ snapshots:
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
 
-  hono@4.5.9: {}
+  hono@4.5.11: {}
 
   hookable@5.5.3: {}
 
@@ -6000,7 +6000,7 @@ snapshots:
       minipass: 3.3.6
       yallist: 4.0.0
 
-  mitata@0.1.11: {}
+  mitata@0.1.14: {}
 
   mkdirp-classic@0.5.3: {}
 
