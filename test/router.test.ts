@@ -506,4 +506,14 @@ describe("Router remove", function () {
       params: { _: "components/snackbars" },
     });
   });
+
+  it("remove wildcard routes #136", function () {
+    const route = "/user/**:id";
+    const router = createRouter([route]);
+
+    removeRoute(router, "GET", route);
+
+    expect(findRoute(router, "GET", "/user/123")).toBeUndefined();
+    expect(findRoute(router, "GET", "/user/wildcard")).toBeUndefined();
+  });
 });
