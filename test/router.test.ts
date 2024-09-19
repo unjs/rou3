@@ -507,7 +507,7 @@ describe("Router remove", function () {
     });
   });
 
-  it("remove wildcard routes #136", function () {
+  it("remove named wildcard routes", function () {
     const route = "/user/**:id";
     const router = createRouter([route]);
 
