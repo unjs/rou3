@@ -43,7 +43,7 @@ function _remove(
   }
 
   // Wildcard
-  if (segment === "**") {
+  if (segment.startsWith("**")) {
     if (node.wildcard) {
       _remove(node.wildcard, method, segments, index + 1);
       if (_isEmptyNode(node.wildcard)) {
