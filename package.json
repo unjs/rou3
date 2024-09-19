@@ -45,7 +45,7 @@
     "esbuild": "^0.23.1",
     "eslint": "^9.10.0",
     "eslint-config-unjs": "^0.3.2",
-    "find-my-way": "^8.2.0",
+    "find-my-way": "^9.0.1",
     "hono": "^4.6.1",
     "jiti": "^2.0.0-beta.3",
     "koa-tree-router": "^0.12.1",
