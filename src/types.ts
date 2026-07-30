@@ -24,7 +24,7 @@ export interface Node<T = unknown> {
 
 export type MatchedRoute<T = unknown> = {
   data: T;
-  params?: Record<string, string>;
+  params?: Record<string, string | undefined>;
 };
 
 type ExtractWildcards<
@@ -42,6 +42,10 @@ type ExtractWildcards<
       ? ExtractWildcards<Rest, Count>
       : never; // No more wildcards found
 
+type ExtractTrailingWildcard<TPath extends string> = TPath extends `${infer Prefix}/*${"" | "/"}`
+  ? Exclude<ExtractWildcards<TPath>, ExtractWildcards<Prefix>>
+  : never;
+
 type ExtractNamedParams<TPath extends string> = TPath extends `${infer _Start}:${infer Rest}` // Found named parameter (:name)
   ? Rest extends `${infer Param}/${infer Tail}` // Parameter followed by path
     ? Param | ExtractNamedParams<`/${Tail}`>
@@ -53,5 +57,9 @@ type ExtractNamedParams<TPath extends string> = TPath extends `${infer _Start}:$
     : never; // No parameters found
 
 export type InferRouteParams<TPath extends string> = {
-  [K in ExtractNamedParams<TPath> | ExtractWildcards<TPath>]: string;
+  [Key in
+    | ExtractNamedParams<TPath>
+    | ExtractWildcards<TPath>]: Key extends ExtractTrailingWildcard<TPath>
+    ? string | undefined
+    : string;
 };

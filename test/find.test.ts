@@ -592,6 +592,7 @@ describe("wildcard tail extraction (compiled parity)", () => {
   addRoute(router, "GET", "/files/**:path", { path: "FILES" });
   addRoute(router, "GET", "/opt/**", { path: "OPT" });
   addRoute(router, "GET", "/pre/:x/**:rest", { path: "PRE" });
+  addRoute(router, "GET", "/segment/*/", { path: "SEGMENT" });
   const compiledLookup = compileRouter(router);
 
   const lookups = [
@@ -629,6 +630,10 @@ describe("wildcard tail extraction (compiled parity)", () => {
       expect(match("GET", "/pre/v/a/b")).toMatchObject({
         data: { path: "PRE" },
         params: { x: "v", rest: "a/b" },
+      });
+      expect(match("GET", "/segment")).toMatchObject({
+        data: { path: "SEGMENT" },
+        params: { "0": undefined },
       });
     });
   }
