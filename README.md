@@ -198,8 +198,21 @@ Precisely:
 
 - **Across the tree:** at each level, wildcard (`**`) matches are emitted first, then single-segment params (`*`, `:name`), then static segments — so wilder/shallower routes come before more-static/deeper ones.
 - **Same-node siblings** (multiple routes ending on the same dynamic node, e.g. `/foo/*` and `/foo/:id(\d+)`): ordered by ascending specificity — optional/unconstrained entries before required/regex-constrained ones — with **insertion order preserved on ties**.
-- **Subsumption consistency:** when registered patterns are strictly ordered by containment (each a `"superset"` of the next per [`compareRoutes`](#pattern-overlap)), the result order agrees with the subsumption order (broader first).
-- Registration order never affects the result order, except as the tiebreaker between equally specific same-node siblings.
+- **Subsumption consistency (patterns without optional syntax):** when the registered patterns use **no** optional syntax and are strictly ordered by containment (each a `"superset"` of the next per [`compareRoutes`](#pattern-overlap)), the result order agrees with the subsumption order (broader first).
+- **Carve-out — optional syntax:** a pattern containing `:name?`, `:name*` or `{...}?` registers **several** entries (one per expansion), and results are ordered by the specificity of the **entry that matched**, not by the breadth of the whole pattern. A pattern that is a `"superset"` of another can therefore come **last**:
+
+  ```js
+  const router = createRouter();
+  addRoute(router, "GET", "/admin", { name: "admin" });
+  addRoute(router, "GET", "/admin/:page?", { name: "admin-page" }); // superset of "/admin"
+
+  findAllRoutes(router, "GET", "/admin").map((m) => m.data.name);
+  // ["admin", "admin-page"] — the broader pattern is last
+  ```
+
+  If you need a true **pattern-level** containment order and your patterns may use optional syntax, re-sort the (small) result array yourself with [`compareRoutes`](#pattern-overlap).
+
+- Registration order never affects the result order, except as the tiebreaker between equally specific same-node **entries** — which, per the carve-out above, includes expansions of optional-syntax patterns (registering `/admin/:page?` before `/admin` swaps the two results in the example above).
 
 [`findOverlappingRoutes`](#pattern-overlap) follows the same least → most specific order.
 

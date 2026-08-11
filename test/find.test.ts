@@ -353,6 +353,65 @@ describe("prototype-key lookups (compiled parity)", () => {
   }
 });
 
+describe("__proto__ param names (compiled parity)", () => {
+  // A `"__proto__":` property in an object literal is the prototype setter, not
+  // a data property — the compiled params literal must use a computed key or
+  // the param silently disappears from the compiled result (the interpreter
+  // builds params on a null-proto object and keeps it).
+  const router = createEmptyRouter<{ path: string }>();
+  addRoute(router, "GET", "/p/:__proto__", { path: "PARAM" });
+  addRoute(router, "GET", "/r/:__proto__(\\d+)", { path: "REGEX" });
+  addRoute(router, "GET", "/rp/x:__proto__(\\d+)y", { path: "REGEX-PARTIAL" });
+  addRoute(router, "GET", "/w/**:__proto__", { path: "WILDCARD" });
+  addRoute(router, "GET", "/o/:__proto__?", { path: "OPTIONAL" });
+  addRoute(router, "GET", "/u/*", { path: "UNNAMED" });
+  const compiledLookup = compileRouter(router);
+  const compiledMatchAll = compileRouter(router, { matchAll: true });
+  // eslint-disable-next-line no-new-func
+  const aotLookup = new Function(
+    `return ${compileRouterToString(router)}`,
+  )() as typeof compiledLookup;
+
+  const cases: [path: string, data: string, key: string, value: string][] = [
+    ["/p/EVIL", "PARAM", "__proto__", "EVIL"],
+    ["/r/42", "REGEX", "__proto__", "42"],
+    ["/rp/x42y", "REGEX-PARTIAL", "__proto__", "42"],
+    ["/w/a/b", "WILDCARD", "__proto__", "a/b"],
+    ["/o/EVIL", "OPTIONAL", "__proto__", "EVIL"],
+    ["/u/EVIL", "UNNAMED", "0", "EVIL"],
+  ];
+
+  const lookups = [
+    { name: "findRoute", match: (m: string, p: string) => findRoute(router, m, p) },
+    { name: "compiledLookup", match: (m: string, p: string) => compiledLookup(m, p) },
+    { name: "aotLookup", match: (m: string, p: string) => aotLookup(m, p) },
+  ];
+
+  for (const { name, match } of lookups) {
+    it(`keeps a "__proto__" param as an own property (${name})`, () => {
+      for (const [path, data, key, value] of cases) {
+        const matched = match("GET", path);
+        expect(matched?.data).toMatchObject({ path: data });
+        // A bare `toEqual` passes vacuously against a prototype-setter result
+        const params = matched!.params!;
+        expect(Object.keys(params)).toEqual([key]);
+        expect(Object.hasOwn(params, key)).toBe(true);
+        expect(params[key]).toBe(value);
+      }
+      // The optional form still matches without the param
+      expect(match("GET", "/o")).toMatchObject({ data: { path: "OPTIONAL" } });
+    });
+  }
+
+  it("matchAll agrees with findAllRoutes (__proto__ params)", () => {
+    for (const [path] of cases) {
+      expect(compiledMatchAll("GET", path).map((mr) => [mr.data.path, { ...mr.params }])).toEqual(
+        findAllRoutes(router, "GET", path).map((mr) => [mr.data.path, { ...mr.params }]),
+      );
+    }
+  });
+});
+
 describe("many static routes (compiled static-map parity)", () => {
   // More than STATIC_CHAIN_MAX static paths switch the compiled static
   // dispatch from an `else if` chain to a null-proto map lookup — pin that
