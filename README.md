@@ -36,6 +36,7 @@ import {
   routesOverlap,
   compareRoutes,
   findOverlappingRoutes,
+  routeNodeKeys,
   routeToRegExp,
   regExpToRoute,
   NullProtoObj,
@@ -54,6 +55,7 @@ import {
   routesOverlap,
   compareRoutes,
   findOverlappingRoutes,
+  routeNodeKeys,
   routeToRegExp,
   regExpToRoute,
   NullProtoObj,
@@ -266,6 +268,41 @@ findOverlappingRoutes(router, "GET", "/protected/feed/**");
 - Patterns are expanded through the same pipeline as `addRoute`, so groups (`{s}?`), optional/repeat modifiers (`:x?`/`:x+`/`:x*`), and escaping (`\:`, `\*`) are all respected. A pattern with optional syntax expands to several shapes; two patterns overlap when **any** pair of shapes overlaps.
 - **Segment counts:** bare `**` matches **zero or more** segments (so `/a/**` overlaps `/a`), `**:name` matches **one or more**, a **trailing** bare `*` matches **zero or one**, and mid-pattern `*` / `:name` match **exactly one**.
 - **Regex constraints** (`:id(\d+)`, unnamed groups, `*.png`) are matched **precisely against static literals** (`/user/:id(\d+)` does _not_ overlap `/user/abc`), but two dynamic segments where at least one is constrained are **over-approximated to "overlaps"** — `routesOverlap("/user/:id(\d+)", "/user/:name([a-z]+)")` returns `true` even though the sets are disjoint. Exact regex intersection is undecidable, and over-approximating toward "overlaps" is the safe conservative default.
+
+### Route node keys
+
+Different patterns can end up on the **same node** of the radix tree — `/users/:id` and `/users/*` both become "any single segment under `/users`". `routeNodeKeys(pattern)` tells you which node(s) a pattern lands on:
+
+```js
+import { routeNodeKeys } from "rou3";
+
+routeNodeKeys("/users/:id"); // ["/users/*"]
+routeNodeKeys("/users/*"); // ["/users/*"]   -> same node as /users/:id
+routeNodeKeys("/admin/**:rest"); // ["/admin/**"]
+routeNodeKeys("/a/:x?"); // ["/a", "/a/*"]  -> optional syntax lands on two nodes
+```
+
+**Why it matters:** routes on the same node share one bucket of handlers, and lookup takes `methods[method]` first, falling back to `methods[""]` only if there is none. So a method-scoped route hides a method-agnostic one registered on the same node:
+
+```js
+const router = createRouter();
+addRoute(router, "", "/users/*", { basicAuth: true }); // method-agnostic gate
+addRoute(router, "GET", "/users/:id", { handler }); // different text, same node
+
+findAllRoutes(router, "GET", "/users/42").map((m) => m.data);
+// [{ handler }] — the gate is gone
+```
+
+If you keep your own per-route metadata (route rules, middleware, auth gates) in a map keyed by **pattern text**, `"/users/*"` and `"/users/:id"` look like two entries while rou3 has only one — and one of them silently disappears. Key that map by `routeNodeKeys` instead, and merge entries that share a key. The guarantee runs both ways:
+
+> `routeNodeKeys(a)` and `routeNodeKeys(b)` intersect **⟺** `a` and `b` share a node (hence one bucket).
+
+- The result is an array because optional syntax (`:x?`, `:x*`, `{...}?`) registers on several nodes (`/x{/a}?{/b}?` registers 4). It is deduplicated.
+- Each key is itself a valid route pattern for exactly the node it names, so keys work directly as ids: `routeNodeKeys(k)` is `[k]`.
+- Invalid patterns throw exactly as `addRoute` does.
+
+> [!IMPORTANT]
+> Sharing a node does **not** mean matching the same paths. The key drops regex constraints and widens `**:name` to `**`, so `/u/:id(\d+)` and `/u/:slug([a-z]+)` share the key `/u/*` but match **disjoint** paths. Merging too much is the safe direction for metadata, but to ask which paths two patterns share, use [`compareRoutes`](#pattern-overlap) — the two answers are independent in both directions (`"equal"` patterns need not share a node either).
 
 ### Regular expressions
 

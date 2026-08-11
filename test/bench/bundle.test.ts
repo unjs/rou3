@@ -18,6 +18,9 @@ describe("benchmark", () => {
     // same-node siblings by specificity so it agrees with compiled matchAll
     // regardless of insertion order (#187). Previous bump was for #184.
     // regExpToRoute() is tree-shakeable, so it does not affect this budget.
+    // routeNodeKeys() likewise: it only reuses createRouter/addRoute (already in
+    // this bundle) and is dropped entirely when unimported — measured identical
+    // with and without its `src/index.ts` re-export.
     // +~15B: getParamRegexp() now escapes only literal dots *outside* (...) groups
     // so a `.` inside a regex constraint (`:id(\d+\.\d+)`) stays verbatim instead
     // of being double-escaped; gzip is unchanged (2383).
