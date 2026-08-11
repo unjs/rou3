@@ -25,14 +25,20 @@ describe("types", () => {
 
     it("should infer wildcard params", () => {
       type Params = InferRouteParams<"/test/*">;
-      type Expected = { "0": string };
+      type Expected = { "0": string | undefined };
       expectTypeOf<Params>().toEqualTypeOf<Expected>();
+      expectTypeOf<InferRouteParams<"/test/*/">>().toEqualTypeOf<Expected>();
     });
 
     it("should infer multiple wildcard params", () => {
       type Params = InferRouteParams<"/test/*/foo/*/bar">;
       type Expected = { "0": string; "1": string };
       expectTypeOf<Params>().toEqualTypeOf<Expected>();
+      expectTypeOf<InferRouteParams<"/file-*-*">>().toEqualTypeOf<Expected>();
+      expectTypeOf<InferRouteParams<"/test/*/foo/*">>().toEqualTypeOf<{
+        "0": string;
+        "1": string | undefined;
+      }>();
     });
 
     it("should handle catch-all wildcard", () => {
