@@ -892,4 +892,106 @@ describe("Router remove", function () {
     expect(findRoute(router, "GET", "/files/a/b/c")).toBeUndefined();
     expect(findRoute(router, "GET", "/files")).toBeUndefined();
   });
+
+  // `addRoute` maps an escaped literal segment to a *static* node key
+  // (`\*` -> `*`, `\*\*` -> `**`, `\uFFFD` placeholders -> `:(){}`); `removeRoute`
+  // has to key it identically or it walks to a nonexistent node and silently
+  // removes nothing. Both now go through `segmentKey()` in `operations/_utils`.
+  describe("remove escaped literal segments", () => {
+    for (const [route, path] of [
+      [String.raw`/a/\*`, "/a/*"],
+      [String.raw`/a/\*\*`, "/a/**"],
+      [String.raw`/\:a/\*`, "/:a/*"],
+      [String.raw`/static\:path/\*\*`, "/static:path/**"],
+      [String.raw`/a/\(x\)`, "/a/(x)"],
+      [String.raw`/a/\{x\}`, "/a/{x}"],
+    ] as const) {
+      it(`${route} (matches ${path})`, function () {
+        const router = createRouter([route]);
+        expect(findRoute(router, "GET", path)).toMatchObject({ data: { path: route } });
+
+        removeRoute(router, "GET", route);
+
+        expect(findRoute(router, "GET", path)).toBeUndefined();
+        expect(formatTree(router.root)).toBe("<root>");
+      });
+    }
+  });
+
+  it("remove routes with segments after a wildcard", function () {
+    // `addRoute` stops at `**`, so `/a/**/b` *is* `/a/**` — removal must stop
+    // there too instead of walking on into a nonexistent `/b` static child.
+    const route = "/a/**/b";
+    const router = createRouter([route]);
+
+    expect(findRoute(router, "GET", "/a/x/y")).toMatchObject({ data: { path: route } });
+
+    removeRoute(router, "GET", route);
+
+    expect(findRoute(router, "GET", "/a/x/y")).toBeUndefined();
+    expect(formatTree(router.root)).toBe("<root>");
+  });
+
+  it("normalizes method and path like addRoute", function () {
+    const router = createRouter<{ path: string }>({});
+    addRoute(router, "get", "a/b", { path: "/a/b" });
+    addRoute(router, "GET", "/b", { path: "/b" });
+
+    // Lower-case method: `addRoute` upper-cases, so removal must too
+    removeRoute(router, "get", "/a/b");
+    expect(findRoute(router, "GET", "/a/b")).toBeUndefined();
+
+    // Missing leading slash used to shift every segment left, removing `/b`
+    expect(findRoute(router, "GET", "/b")).toMatchObject({ data: { path: "/b" } });
+  });
+
+  it("removing a route does not remove a distinct route that shares a node", function () {
+    // Escaped literals live on a *static* node, the unescaped forms on the
+    // param/wildcard node of the same parent: removing one must not touch the
+    // other (in either order).
+    for (const [remove, keep] of [
+      [String.raw`/a/\*`, "/a/*"],
+      ["/a/*", String.raw`/a/\*`],
+      [String.raw`/a/\*\*`, "/a/**"],
+      ["/a/**", String.raw`/a/\*\*`],
+      [String.raw`/a/\:x`, "/a/:x"],
+      ["/a/:x", String.raw`/a/\:x`],
+    ] as const) {
+      const router = createRouter([remove, keep]);
+      removeRoute(router, "GET", remove);
+      // Same tree as if `remove` had never been added
+      expect(formatTree(router.root), `remove ${remove} / keep ${keep}`).toBe(
+        formatTree(createRouter([keep]).root),
+      );
+    }
+  });
+
+  it("add -> remove restores the original tree", function () {
+    const base = ["/a/b", "/a/:id", "/a/**"];
+    const routes = [
+      "/a/b/c",
+      "/x/:id",
+      "/x/:id(\\d+)",
+      "/x/*",
+      "/x/*.png",
+      "/x/pre-:id-suf",
+      "/x/**",
+      "/x/**:rest",
+      String.raw`/x/\*`,
+      String.raw`/x/\*\*`,
+      String.raw`/x/\:id`,
+      "/x{/y}?",
+      "/x/:opt?",
+      "/x/:many*",
+      "/x/:some+",
+      "/x/y/",
+      "/x/y//",
+    ];
+    const expected = formatTree(createRouter(base).root);
+    for (const route of routes) {
+      const router = createRouter([...base, route]);
+      removeRoute(router, "GET", route);
+      expect(formatTree(router.root), route).toBe(expected);
+    }
+  });
 });

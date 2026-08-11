@@ -1,9 +1,9 @@
 import { expandGroupDelimiters } from "../_group-delimiters.ts";
 import { toGroupName, toUnnamedGroupKey } from "../_group-names.ts";
-import { hasSegmentWildcard, replaceSegmentWildcards } from "../_segment-wildcards.ts";
+import { replaceSegmentWildcards } from "../_segment-wildcards.ts";
 import { NullProtoObj } from "../object.ts";
 import type { RouterContext, ParamsIndexMap } from "../types.ts";
-import { decodeEscaped, encodeEscapes, expandModifiers, splitRoute } from "./_utils.ts";
+import { encodeEscapes, expandModifiers, segmentKey, splitRoute } from "./_utils.ts";
 
 /**
  * Add a route to the router context.
@@ -49,9 +49,10 @@ export function addRoute<T>(
 
   for (let i = 0; i < segments.length; i++) {
     let segment = segments[i];
+    const key = segmentKey(segment);
 
     // Wildcard
-    if (segment.startsWith("**")) {
+    if (key === 2) {
       if (!node.wildcard) {
         node.wildcard = { key: "**" };
       }
@@ -61,21 +62,14 @@ export function addRoute<T>(
     }
 
     // Param
-    const hasParen = segment.includes("(");
-    const hasWildcard = !hasParen && hasSegmentWildcard(segment);
-    if (segment === "*" || hasParen || hasWildcard || segment.includes(":")) {
+    if (key === 1) {
       if (!node.param) {
         node.param = { key: "*" };
       }
       node = node.param;
       if (segment === "*") {
         paramsMap.push([i, String(_unnamedParamIndex++), true /* optional */]);
-      } else if (
-        hasParen ||
-        hasWildcard ||
-        segment.includes(":", 1) ||
-        !/^:[\w-]+$/.test(segment)
-      ) {
+      } else if (segment.includes("(") || segment.includes(":", 1) || !/^:[\w-]+$/.test(segment)) {
         const [regexp, nextIndex] = getParamRegexp(segment, _unnamedParamIndex);
         _unnamedParamIndex = nextIndex;
         paramsRegexp[i] = regexp;
@@ -88,12 +82,7 @@ export function addRoute<T>(
     }
 
     // Static
-    if (segment === "\\*") {
-      segment = segments[i] = "*";
-    } else if (segment === "\\*\\*") {
-      segment = segments[i] = "**";
-    }
-    segment = segments[i] = decodeEscaped(segment);
+    segment = segments[i] = key;
     const child = node.static?.[segment];
     if (child) {
       node = child;

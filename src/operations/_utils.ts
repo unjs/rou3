@@ -1,4 +1,5 @@
 import { fromGroupName } from "../_group-names.ts";
+import { hasSegmentWildcard } from "../_segment-wildcards.ts";
 import { NullProtoObj } from "../object.ts";
 import type { MatchedRoute, ParamsIndexMap } from "../types.ts";
 
@@ -7,7 +8,32 @@ export function encodeEscapes(path: string): string {
   return path.replace(/\\([:(){}])/g, (_, c) => "\uFFFD" + "ABCDE"[":(){}".indexOf(c)]);
 }
 
-export function decodeEscaped(segment: string): string {
+/**
+ * Where a route-pattern segment goes in the tree, exactly as `addRoute` inserts
+ * it: `2` = `node.wildcard`, `1` = `node.param`, otherwise the returned string
+ * is the `node.static` key — an escaped `\*` / `\*\*` is the literal `*` / `**`
+ * (the escape is what keeps it out of the wildcard/param branches), and
+ * `\uFFFD` placeholders decode back to `:(){}`.
+ *
+ * Shared by `addRoute` and `removeRoute`: the two must classify *and* key
+ * segments identically, otherwise removal walks to a different — usually
+ * nonexistent — node and silently does nothing.
+ *
+ * A wildcard is **terminal**: `addRoute` stops at `**`, so any segments after
+ * it are not part of the tree path.
+ */
+export function segmentKey(segment: string): string | 1 | 2 {
+  if (segment.startsWith("**")) return 2;
+  if (
+    segment === "*" ||
+    segment.includes(":") ||
+    segment.includes("(") ||
+    hasSegmentWildcard(segment)
+  ) {
+    return 1;
+  }
+  if (segment === "\\*") return "*";
+  if (segment === "\\*\\*") return "**";
   if (!segment.includes("\uFFFD")) return segment;
   return segment.replace(/\uFFFD([A-E])/g, (_, c) =>
     // eslint-disable-next-line unicorn/no-nested-ternary
