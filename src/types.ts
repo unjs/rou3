@@ -8,6 +8,8 @@ export type MethodData<T = unknown> = {
   data: T;
   paramsMap?: ParamsIndexMap;
   paramsRegexp: RegExp[];
+  /** Source pattern after addRoute normalization; used to splice one same-node sibling. */
+  route: string;
 };
 
 export interface Node<T = unknown> {

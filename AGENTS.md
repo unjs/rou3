@@ -204,6 +204,8 @@ Two different rules, and they must not be conflated:
 - Unescaped `*` inside a segment is treated as an unnamed capture (`"0"`, `"1"`, ...), including mid-pattern forms like `/*.png` and `/file-*-*.png`.
 - Wildcard capture indexing is shared with unnamed regex groups in the same route.
 - `removeRoute()` now treats wildcard-segment patterns as dynamic segments (same classification as add/find/regexp).
+- `removeRoute()` splices one `MethodData` entry by the `route` identity stored at `addRoute` time. Same-node siblings (`/a/:id` vs `/a/:userId`, `/a/**` vs `/a/**:rest`) share `methods[method]`; deleting the whole bucket used to drop them all. When a node's methods become empty, the matching `ctx.static` entry is dropped too.
+
 
 ## Build & Scripts
 
