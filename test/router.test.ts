@@ -792,9 +792,8 @@ describe("Router remove", function () {
       },
     });
 
-    // TODO
-    // removeRoute(router, "GET", "/placeholder/:choo");
-    // expect(findRoute(router,"/placeholder/route")).to.deep.equal(undefined);
+    removeRoute(router, "GET", "/placeholder/:choo");
+    expect(findRoute(router, "GET", "/placeholder/route")).to.deep.equal(undefined);
 
     expect(findRoute(router, "GET", "/placeholder/route/route2")).to.deep.equal({
       data: { path: "/placeholder/:choo/:choo2" },
@@ -964,6 +963,60 @@ describe("Router remove", function () {
         formatTree(createRouter([keep]).root),
       );
     }
+  });
+
+  it("removing one same-node sibling leaves the others", function () {
+    // Same-node siblings share methods[method] (param names / wildcard names /
+    // regex constraints). Removal used to `delete` the whole bucket.
+    for (const [remove, keep, keepPath] of [
+      ["/a/:id", "/a/:userId", "/a/x"],
+      ["/a/**", "/a/**:rest", "/a/x"],
+      ["/a/:id", "/a/:n(\\d+)", "/a/1"],
+      ["/a/*", "/a/:id", "/a/x"],
+    ] as const) {
+      const router = createRouter([remove, keep]);
+      removeRoute(router, "GET", remove);
+      expect(findRoute(router, "GET", keepPath), `remove ${remove} / keep ${keep}`).toMatchObject({
+        data: { path: keep },
+      });
+      expect(
+        compileRouter(router)("GET", keepPath),
+        `compiled remove ${remove} / keep ${keep}`,
+      ).toMatchObject({
+        data: { path: keep },
+      });
+      expect(formatTree(router.root), `remove ${remove} / keep ${keep}`).toBe(
+        formatTree(createRouter([keep]).root),
+      );
+    }
+  });
+
+  it("drops ctx.static when a static route has no methods left", function () {
+    const router = createRouter(["/a/b", "/a/c"]);
+    expect(router.static["/a/b"]).toBeDefined();
+    expect(router.static["/a/c"]).toBeDefined();
+
+    removeRoute(router, "GET", "/a/b");
+
+    expect(router.static["/a/b"]).toBeUndefined();
+    expect(router.static["/a/c"]).toBeDefined();
+    expect(findRoute(router, "GET", "/a/c")).toMatchObject({ data: { path: "/a/c" } });
+  });
+
+  it("keeps ctx.static while another method remains on the same path", function () {
+    const router = createRouter<{ path: string }>({});
+    addRoute(router, "GET", "/a/b", { path: "get" });
+    addRoute(router, "POST", "/a/b", { path: "post" });
+
+    removeRoute(router, "GET", "/a/b");
+
+    expect(router.static["/a/b"]).toBeDefined();
+    expect(findRoute(router, "POST", "/a/b")).toMatchObject({ data: { path: "post" } });
+
+    removeRoute(router, "POST", "/a/b");
+
+    expect(router.static["/a/b"]).toBeUndefined();
+    expect(findRoute(router, "POST", "/a/b")).toBeUndefined();
   });
 
   it("add -> remove restores the original tree", function () {

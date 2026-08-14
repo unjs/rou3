@@ -56,7 +56,9 @@ describe("benchmark", () => {
     // ctx.static key and the compiled static dispatch each matching a different
     // set of paths. Lookup paths still use splitPath (one popped empty segment,
     // i.e. `/a//` reaches `/a` but `/a///` does not) — unchanged.
-    expect(bytes).toBeLessThanOrEqual(6640); // <6.64kb
+    // +~20B raw / gzip unchanged: addRoute stores a `route` identity on each
+    // MethodData so removeRoute can splice one same-node sibling (#201).
+    expect(bytes).toBeLessThanOrEqual(6670); // <6.67kb
     expect(gzipSize).toBeLessThanOrEqual(2690); // <2.69kb
   });
 });

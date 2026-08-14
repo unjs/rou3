@@ -42,6 +42,9 @@ export function addRoute<T>(
 
   let node = ctx.root;
 
+  // Identity for removeRoute: canonical segments, before static keys are rewritten.
+  const route = "/" + segments.join("/");
+
   let _unnamedParamIndex = 0;
 
   const paramsMap: ParamsIndexMap = [];
@@ -103,6 +106,7 @@ export function addRoute<T>(
     data: data || (null as T),
     paramsRegexp,
     paramsMap: hasParams ? paramsMap : undefined,
+    route,
   });
 
   // Static
