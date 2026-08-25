@@ -143,5 +143,11 @@ function getParamRegexp(segment: string, unnamedStart = 0): [RegExp, number] {
     .replace(/\((?![?<])/g, () => `(?<${toUnnamedGroupKey(_i++)}>`)
     .replace(/\uFFFE(.)/g, (_, c) => (/[.*+?^${}()|[\]\\]/.test(c) ? `\\${c}` : c));
 
-  return [new RegExp(`^${regex}$`), _i];
+  try {
+    return [new RegExp(`^${regex}$`), _i];
+  } catch {
+    throw new Error(
+      `Invalid route pattern "${segment}": unbalanced '(' group. Escape a literal parenthesis as '\\('.`,
+    );
+  }
 }
