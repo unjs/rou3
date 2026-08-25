@@ -145,9 +145,12 @@ function getParamRegexp(segment: string, unnamedStart = 0): [RegExp, number] {
 
   try {
     return [new RegExp(`^${regex}$`), _i];
-  } catch {
-    throw new Error(
-      `Invalid route pattern "${segment}": unbalanced '(' group. Escape a literal parenthesis as '\\('.`,
-    );
+  } catch (err: any) {
+    if (err?.message?.includes("Unterminated group") || err?.message?.includes("unterminated")) {
+      throw new Error(
+        `Invalid route pattern "${segment}": unbalanced '(' group. Escape a literal parenthesis as '\\('.`,
+      );
+    }
+    throw new Error(`Invalid route pattern "${segment}": ${err.message}`);
   }
 }
