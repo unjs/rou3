@@ -146,7 +146,16 @@ function routeToRegExpSegments(route: string): string[] {
     if (segment === "*") {
       reSegments.push(`(?<${toRegExpUnnamedKey(idCtr++)}>[^/]*)`);
     } else if (segment.startsWith("**")) {
-      reSegments.push(segment === "**" ? "?(?<_>.*)" : `?(?<${toGroupName(segment.slice(3))}>.+)`);
+      const isWildcard = segment === "**";
+      const name = isWildcard ? "_" : toGroupName(segment.slice(3));
+      const pattern = isWildcard ? ".*" : ".+";
+      if (reSegments.length > 0) {
+        const prev = reSegments.pop()!;
+        reSegments.push(`${prev}(?:/(?<${name}>${pattern}))?`);
+      } else {
+        reSegments.push(isWildcard ? `?(?<${name}>${pattern})` : `?(?<${name}>${pattern})`);
+      }
+      break;
     } else if (
       segment.includes(":") ||
       /(^|[^\\])\(/.test(segment) ||

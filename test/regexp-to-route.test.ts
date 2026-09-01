@@ -26,8 +26,8 @@ describe("regExpToRoute", () => {
     expect(regExpToRoute(/^\/path\/(?<param>[^/]+)\/?$/)).toBe("/path/:param");
     expect(regExpToRoute(/^\/path\/(?<_0>[^/]*)\/foo\/?$/)).toBe("/path/*/foo");
     expect(regExpToRoute(/^\/path\/(?<_0>[^/]*)\.png\/?$/)).toBe("/path/*.png");
-    expect(regExpToRoute(/^\/path\/?(?<_>.*)\/?$/)).toBe("/path/**");
-    expect(regExpToRoute(/^\/base\/?(?<path>.+)\/?$/)).toBe("/base/**:path");
+    expect(regExpToRoute(/^\/path(?:\/(?<_>.*))?\/?$/)).toBe("/path/**");
+    expect(regExpToRoute(/^\/base(?:\/(?<path>.+))?\/?$/)).toBe("/base/**:path");
     expect(regExpToRoute(/^\/path\/(?<id>\d+)\/?$/)).toBe("/path/:id(\\d+)");
     expect(regExpToRoute(/^\/path(?:\/(?<id>[^/]+))?\/?$/)).toBe("/path/:id?");
     expect(regExpToRoute(/^\/path(?:\/(?<rest>.*))?\/?$/)).toBe("/path/:rest*");
@@ -39,7 +39,7 @@ describe("regExpToRoute", () => {
     // emitted escaped; reversing must restore the original name, not leak the
     // internal form as `:__rou3_esc_test_hid`.
     expect(regExpToRoute(/^\/api\/(?<__rou3_esc_test_hid>[^/]+)\/?$/)).toBe("/api/:test-id");
-    expect(regExpToRoute(/^\/api\/?(?<__rou3_esc_test_hid>.+)\/?$/)).toBe("/api/**:test-id");
+    expect(regExpToRoute(/^\/api(?:\/(?<__rou3_esc_test_hid>.+))?\/?$/)).toBe("/api/**:test-id");
     expect(regExpToRoute(/^\/api(?:\/(?<__rou3_esc_test_hid>[^/]+))?\/?$/)).toBe("/api/:test-id?");
     expect(regExpToRoute(/^\/api\/(?<__rou3_esc_0>[^/]+)\/?$/)).toBe("/api/:0");
     expect(regExpToRoute(/^\/mix\/(?<__rou3_esc_a_hb>[^/]+)\.(?<a_b>[^/]+)\/?$/)).toBe(
