@@ -52,15 +52,11 @@ export const regexpCases: Record<string, RegExpCase> = {
     match: [["/path/file-a-b.png", { "0": "a", "1": "b" }]],
   },
   "/path/**": {
-    regex: /^\/path\/?(?<_>.*)\/?$/,
-    match: [
-      ["/path/", { _: "" }],
-      ["/path", { _: "" }],
-      ["/path/anything/more", { _: "anything/more" }],
-    ],
+    regex: /^\/path(?:\/(?<_>.*))?\/?$/,
+    match: [["/path/", { _: "" }], ["/path"], ["/path/anything/more", { _: "anything/more" }]],
   },
   "/base/**:path": {
-    regex: /^\/base\/?(?<path>.+)\/?$/,
+    regex: /^\/base(?:\/(?<path>.+))?\/?$/,
     match: [["/base/anything/more", { path: "anything/more" }]],
   },
   "/static%3Apath/\\*/\\*\\*": {
@@ -163,7 +159,7 @@ export const regexpCases: Record<string, RegExpCase> = {
     match: [["/api/abc", { "test-id": "abc" }], ["/api"]],
   },
   "/api/**:test-id": {
-    regex: /^\/api\/?(?<__rou3_esc_test_hid>.+)\/?$/,
+    regex: /^\/api(?:\/(?<__rou3_esc_test_hid>.+))?\/?$/,
     match: [["/api/a/b", { "test-id": "a/b" }]],
   },
   "/files/:file-name.json": {

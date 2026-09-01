@@ -202,6 +202,12 @@ function paramToken(name: string, body: string): string {
 
 /** Classify a param inside an optional group (`:name?`, `:name*`, ...). */
 function optionalParam(name: string, body: string): string {
+  if (name === "_" && body === ".*") {
+    return "**";
+  }
+  if (body === ".+") {
+    return `**:${name}`;
+  }
   if (body === "[^/]+") {
     return `:${name}?`;
   }

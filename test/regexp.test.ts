@@ -46,6 +46,15 @@ describe("routeToRegExp", () => {
     });
   }
 
+  it("does not over-match sibling paths for wildcard routes", () => {
+    const re = routeToRegExp("/pub/**");
+    expect(re.test("/pub")).toBe(true);
+    expect(re.test("/pub/")).toBe(true);
+    expect(re.test("/pub/a")).toBe(true);
+    expect(re.test("/pubx")).toBe(false);
+    expect(re.test("/publicsecret")).toBe(false);
+  });
+
   // Trailing single optional groups are compiled inline (`(?:...)?`) rather than
   // expanded into an alternation of full routes, so a param before the group is
   // never emitted twice. Duplicate named groups are valid JS but rejected by
